@@ -37,7 +37,7 @@ const workList = [
     image: panoramicImage,
   },
   {
-    link: '#/city',
+    link: '#/earth',
     title: '🌏 3D Low Poly地球',
     description: 'Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents except Antarctica',
     image: earthImage,
