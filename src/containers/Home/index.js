@@ -8,6 +8,7 @@ import cityImage from './images/city.png';
 import panoramicImage from './images/panoramic.png';
 import metaImage from './images/meta.png';
 import earthImage from './images/earth.png';
+import './index.css';
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -48,7 +49,7 @@ export default class Home extends React.Component {
     return (
       <div className="home" style={{ padding: '24px'}}>
         <Box>
-          <h1 className="title">MY WORK LIST</h1>
+          <h1 className="page_title">MY WORK LIST</h1>
         </Box>
         <Box sx={{ width: '100%' }} style={{ maxWidth: '1200px', margin: 'auto' }}>
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
