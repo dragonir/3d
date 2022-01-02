@@ -30,18 +30,18 @@ export default class City extends React.Component {
       container.appendChild(renderer.domElement);
       // 场景
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x000000);
-      scene.fog = new THREE.Fog(0xa0a0a0, 200, 1000);
+      scene.background = new THREE.Color(0x582424);
+      scene.fog = new THREE.Fog(0xeeeeee, 0, 100);
       // 透视相机：视场、长宽比、近面、远面
       camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.set(0, 10, 20);
       camera.lookAt(new THREE.Vector3(0, 0, 0));
       // 半球光源：创建室外效果更加自然的光源
       const cubeGeometry = new THREE.BoxGeometry(0.001, 0.001, 0.001);
-      const cubeMaterial = new THREE.MeshLambertMaterial({ color: 'white' });
+      const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
       const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-      light = new THREE.DirectionalLight(0xfff9f0, 1);
-      light.intensity = 1.6;
+      light = new THREE.DirectionalLight(0xb5b1c1, 1);
+      light.intensity = 1.2;
       light.position.set(20, 20, 5);
       light.castShadow = true;
       light.target = cube;
@@ -59,7 +59,7 @@ export default class City extends React.Component {
       // scene.add(lightCameraHelper);
 
       // 环境光
-      var ambientLight = new THREE.AmbientLight(0xc4c4c4);
+      var ambientLight = new THREE.AmbientLight(0x605a64);
       scene.add(ambientLight);
 
       // 网格
@@ -77,6 +77,7 @@ export default class City extends React.Component {
             child.castShadow = true;
             child.receiveShadow = true;
             cityMeshes.push(child)
+            child.material.metalness = 1;
           }
         });
         mesh.rotation.y = Math.PI / 2;
@@ -116,9 +117,10 @@ export default class City extends React.Component {
       // 通过鼠标点的位置和当前相机的矩阵计算出raycaster
       raycaster.setFromCamera(mouse, camera);
       // 获取raycaster直线和所有模型相交的数组集合
-      console.log(scene.children)
       var intersects = raycaster.intersectObjects(cityMeshes);
-      console.log(intersects)
+      if (intersects.length > 0) {
+        console.log(intersects[0].object)
+      }
     }
     window.addEventListener('click', onMouseClick, false);
   }
