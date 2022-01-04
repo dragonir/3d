@@ -5,11 +5,19 @@ import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Stats from "three/examples/jsm/libs/stats.module";
 import cityModel from './models/city.fbx';
+import Animations from './animations';
+import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
+import './index.css';
 
 export default class City extends React.Component {
 
   constructor(props) {
     super(props);
+  }
+
+  state = {
+    // 页面模型加载进度，0：未加载，100：加载完成
+    loadingProcess: 0
   }
 
   componentDidMount() {
@@ -19,14 +27,15 @@ export default class City extends React.Component {
   initThree = () => {
     var container, controls, stats;
     var camera, scene, renderer, light, cityMeshes = [];
+    let _this = this;
     init();
     animate();
     function init() {
-      container = document.getElementById('container');
       renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.shadowMap.enabled = true;
+      container = document.getElementById('container');
       container.appendChild(renderer.domElement);
       // 场景
       scene = new THREE.Scene();
@@ -34,7 +43,7 @@ export default class City extends React.Component {
       scene.fog = new THREE.Fog(0xeeeeee, 0, 100);
       // 透视相机：视场、长宽比、近面、远面
       camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.set(0, 10, 20);
+      camera.position.set(120, 100, 100);
       camera.lookAt(new THREE.Vector3(0, 0, 0));
       // 半球光源：创建室外效果更加自然的光源
       const cubeGeometry = new THREE.BoxGeometry(0.001, 0.001, 0.001);
@@ -71,7 +80,7 @@ export default class City extends React.Component {
 
       // 加载模型
       var loader = new FBXLoader();
-      loader.load(cityModel, function (mesh) {
+      loader.load(cityModel, mesh => {
         mesh.traverse(function (child) {
           if (child.isMesh) {
             child.castShadow = true;
@@ -84,6 +93,13 @@ export default class City extends React.Component {
         mesh.position.set(40, 0, -50);
         mesh.scale.set(1, 1, 1);
         scene.add(mesh);
+      }, res => {
+        if (Number((res.loaded / res.total * 100).toFixed(0)) === 100) {
+          Animations.animateCamera(camera, controls, { x: 0, y: 10, z: 20 }, { x: 0, y: 0, z: 0 }, 4000, () => {});
+        }
+        _this.setState({ loadingProcess: Math.floor(res.loaded / res.total * 100) });
+      }, err => {
+        console.log(err);
       });
 
       controls = new OrbitControls(camera, renderer.domElement);
@@ -105,6 +121,7 @@ export default class City extends React.Component {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
       stats && stats.update();
+      TWEEN && TWEEN.update();
     }
 
     // 增加点击事件，声明raycaster和mouse变量
@@ -127,7 +144,15 @@ export default class City extends React.Component {
 
   render () {
     return (
-      <div id="container"></div>
+      <div>
+        <div id="container"></div>
+        {this.state.loadingProcess === 100 ? '' : (
+          <div id="loading">
+            <div className="box">{this.state.loadingProcess} %</div>
+          </div>
+        )
+      }
+      </div>
     )
   }
 }
