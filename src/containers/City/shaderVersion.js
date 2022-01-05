@@ -5,9 +5,29 @@ import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Stats from "three/examples/jsm/libs/stats.module";
 import cityModel from './models/city.fbx';
-import Animations from '../../assets/utils/animations';
+import Animations from './animations';
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
 import './index.css';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+
+const vertexShader = `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+  }
+`;
+const fragmentShader = `
+  uniform sampler2D baseTexture;
+  uniform sampler2D bloomTexture;
+  varying vec2 vUv;
+  void main() {
+    gl_FragColor = ( texture2D( baseTexture, vUv ) + vec4( 1.0 ) * texture2D( bloomTexture, vUv ) );
+  }
+`;
 
 export default class City extends React.Component {
 
@@ -25,8 +45,19 @@ export default class City extends React.Component {
   }
 
   initThree = () => {
-    var container, controls, stats;
-    var camera, scene, renderer, light, cityMeshes = [];
+    var container, controls, stats, materials = {};
+    var camera, scene, renderer, bloomComposer, finalComposer, light, cityMeshes = [];
+    const darkMaterial = new THREE.MeshBasicMaterial( { color: "black" } );
+    const ENTIRE_SCENE = 0, BLOOM_SCENE = 1;
+    const bloomLayer = new THREE.Layers();
+    bloomLayer.set(BLOOM_SCENE);
+    const params = {
+      exposure: 1,
+      bloomStrength: .5,
+      bloomThreshold: 0,
+      bloomRadius: 0
+    };
+
     let _this = this;
     init();
     animate();
@@ -35,6 +66,7 @@ export default class City extends React.Component {
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.shadowMap.enabled = true;
+      renderer.toneMapping = THREE.ReinhardToneMapping;
       container = document.getElementById('container');
       container.appendChild(renderer.domElement);
       // 场景
@@ -83,23 +115,12 @@ export default class City extends React.Component {
       loader.load(cityModel, mesh => {
         mesh.traverse(function (child) {
           if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-            cityMeshes.push(child)
+            // child.castShadow = true;
+            // child.receiveShadow = true;
+            cityMeshes.push(child);
             if (child.material.length > 1) {
-              child.material.map(item => {
-                item.metalness = .5;
-                item.specular = item.color;
-                item.shininess = 50;
-                if (/green|pink|cyan|black/i.test(item.name)) {
-                  item.emissive = item.color;
-                }
-                if (item.name.includes('DarkGray')) {
-                  item.metalness = 1;
-                  item.fog = false;
-                  item.emissive = new THREE.Color(0x000000);
-                }
-              })
+              let bool = child.material.some(item => /green/i.test(item.name));
+              bool && child.layers.enable(BLOOM_SCENE);
             }
           }
         });
@@ -112,32 +133,87 @@ export default class City extends React.Component {
           Animations.animateCamera(camera, controls, { x: 0, y: 10, z: 20 }, { x: 0, y: 0, z: 0 }, 4000, () => {});
         }
         _this.setState({ loadingProcess: Math.floor(res.loaded / res.total * 100) });
+        renderBloom();
+        finalComposer.render();
       }, err => {
         console.log(err);
       });
 
       controls = new OrbitControls(camera, renderer.domElement);
       controls.target.set(0, 0, 0);
+      controls.addEventListener('change', () => {
+        renderBloom();
+        finalComposer.render();
+      });
       controls.update();
       window.addEventListener('resize', onWindowResize, false);
 
       stats = new Stats();
       document.documentElement.appendChild(stats.dom);
+
+      // 局部辉光着色器渲染
+      const renderScene = new RenderPass(scene, camera);
+      const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85);
+      bloomPass.threshold = params.bloomThreshold;
+      bloomPass.strength = params.bloomStrength;
+      bloomPass.radius = params.bloomRadius;
+      bloomComposer = new EffectComposer(renderer);
+      bloomComposer.renderToScreen = false;
+      bloomComposer.addPass(renderScene);
+      bloomComposer.addPass(bloomPass);
+      const finalPass = new ShaderPass(
+        new THREE.ShaderMaterial({
+          uniforms: {
+            baseTexture: { value: null },
+            bloomTexture: { value: bloomComposer.renderTarget2.texture }
+          },
+          vertexShader: vertexShader,
+          fragmentShader: fragmentShader,
+          defines: {}
+        }), "baseTexture"
+      );
+      finalPass.needsSwap = true;
+      finalComposer = new EffectComposer(renderer);
+      finalComposer.addPass(renderScene);
+      finalComposer.addPass(finalPass);
     }
 
     function onWindowResize() {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      bloomComposer.setSize(window.innerWidth, window.innerHeight);
+      finalComposer.setSize(window.innerWidth, window.innerHeight);
     }
 
     function animate() {
       requestAnimationFrame(animate);
-      renderer.render(scene, camera);
+      finalComposer && finalComposer.render();
       stats && stats.update();
       TWEEN && TWEEN.update();
     }
 
+    function renderBloom() {
+      let bloomArray = [];
+      cityMeshes.map(mesh => {
+        if (bloomLayer.test(mesh.layers) === false) {
+          mesh.material.length > 1 && mesh.material.map(item => {
+            bloomArray.push(item);
+            if (/green/i.test(item.name)) {
+              materials[obj.uuid] = item;
+              item = darkMaterial;
+            }
+          })
+        }
+      })
+      bloomComposer.render();
+      bloomArray.map(item => {
+        if (materials[item.uuid]) {
+          item = materials[item.uuid];
+          delete materials[item.uuid];
+        }
+      })
+    }
     // 增加点击事件，声明raycaster和mouse变量
     var raycaster = new THREE.Raycaster();
     var mouse = new THREE.Vector2();
