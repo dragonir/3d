@@ -8,7 +8,10 @@
     "@testing-library/user-event": "^13.2.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.0",
+    "three": "^0.136.0",
+    "three.js": "^0.77.1",
     "web-vitals": "^2.1.0"
   },
   "scripts": {
