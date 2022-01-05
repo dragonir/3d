@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+  <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+  <title>数字乡村 | 欣荣村社区</title>
+  <style>
+    html, body, #container {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  <script>
+    delete window.AMap;
+  </script>
+</head>
+<body onLoad="mapInit()">
+  <div id="container"></div>
+  <script src="https://webapi.amap.com/maps?v=1.4.15&key=74e01c193a5d8c596394e99f6fb417cb&plugin=Map3D"></script>
+  <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+  <script>
+    function mapInit() {
+      // 创建地图实例
+      // 欣荣村社区
+      var map = new AMap.Map("container", {
+        viewMode: '3D',
+        // 俯视角度
+        pitch: 65,
+        rotation: 0,
+        // 缩放比例
+        zoom: 16,
+        center: [106.390516, 38.750702],
+        showBuildingBlock: false,
+        mapStyle: 'amap://styles/darkblue',
+        // 加载卫星地图
+        // layers: [new AMap.TileLayer.Satellite()],
+        layers: [//只显示默认图层的时候，layers可以缺省
+            new AMap.TileLayer()//高德默认标准图层
+        ],
+        showIndoorMap: false
+      });
+      // 创建Object3DLayer图层
+      var object3Dlayer = new AMap.Object3DLayer();
+      map.add(object3Dlayer);
+      var druckMeshes, cityMeshes;
+      map.plugin(["AMap.GltfLoader"], function () {
+        var urlCity = './assets/models/land.gltf';
+        var urlDuck = 'https://a.amap.com/jsapi_demos/static/gltf/Duck.gltf';
+        var paramCity = {
+          position: new AMap.LngLat(106.3900, 38.750702), // 必须
+          scale: 3200, // 非必须，默认1
+          height: -150,  // 非必须，默认0
+          scene: 0, // 非必须，默认0
+        };
+        var paramDuck = {
+          position: new AMap.LngLat(106.390516, 38.750702), // 必须
+          scale: 800, // 非必须，默认1
+          height: -100,  // 非必须，默认0
+          scene: 0, // 非必须，默认0
+        };
+        var gltfObj = new AMap.GltfLoader();
+        gltfObj.load(urlCity, function (gltfCity) {
+          cityMeshes = gltfCity;
+          gltfCity.setOption(paramCity);
+          gltfCity.rotateX(90);
+          gltfCity.rotateZ(100);
+          object3Dlayer.add(gltfCity);
+        });
+
+
+        gltfObj.load(urlDuck, function (gltfDuck) {
+          druckMeshes = gltfDuck;
+          gltfDuck.setOption(paramDuck);
+          gltfDuck.rotateX(90);
+          gltfDuck.rotateZ(-20);
+          object3Dlayer.add(gltfDuck);
+        });
+      });
+      // 给gltf模型绑定事件
+      map.on('click', function (ev) {
+        var pixel = ev.pixel;
+        var px = new AMap.Pixel(pixel.x, pixel.y);
+        var obj = map.getObject3DByContainerPos(px, [object3Dlayer], false) || {};
+        if (obj && obj.object) {
+          var meshId = obj.object.id;
+          if (druckMeshes && druckMeshes.layerMesh) {
+            for (var i = 0; i < druckMeshes.layerMesh.length; i++) {
+              if (meshId === druckMeshes.layerMesh[i].id) {
+                return log.info("您点击了小黄鸭模型！");
+              }
+            }
+          }
+          if (cityMeshes && cityMeshes.layerMesh) {
+            for (var i = 0; i < cityMeshes.layerMesh.length; i++) {
+              if (meshId === cityMeshes.layerMesh[i].id) {
+                return log.info("您点击了欣荣村社区模型！");
+              }
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

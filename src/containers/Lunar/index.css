@@ -1,12 +1,12 @@
-#loading {
+.lunar_loading {
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
   width: 100vw;
-  background: #582424;
-  background: -webkit-linear-gradient(to right, #97444f, #582424);
-  background: linear-gradient(to right, #97444f, #582424);
+  background: #c13314;
+  background: -webkit-linear-gradient(to right, #97444f, #c13314);
+  background: linear-gradient(to right, #97444f, #c13314);
   display: flex;
   justify-content: space-around;
   align-items: center;

@@ -10,7 +10,7 @@ import bgTexture from './images/bg.png';
 import textModel from './models/text.fbx';
 import tigerModel from './models/tiger.gltf';
 import Animations from '../../assets/utils/animations';
-
+import './index.css';
 export default class Lunar extends React.Component {
 
   constructor(props) {
@@ -143,9 +143,7 @@ export default class Lunar extends React.Component {
         mesh.scene.scale.set(.75, .75, .75);
 
         let meshAnimation = mesh.animations[0];
-        console.log(meshAnimation)
         mixer = new THREE.AnimationMixer(mesh.scene);
-        console.log(mixer)
         let animationClip = meshAnimation;
         let clipAction = mixer.clipAction(animationClip).play();
         animationClip = clipAction.getClip();
@@ -155,7 +153,9 @@ export default class Lunar extends React.Component {
 
       controls = new OrbitControls(camera, renderer.domElement);
       controls.target.set(0, 0, 0);
-      controls.update();
+      // 开启缓动动画
+      controls.enableDamping = true;
+      // controls.dampingFactor = 0.25;
       window.addEventListener('resize', onWindowResize, false);
 
       stats = new Stats();
@@ -175,6 +175,7 @@ export default class Lunar extends React.Component {
       let time = clock.getDelta();
       mixer && mixer.update(time);
       TWEEN && TWEEN.update();
+      controls && controls.update();
     }
 
     // 增加点击事件，声明raycaster和mouse变量
@@ -200,7 +201,7 @@ export default class Lunar extends React.Component {
       <div>
         <div id="container"></div>
         {this.state.loadingProcess === 100 ? '' : (
-          <div id="loading">
+          <div className="lunar_loading">
             <div className="box">{this.state.loadingProcess} %</div>
           </div>
         )

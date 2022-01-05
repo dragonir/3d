@@ -1,0 +1,159 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>数字乡村</title>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <script src="./assets/libs/three.js"></script>
+  <script src="./assets/libs/loaders/GLTFLoader.js"></script>
+  <script src="./assets/libs/loaders/inflate.min.js"></script>
+  <script src="./assets/libs/loaders/OrbitControls.js"></script>
+  <script src="./assets/libs/loaders/stats.js"></script>
+  <script>
+    var container, stats, controls;
+    var camera, scene, renderer, light, lands = [];
+    init();
+    animate();
+    function init() {
+      container = document.createElement('div');
+      document.body.appendChild(container);
+
+      // 场景
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x000000);
+      scene.fog = new THREE.Fog(0xffffff, 200, 1000);
+
+      // 透视相机：视场、长宽比、近面、远面
+      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(1, 5, 14);
+      camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+      // 半球光源：创建室外效果更加自然的光源
+      light = new THREE.HemisphereLight(0xffffff, 0x03c03c);
+      scene.add(light);
+      light = new THREE.DirectionalLight(0xffffff);
+      light.position.set(0, 20, 20);
+      light.castShadow = true;
+      scene.add(light);
+      // 环境光
+      var ambientLight = new THREE.AmbientLight(0xDDDDDD);
+      scene.add(ambientLight);
+
+      // 网格
+      var grid = new THREE.GridHelper(50, 100, 0x000000, 0x000000);
+      grid.material.opacity = 0.2;
+      grid.material.transparent = true;
+      scene.add(grid);
+
+      // 地面
+      var planeGeometry = new THREE.PlaneGeometry(60, 20);
+      var planeMaterial = new THREE.MeshLambertMaterial({
+        color: 0xAAAAAA
+      });
+      var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+      // rotate and position the plane
+      plane.rotation.x = -0.5 * Math.PI;
+      plane.position.set(15, 0, 0);
+      plane.receiveShadow = true;
+      scene.add(plane);
+
+      // 加载模型
+      var loader = new THREE.GLTFLoader();
+      var texLoader = new THREE.TextureLoader();
+      loader.load('assets/models/tree.gltf', function (object) {
+        object.scene.traverse(function (child) {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            lands.push(child)
+            child.material = new THREE.MeshPhysicalMaterial({
+              map: texLoader.load("./assets/images/tree.png"),
+              transparent: true,
+              side:THREE.DoubleSide,
+              metalness: .2,
+              roughness: 0.1,
+              depthTest: false,
+              needsUpdate: true
+            })
+            child.customDepthMaterial = new THREE.MeshDepthMaterial( {
+              depthPacking: THREE.RGBADepthPacking,
+              map: texLoader.load("./assets/images/tree.png"),
+              alphaTest: 0.5
+				    });
+          }
+        });
+        object.scene.rotation.y = Math.PI / 2;
+        object.scene.position.set(0, 0, 0);
+        object.scene.scale.set(1, 1, 1);
+        scene.add(object.scene);
+      });
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.needsUpdate = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      container.appendChild(renderer.domElement);
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.target.set(0, 0, 0);
+      controls.update();
+      window.addEventListener('resize', onWindowResize, false);
+
+      // stats：初始化性能插件
+      stats = new Stats();
+      container.appendChild(stats.dom);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+      stats.update();
+    }
+    // 增加点击事件
+    //声明raycaster和mouse变量
+    var raycaster = new THREE.Raycaster();
+    var mouse = new THREE.Vector2();
+    function onMouseClick(event) {
+      // 通过鼠标点击的位置计算出raycaster所需要的点的位置，以屏幕中心为原点，值的范围为-1到1.
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+      // 通过鼠标点的位置和当前相机的矩阵计算出raycaster
+      raycaster.setFromCamera(mouse, camera);
+      // 获取raycaster直线和所有模型相交的数组集合
+      console.log(scene.children)
+      var intersects = raycaster.intersectObjects(lands);
+      // console.log(intersects);
+      //将所有的相交的模型的颜色设置为红色，如果只需要将第一个触发事件，那就数组的第一个模型改变颜色即可
+      // for (var i = 0; i < intersects.length; i++) {
+      //   intersects[i].object.material.color.set(0xff0000);
+      // }
+      if (intersects.length > 0) {
+        var selectedObj = intersects[0].object;
+        console.log(intersects[0].object)
+        if (selectedObj.name === 'car') {
+          alert('汽车🚗')
+        } else if (selectedObj.name === 'N_office_1') {
+          alert('办公室1')
+        } else if (selectedObj.name === 'N_office_2') {
+          alert('办公室2')
+        }
+      }
+    }
+    window.addEventListener('click', onMouseClick, false);
+  </script>
+</body>
+</html>

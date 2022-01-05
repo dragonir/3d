@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>osm buildings demo</title>
+<link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maptalks/dist/maptalks.css">
+    <script type="text/javascript" src="./js/maptalks.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/three@0.104.0/build/three.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/maptalks.three@latest/dist/maptalks.three.js"></script>
+  <script type="text/javascript" src="buildings.js"></script>
+  <style>
+    html,body{
+        margin:0px;
+        height:100%;
+        width: 100%;
+    }
+    #map { width: 100%; height: 100%; background-color : #000;}
+  </style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+
+var map = new maptalks.Map("map",{
+    center : [13.416935229170008, 52.529564137540376],
+    zoom   :  15,
+    pitch : 70,
+    bearing : 180,
+
+    centerCross : true,
+    doubleClickZoom : false,
+    baseLayer : new maptalks.TileLayer('tile',{
+      urlTemplate: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+      subdomains: ['a','b','c','d'],
+      attribution: '&copy; <a href="http://osm.org">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/">CARTO</a>'
+    })
+});
+
+// features to draw
+var features = [];
+
+buildings.forEach(function (b) {
+    features = features.concat(b.features);
+});
+
+// the ThreeLayer to draw buildings
+var threeLayer = new maptalks.ThreeLayer('t', {
+    forceRenderOnMoving : true,
+    forceRenderOnRotating : true
+});
+threeLayer.prepareToDraw = function (gl, scene, camera) {
+    var me = this;
+    var light = new THREE.DirectionalLight(0xffffff);
+    light.position.set(0, -10, 10).normalize();
+    scene.add(light);
+
+    features.forEach(function (g) {
+        var heightPerLevel = 10;
+        var levels = g.properties.levels || 1;
+        var color = getColor(levels);
+
+        var m = new THREE.MeshPhongMaterial({color: color, opacity : 0.7});
+        //change to back side with THREE <= v0.94
+        // m.side = THREE.BackSide;
+
+        var mesh = me.toExtrudeMesh(maptalks.GeoJSON.toGeometry(g), levels * heightPerLevel, m, levels * heightPerLevel);
+        if (Array.isArray(mesh)) {
+          scene.add.apply(scene, mesh);
+        } else {
+          scene.add(mesh);
+        }
+    });
+};
+threeLayer.addTo(map);
+
+//select buildings by mouse click
+var raycaster = new THREE.Raycaster();
+
+document.addEventListener('click', function (event) {
+    event.preventDefault();
+    var mouse = new THREE.Vector2();
+    
+    let dpr = map.getDevicePixelRatio();
+    if(!dpr)
+    {
+      dpr = 1;
+    }
+    // 屏幕点击坐标转 ndc 设备无关坐标，[-1, 1]
+    var renderer = threeLayer.getThreeRenderer();
+    var rendererSize = renderer.getSize();
+    mouse.x = (event.clientX * dpr / rendererSize.width) * 2 - 1;
+    mouse.y = -(event.clientY * dpr / rendererSize.height) * 2 + 1;
+
+    var objects = [];
+    threeLayer.getScene().children.forEach(child => {
+        if (child instanceof THREE.Mesh) {
+           objects.push(child);
+        }
+    })
+    raycaster.setFromCamera(mouse, threeLayer.getCamera());
+    var intersects = raycaster.intersectObjects(objects);
+    if (intersects.length > 0) {
+        alert('Mesh : ' + intersects[0].object.uuid);
+    }
+}, false);
+
+function getColor(level) {
+    if (level < 2) {
+        return 0x2685a7;
+    } else if (level >= 2 && level <= 5) {
+        return 0xff5733;
+    } else {
+        return 0xff2e00;
+    }
+ }
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>数字乡村</title>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/dat.gui@0.7.6/build/dat.gui.min.js"></script>
+  <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maptalks/dist/maptalks.css">
+  <link type="text/css" rel="stylesheet" href="./assets/styles/index.css">
+  <script type="text/javascript" src="./assets/libs/maptalks.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/three@0.104.0/build/three.min.js"></script>
+  <script type="text/javascript"
+    src="https://cdn.jsdelivr.net/npm/maptalks.three@latest/dist/maptalks.three.js"></script>
+  <script type="text/javascript"
+    src="https://cdn.jsdelivr.net/npm/three@0.104.0/examples/js/libs/stats.min.js"></script>
+  <script type="text/javascript" src="./assets/scripts/building.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h1>数字乡村</h1>
+  </div>
+  <div id="map"></div>
+  <script>
+    var map = new maptalks.Map("map", {
+      center: [13.414049129456203, 52.53160987202452],
+      // 缩放比例
+      zoom: 16,
+      // 螺距
+      pitch: 60,
+      // 轴承
+      bearing: 180,
+      // 中心交叉
+      centerCross: true,
+      // 双击缩放
+      doubleClickZoom: true,
+      // 地图
+      baseLayer: new maptalks.TileLayer('tile', {
+        urlTemplate: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+        subdomains: ['a', 'b', 'c', 'd'],
+        attribution: '&copy; <a href="http://osm.org">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/">CARTO</a>'
+      })
+    });
+    // 获取建筑物
+    // features to draw
+    var features = [];
+    buildings.forEach(function (b) {
+      features = features.concat(b.features);
+    });
+    // the ThreeLayer to draw buildings
+    var threeLayer = new maptalks.ThreeLayer('t', {
+      forceRenderOnMoving: true,
+      forceRenderOnRotating: true,
+      animation: true
+    });
+
+    var meshs = [];
+    var material = getBuildingsMaterial();
+    material.vertexColors = THREE.VertexColors;
+    const lineMaterial = new THREE.LineBasicMaterial({
+      // 线的颜色
+      color: "rgb(250, 250, 250)",
+      transparent: true,
+      linewidth: 0.5,
+      opacity: 0.5,
+      depthTest: true,
+    });
+
+    //解决z-flighting
+    lineMaterial.polygonOffset = true;
+    lineMaterial.depthTest = true;
+    lineMaterial.polygonOffsetFactor = 1;
+    lineMaterial.polygonOffsetUnits = 1.0;
+    threeLayer.prepareToDraw = function (gl, scene, camera) {
+      stats = new Stats();
+      stats.domElement.style.zIndex = 100;
+      document.getElementById('map').appendChild(stats.domElement);
+      var light = new THREE.DirectionalLight(0xffffff);
+      light.position.set(0, -10, 10).normalize();
+      scene.add(light);
+      camera.add(new THREE.PointLight('#fff', 0.5));
+      var heightPerLevel = 10;
+      var polygons = features.map(f => {
+        const polygon = maptalks.GeoJSON.toGeometry(f);
+        var levels = f.properties.levels || 1;
+        polygon.setProperties({
+          height: heightPerLevel * levels,
+        });
+        return polygon;
+      });
+      const mesh = threeLayer.toExtrudePolygons(polygons, { interactive: false, topColor: '#fff' }, material);
+      meshs.push(mesh);
+      var outLine = new OutLine(mesh, { interactive: false }, lineMaterial, threeLayer);
+      meshs.push(outLine);
+      threeLayer.addMesh(meshs);
+      initGui();
+      animation();
+    };
+    threeLayer.addTo(map);
+    function getBuildingsMaterial(color = 'red') {
+      const material = new THREE.MeshPhongMaterial({
+        transparent: true,
+        color: 'rgb(0,0,0)'
+      });
+      return material;
+    }
+    function animation() {
+      if (!map.isInteracting()) {
+        threeLayer._needsUpdate = !threeLayer._needsUpdate;
+        if (threeLayer._needsUpdate) {
+          threeLayer.renderScene();
+        }
+      }
+      stats.update();
+      requestAnimationFrame(animation);
+    }
+    function initGui() {
+      var params = {
+        add: true,
+        color: material.color.getStyle(),
+        // color: '#03c03c',
+        show: true,
+        opacity: 1,
+        altitude: 0,
+        lineColor: lineMaterial.color.getStyle(),
+        lineOpacity: lineMaterial.opacity,
+        animateShow: animateShow
+      };
+      var gui = new dat.GUI();
+      gui.add(params, 'add').onChange(function () {
+        if (params.add) {
+          threeLayer.addMesh(meshs);
+        } else {
+          threeLayer.removeMesh(meshs);
+        }
+      });
+      gui.addColor(params, 'color').name('building color').onChange(function () {
+        material.color.set(params.color);
+      });
+      gui.add(params, 'opacity', 0, 1).name('building opacity').onChange(function () {
+        material.opacity = params.opacity;
+      });
+      gui.addColor(params, 'lineColor').name('line color').onChange(function () {
+        lineMaterial.color.set(params.lineColor);
+      });
+      gui.add(params, 'lineOpacity', 0, 1).onChange(function () {
+        lineMaterial.opacity = params.lineOpacity;
+      });
+      gui.add(params, 'altitude', 0, 300).onChange(function () {
+        meshs.forEach(function (mesh) {
+          mesh.setAltitude(params.altitude);
+        });
+      });
+      gui.add(params, 'animateShow');
+    }
+    function animateShow() {
+      meshs.forEach(function (mesh) {
+        mesh.animateShow({
+          duration: 3000
+        });
+      });
+    }
+    //default values
+    var OPTIONS = {
+      altitude: 0
+    };
+    class OutLine extends maptalks.BaseObject {
+      constructor(mesh, options, material, layer) {
+        options = maptalks.Util.extend({}, OPTIONS, options, { layer });
+        super();
+        //Initialize internal configuration
+        // https://github.com/maptalks/maptalks.three/blob/1e45f5238f500225ada1deb09b8bab18c1b52cf2/src/BaseObject.js#L135
+        this._initOptions(options);
+        const edges = new THREE.EdgesGeometry(mesh.getObject3d().geometry, 1);
+        const lineS = new THREE.LineSegments(edges, material);
+        this._createGroup();
+        this.getObject3d().add(lineS);
+        //Initialize internal object3d
+        // https://github.com/maptalks/maptalks.three/blob/1e45f5238f500225ada1deb09b8bab18c1b52cf2/src/BaseObject.js#L140
+        //set object3d position
+        this.getObject3d().position.copy(mesh.getObject3d().position);
+      }
+    }
+
+    //select buildings by mouse click
+    var raycaster = new THREE.Raycaster();
+
+    document.addEventListener('click', function (event) {
+      event.preventDefault();
+      var mouse = new THREE.Vector2();
+      
+      let dpr = map.getDevicePixelRatio();
+      if(!dpr)
+      {
+        dpr = 1;
+      }
+      // 屏幕点击坐标转 ndc 设备无关坐标，[-1, 1]
+      var renderer = threeLayer.getThreeRenderer();
+      var rendererSize = renderer.getSize();
+      mouse.x = (event.clientX * dpr / rendererSize.width) * 2 - 1;
+      mouse.y = -(event.clientY * dpr / rendererSize.height) * 2 + 1;
+
+      var objects = [];
+      threeLayer.getScene().children.forEach(child => {
+          if (child instanceof THREE.Mesh) {
+            objects.push(child);
+          }
+      })
+      raycaster.setFromCamera(mouse, threeLayer.getCamera());
+      var intersects = raycaster.intersectObjects(objects);
+      if (intersects.length > 0) {
+          alert('Mesh : ' + intersects[0].object.uuid);
+      }
+  }, false);
+
+  function getColor(level) {
+      if (level < 2) {
+          return 0x2685a7;
+      } else if (level >= 2 && level <= 5) {
+          return 0xff5733;
+      } else {
+          return 0xff2e00;
+      }
+  }
+
+  </script>
+</body>
+</html>
