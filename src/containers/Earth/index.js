@@ -73,7 +73,7 @@ export default class Earth extends React.Component {
 
       controls = new OrbitControls(camera, renderer.domElement);
       controls.target.set(0, 0, 0);
-      controls.update();
+      controls.enableDamping = true;
       window.addEventListener('resize', onWindowResize, false);
     }
 
@@ -88,6 +88,7 @@ export default class Earth extends React.Component {
       renderer.render(scene, camera);
       earth && (earth.rotation.y += 0.002)
       stats && stats.update();
+      controls && controls.update();
     }
   }
 

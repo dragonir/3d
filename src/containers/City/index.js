@@ -118,7 +118,7 @@ export default class City extends React.Component {
 
       controls = new OrbitControls(camera, renderer.domElement);
       controls.target.set(0, 0, 0);
-      controls.update();
+      controls.enableDamping = true;
       window.addEventListener('resize', onWindowResize, false);
 
       stats = new Stats();
@@ -136,6 +136,7 @@ export default class City extends React.Component {
       renderer.render(scene, camera);
       stats && stats.update();
       TWEEN && TWEEN.update();
+      controls && controls.update();
     }
 
     // 增加点击事件，声明raycaster和mouse变量

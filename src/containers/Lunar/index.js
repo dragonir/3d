@@ -43,14 +43,15 @@ export default class Lunar extends React.Component {
 
       scene = new THREE.Scene();
       scene.background = new THREE.TextureLoader().load(bgTexture);
+      scene.fog = new THREE.Fog(0xdddddd, 100, 120);
       camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.set(100, 100, 100);
       camera.lookAt(new THREE.Vector3(0, 0, 0));
 
       // 网格
-      var grid = new THREE.GridHelper(100, 100, 0xfffc00, 0xfffc00);
-      grid.position.set(0, -10, 0)
-      grid.material.opacity = 0.1;
+      var grid = new THREE.GridHelper(100, 100, 0xefefef, 0xefefef);
+      grid.position.set(0, -8, 0);
+      grid.material.opacity = 0.2;
       grid.material.transparent = true;
       scene.add(grid);
 
@@ -60,7 +61,7 @@ export default class Lunar extends React.Component {
       var planeMaterial = new THREE.ShadowMaterial({ opacity: .5 });
       var plane = new THREE.Mesh(planeGeometry, planeMaterial);
       plane.rotation.x = -0.5 * Math.PI;
-      plane.position.set(0, -10, 0);
+      plane.position.set(0, -8, 0);
       plane.receiveShadow = true;
       scene.add(plane);
 
@@ -69,7 +70,7 @@ export default class Lunar extends React.Component {
       const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
       cube.position.set(0, 0, 0);
       light = new THREE.DirectionalLight(0xffffff, 1);
-      light.intensity = 1.5;
+      light.intensity = 1.2;
       light.position.set(20, 20, 8);
       light.castShadow = true;
       light.target = cube;
@@ -86,8 +87,16 @@ export default class Lunar extends React.Component {
       // const lightCameraHelper = new THREE.CameraHelper(light.shadow.camera);
       // scene.add(lightCameraHelper);
 
-      const ambientLight = new THREE.AmbientLight(0xefefef);
+      // 环境光
+      const ambientLight = new THREE.AmbientLight(0xffffff);
       scene.add(ambientLight);
+
+      // 聚光灯
+      const spotLight = new THREE.SpotLight(0xffffff);
+      spotLight.position.set(-20, 20, -2);
+      spotLight.castShadow = false;
+      spotLight.target = plane;
+      scene.add(spotLight);
 
       // 文字模型
       const fbxLoader = new FBXLoader();
@@ -97,8 +106,8 @@ export default class Lunar extends React.Component {
             meshes.push(mesh);
             child.castShadow = true;
             child.receiveShadow = true;
-            child.material.metalness = 0;
-            child.material.roughness = 1;
+            child.material.metalness = .2;
+            child.material.roughness = .8;
             child.material.color = new THREE.Color(0x111111);
           }
         });
@@ -108,7 +117,7 @@ export default class Lunar extends React.Component {
         group.add(mesh);
       });
 
-      // 老虎模型
+      // 模型加载进度管理
       const manager = new THREE.LoadingManager();
       manager.onStart = (url, loaded, total) => {};
       manager.onLoad = () => {
@@ -134,7 +143,8 @@ export default class Lunar extends React.Component {
             child.castShadow = true;
             child.receiveShadow = true;
             child.material.metalness = 0;
-            child.material.roughness = 1;
+            child.material.roughness = .5;
+            child.material.transparent = true;
             console.log(child)
           }
         });
@@ -155,11 +165,11 @@ export default class Lunar extends React.Component {
       controls.target.set(0, 0, 0);
       // 开启缓动动画
       controls.enableDamping = true;
-      // controls.dampingFactor = 0.25;
+      controls.maxDistance = 160;
       window.addEventListener('resize', onWindowResize, false);
-
-      stats = new Stats();
-      document.documentElement.appendChild(stats.dom);
+      // 性能工具
+      // stats = new Stats();
+      // document.documentElement.appendChild(stats.dom);
     }
 
     function onWindowResize() {

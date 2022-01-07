@@ -1,0 +1,47 @@
+.cell_loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: #03c03c;
+  background: -webkit-linear-gradient(to right, #64e06b, #03c03c);
+  background: linear-gradient(to right, #64e06b, #03c03c);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 64px;
+  color: #FFFFFF;
+  text-shadow:     0 1px 0 hsl(174,5%,80%),
+                   0 2px 0 hsl(174,5%,75%),
+                   0 3px 0 hsl(174,5%,70%),
+                   0 4px 0 hsl(174,5%,66%),
+                   0 5px 0 hsl(174,5%,64%),
+                   0 6px 0 hsl(174,5%,62%),
+                   0 7px 0 hsl(174,5%,61%),
+                   0 8px 0 hsl(174,5%,60%),
+                   0 0 5px rgba(0,0,0,.05),
+                  0 1px 3px rgba(0,0,0,.2),
+                  0 3px 5px rgba(0,0,0,.2),
+                 0 5px 10px rgba(0,0,0,.2),
+                0 10px 10px rgba(0,0,0,.2),
+                0 20px 20px rgba(0,0,0,.3);
+}
+
+.toggle_button {
+  position: fixed;
+  width: 160px;
+  height: 48px;
+  top: 100px;
+  left: 50%;
+  margin-left: -80px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, .3);
+  border: 1px groove rgba(255, 255, 255, .5);
+  backdrop-filter: 2px;
+  font-size: 16px;
+  color: rgba(255, 255, 255, .8);
+  text-shadow: 0 0 1px rgba(0, 0, 0, .2);
+  border-radius: 24px;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, .25);
+}

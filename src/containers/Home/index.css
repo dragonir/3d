@@ -20,3 +20,26 @@
                 0 10px 10px rgba(0,0,0,.2),
                 0 20px 20px rgba(0,0,0,.3);
 }
+
+.grid_item {
+  position: relative;
+}
+
+.three_logo {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  display: inline-block;
+  height: 24px;
+  width: 24px;
+  z-index: 2;
+  background: url('./images/3d.png') no-repeat center;
+  background-size: 100% 100%;
+  filter: drop-shadow(0px 0px 8px rgba(0, 0, 0, .5));
+  transition: all .5s linear;
+  opacity: .85;
+}
+
+.grid_item:hover .three_logo {
+  transform: rotate(360deg);
+}
