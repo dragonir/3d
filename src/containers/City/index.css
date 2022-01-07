@@ -27,3 +27,13 @@
                 0 10px 10px rgba(0,0,0,.2),
                 0 20px 20px rgba(0,0,0,.3);
 }
+
+.billboard {
+  min-width: 100px;
+  padding: 24px;
+  margin-left: 120px;
+  font-size: 16px;
+  background: rgba(0, 0, 0, .8);
+  border-radius: 8px;
+  color: #FFFFFF;
+}

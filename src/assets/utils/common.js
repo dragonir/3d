@@ -26,7 +26,7 @@ export const makeTextSprite = (text, color, parameters) => {
 }
 
 // 创建圆形文字
-export const makeCycleTextSprite = (text, W = 100, H = 100, borderWidth = 6, borderColor = 'white', color = 'black', textColor = 'white') => {
+export const makeCycleTextSprite = (text, color = 'black', borderColor = 'white',  textColor = 'white', W = 100, H = 100, borderWidth = 6) => {
   var canvas = document.createElement('canvas');
   canvas.width = W;
   canvas.height = H;
@@ -47,7 +47,7 @@ export const makeCycleTextSprite = (text, W = 100, H = 100, borderWidth = 6, bor
   ctx.fillStyle = textColor;
   ctx.textAlign = "center";
   var metrics = ctx.measureText(text);
-  ctx.fillText(text, (W + borderWidth) / 2, (H + borderWidth * 2) / 2 + metrics.fontBoundingBoxDescent + metrics.actualBoundingBoxDescent * 2);
+  ctx.fillText(text, (W + borderWidth) / 2, (H + borderWidth * 2) / 2 + metrics.fontBoundingBoxDescent + metrics.actualBoundingBoxDescent * 4);
   var texture = new THREE.Texture(canvas);
   texture.needsUpdate = true;
   var spriteMaterial = new THREE.SpriteMaterial({
