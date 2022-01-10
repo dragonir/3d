@@ -9,6 +9,7 @@ import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
 import bgTexture from './images/bg.png';
 import textModel from './models/text.fbx';
 import tigerModel from './models/tiger.gltf';
+import cycleTexture from './models/cycle.png';
 import Animations from '../../assets/utils/animations';
 import './index.css';
 export default class Lunar extends React.Component {
@@ -28,7 +29,7 @@ export default class Lunar extends React.Component {
 
   initThree = () => {
     var container, controls, stats, mixer;
-    var camera, scene, renderer, light, meshes = [];
+    var camera, scene, renderer, light, meshes = [], cycle = null;;
     var clock = new THREE.Clock(), group = new THREE.Group;
     var _this = this;
     init();
@@ -49,11 +50,11 @@ export default class Lunar extends React.Component {
       camera.lookAt(new THREE.Vector3(0, 0, 0));
 
       // 网格
-      var grid = new THREE.GridHelper(100, 100, 0xefefef, 0xefefef);
-      grid.position.set(0, -8, 0);
-      grid.material.opacity = 0.2;
-      grid.material.transparent = true;
-      scene.add(grid);
+      // var grid = new THREE.GridHelper(100, 100, 0xefefef, 0xefefef);
+      // grid.position.set(0, -8, 0);
+      // grid.material.opacity = 0.2;
+      // grid.material.transparent = true;
+      // scene.add(grid);
 
       // 创建地面
       var planeGeometry = new THREE.PlaneGeometry(100, 100);
@@ -65,12 +66,22 @@ export default class Lunar extends React.Component {
       plane.receiveShadow = true;
       scene.add(plane);
 
+      // 透明材质显示阴影
+      cycle = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshPhongMaterial({
+        map: new THREE.TextureLoader().load(cycleTexture),
+        transparent: true
+      }));
+      cycle.rotation.x = -0.5 * Math.PI;
+      cycle.position.set(0, -9, 0);
+      cycle.receiveShadow = true;
+      scene.add(cycle);
+
       const cubeGeometry = new THREE.BoxGeometry(0.001, 0.001, 0.001);
       const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xdc161a });
       const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
       cube.position.set(0, 0, 0);
       light = new THREE.DirectionalLight(0xffffff, 1);
-      light.intensity = 1.2;
+      light.intensity = 1;
       light.position.set(20, 20, 8);
       light.castShadow = true;
       light.target = cube;
@@ -111,9 +122,9 @@ export default class Lunar extends React.Component {
             child.material.color = new THREE.Color(0x111111);
           }
         });
-        mesh.position.set(4, 6, -6);
+        mesh.position.set(4, 6, -8);
         mesh.rotation.set(-80, 0, 0);
-        mesh.scale.set(.3, .3, .3);
+        mesh.scale.set(.32, .32, .32);
         group.add(mesh);
       });
 
@@ -122,7 +133,6 @@ export default class Lunar extends React.Component {
       manager.onStart = (url, loaded, total) => {};
       manager.onLoad = () => {
         console.log('Loading complete!');
-        // 镜头动画
       };
       manager.onProgress = async(url, loaded, total) => {
         if (Math.floor(loaded / total * 100) === 100) {
@@ -141,17 +151,16 @@ export default class Lunar extends React.Component {
         mesh.scene.traverse(child => {
           if (child.isMesh) {
             child.castShadow = true;
-            child.receiveShadow = true;
             child.material.metalness = 0;
-            child.material.roughness = .5;
+            child.material.roughness = .8;
             child.material.transparent = true;
-            console.log(child)
+            child.material.side = THREE.DoubleSide;
+            child.material.color = new THREE.Color(0xffffff);
           }
         });
         mesh.scene.rotation.y = Math.PI * 9 / 8;
         mesh.scene.position.set(0, -4, 2);
         mesh.scene.scale.set(.75, .75, .75);
-
         let meshAnimation = mesh.animations[0];
         mixer = new THREE.AnimationMixer(mesh.scene);
         let animationClip = meshAnimation;
@@ -186,6 +195,7 @@ export default class Lunar extends React.Component {
       mixer && mixer.update(time);
       TWEEN && TWEEN.update();
       controls && controls.update();
+      cycle && (cycle.rotation.z += .01);
     }
 
     // 增加点击事件，声明raycaster和mouse变量
