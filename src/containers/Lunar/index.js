@@ -9,7 +9,7 @@ import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
 import bgTexture from './images/bg.png';
 import textModel from './models/text.fbx';
 import tigerModel from './models/tiger.gltf';
-import cycleTexture from './models/cycle.png';
+import cycleTexture from './images/cycle.png';
 import Animations from '../../assets/utils/animations';
 import './index.css';
 export default class Lunar extends React.Component {
