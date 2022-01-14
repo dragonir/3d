@@ -7,6 +7,7 @@ import Demo from './containers/Demo/index';
 import Lunar from './containers/Lunar/index';
 import Cell from './containers/Cell/index';
 import Car from './containers/Car/index';
+import Zelda from './containers/Zelda/index';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route element={ <Lunar /> } path="/lunar" />
           <Route element={ <Cell /> } path="/cell" />
           <Route element={ <Car /> } path="/car" />
+          <Route element={ <Zelda /> } path="/zelda" />
         </Routes>
       </Router>
     </div>

@@ -11,7 +11,9 @@ import earthImage from './images/earth.png';
 import cellImage from './images/cell.png';
 import lunarImage from './images/lunar.png';
 import zeldaImage from './images/zelda.png';
+import zeldaMapImage from './images/zelda_map.png';
 import scanImage from './images/scan.png';
+import carImage from './images/car.png';
 import './index.css';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -68,13 +70,27 @@ const workList = [
     link: 'https://dragonir.github.io/zelda-map/',
     title: '塞尔达：旷野之息地图',
     description: '🗺 在地图上标记神庙、查询回忆点！',
-    image: zeldaImage,
+    image: zeldaMapImage,
   },
   {
     link: 'https://dragonir.github.io/h5-scan-qrcode/',
     title: '浏览器扫码',
     description: '📷 使用原生浏览器就可以在h5页面实现扫码功能了，试试看！',
     image: scanImage,
+  },
+  {
+    link: '#/car',
+    title: 'Lamborghini Centenario LP-770',
+    description: '📷车辆模型展示',
+    image: carImage,
+    three: true
+  },
+  {
+    link: '#/zelda',
+    title: '塞尔达：旷野之息3D',
+    description: '📷 林克',
+    image: zeldaImage,
+    three: true
   }
 ];
 

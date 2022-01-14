@@ -9,7 +9,7 @@ import carModel from './models/car.gltf';
 import Animations from '../../assets/utils/animations';
 import './index.css';
 
-export default class Earth extends React.Component {
+export default class Car extends React.Component {
 
   constructor(props) {
     super(props);
