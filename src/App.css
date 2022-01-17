@@ -36,3 +36,25 @@
     transform: rotate(360deg);
   }
 }
+
+*::-webkit-scrollbar {
+  width: 4px !important;
+  background: 0 0 !important;
+  cursor: pointer !important
+}
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(3, 192, 60, .5) !important;
+  border-radius: 4px !important;
+  border-color: transparent !important;
+  border-style: solid !important;
+  border-width: 1px !important;
+  background-clip: padding-box !important
+}
+*::-webkit-scrollbar-thumb:active {
+  background-color: rgba(3, 192, 60, .5) !important
+}
+*::-webkit-scrollbar-thumb:active,body.platform-win32 ::-webkit-scrollbar-thumb:hover {
+  border-width: 1px !important;
+  background-color: rgba(3, 192, 60, .5) !important;
+  cursor: pointer !important
+}
