@@ -1,3 +1,7 @@
+// 性能显示
+const stats = new Stats();
+document.documentElement.appendChild(stats.dom);
+
 const randnum = (min, max) => Math.round(Math.random() * (max - min) + min);
 
 class CannonHelper {
@@ -7,20 +11,16 @@ class CannonHelper {
 
   addLights(renderer) {
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
+    // 默认THREE.PCFShadowMap
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // LIGHTS
-    /*        const ambient = new THREE.AmbientLight( 0x888888 );
-            this.scene.add( ambient );*/
-
-    const light = new THREE.DirectionalLight(0xdddddd, .25, 1);
+    // 光源
+    const light = new THREE.DirectionalLight(0xffffff, .25, 1);
     light.position.set(3, 10, 4);
     light.target.position.set(0, 0, 0);
     light.castShadow = true;
-
     this.sun = light;
     this.scene.add(light);
-
   }
 
   set shadowTarget(obj) {
@@ -29,20 +29,17 @@ class CannonHelper {
 
   createCannonTrimesh(geometry) {
     if (!geometry.isBufferGeometry) return null;
-
     const posAttr = geometry.attributes.position;
     const vertices = geometry.attributes.position.array;
     let indices = [];
     for (let i = 0; i < posAttr.count; i++) {
       indices.push(i);
     }
-
     return new CANNON.Trimesh(vertices, indices);
   }
 
   createCannonConvex(geometry) {
     if (!geometry.isBufferGeometry) return null;
-
     const posAttr = geometry.attributes.position;
     const floats = geometry.attributes.position.array;
     const vertices = [];
@@ -57,7 +54,6 @@ class CannonHelper {
         face = [];
       }
     }
-
     return new CANNON.ConvexPolyhedron(vertices, faces);
   }
 
@@ -100,9 +96,7 @@ class CannonHelper {
     // What geometry should be used?
     let mesh;
     if (body instanceof CANNON.Body) mesh = this.shape2Mesh(body, castShadow, receiveShadow);
-
     if (mesh) {
-      // Add body
       body.threemesh = mesh;
       mesh.castShadow = castShadow;
       mesh.receiveShadow = receiveShadow;
@@ -115,30 +109,24 @@ class CannonHelper {
     const material = this.currentMaterial;
     const game = this;
     let index = 0;
-
     body.shapes.forEach(function (shape) {
       let mesh;
       let geometry;
       let v0, v1, v2;
-
       switch (shape.type) {
-
         case CANNON.Shape.types.SPHERE:
           const sphere_geometry = new THREE.SphereGeometry(shape.radius, 8, 8);
           mesh = new THREE.Mesh(sphere_geometry, material);
           break;
-
         case CANNON.Shape.types.PARTICLE:
           mesh = new THREE.Mesh(game.particleGeo, game.particleMaterial);
           const s = this.settings;
           mesh.scale.set(s.particleSize, s.particleSize, s.particleSize);
           break;
-
         case CANNON.Shape.types.PLANE:
           geometry = new THREE.PlaneGeometry(100, 100, 4, 4);
           mesh = new THREE.Object3D();
           const submesh = new THREE.Object3D();
-
           THREE.ImageUtils.crossOrigin = '';
           var floorMap = THREE.ImageUtils.loadTexture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMaznkwKbnlWTf0zzL9uQrUQ2Q54MfyI7JC5m62icHR5oRjT1v");
           floorMap.wrapS = floorMap.wrapT = THREE.RepeatWrapping;
@@ -984,7 +972,7 @@ var lastTime;
   renderer.render(scene, camera);
   orbitControls && orbitControls.update();
   //composer.render();
-
+  stats && stats.update();
   let delta = clock.getDelta();
   mixers.map(x => x.update(delta));
 

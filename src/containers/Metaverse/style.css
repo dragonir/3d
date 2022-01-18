@@ -1,9 +1,15 @@
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
 body {
-  /* set margin to 0 and overflow to hidden, to go fullsc{reen */
   margin: 0;
   overflow: hidden;
   background-color: #000000;
-  color: white;
+  color: #FFFFFF;
 }
 #info {
   font-family: monospace;
