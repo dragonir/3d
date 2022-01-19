@@ -9,7 +9,6 @@ import linkModel from './models/link.fbx';
 import Animations from '../../assets/utils/animations';
 import './index.css';
 import bgImage from './images/bg.jpg';
-import { Color } from 'three';
 
 export default class Zelda extends React.Component {
 

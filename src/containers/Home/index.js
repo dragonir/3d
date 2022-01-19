@@ -14,6 +14,8 @@ import zeldaImage from './images/zelda.png';
 import zeldaMapImage from './images/zelda_map.png';
 import scanImage from './images/scan.png';
 import carImage from './images/car.png';
+import developingImage from './images/developing.png';
+import segmentFaultImage from './images/segmengfault.png';
 import './index.css';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -46,6 +48,20 @@ const workList = [
     three: true
   },
   {
+    link: '#/lunar',
+    title: '虎年春节创意',
+    description: '🐅 2022虎虎生威！',
+    image: lunarImage,
+    three: true
+  },
+  {
+    link: '#/segmentfault',
+    title: 'SegmentFault突破1000粉纪念',
+    description: '🏆 1000+ followers ！',
+    image: segmentFaultImage,
+    three: true
+  },
+  {
     link: '#/earth',
     title: '地球',
     description: '🌏 尽情探索3D Low Poly数字地球吧！',
@@ -57,13 +73,6 @@ const workList = [
     title: '动植物细胞结构',
     description: '👻 可以查看动物细胞和植物细胞的内部组成结构。',
     image: cellImage,
-    three: true
-  },
-  {
-    link: '#/lunar',
-    title: '虎年春节创意',
-    description: '🐅 2022虎虎生威！',
-    image: lunarImage,
     three: true
   },
   {
@@ -90,6 +99,34 @@ const workList = [
     title: '塞尔达：旷野之息3D',
     description: '📷 林克',
     image: zeldaImage,
+    three: true
+  },
+  {
+    link: '#/',
+    title: '远航：无尽的拉格朗日',
+    description: '开发中...',
+    image: developingImage,
+    three: true
+  },
+  {
+    link: '#/',
+    title: '探索：无人深空',
+    description: '开发中...',
+    image: developingImage,
+    three: true
+  },
+  {
+    link: '#/',
+    title: '着陆：失落的星球',
+    description: '开发中...',
+    image: developingImage,
+    three: true
+  },
+  {
+    link: '#/',
+    title: '航巡：迷失在黑洞',
+    description: '开发中...',
+    image: developingImage,
     three: true
   }
 ];

@@ -1,0 +1,195 @@
+.segment_fault_page {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+.segment_fault_loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: #00c6ff;
+  background: -webkit-linear-gradient(to right, #0072ff, #00c6ff);
+  background: linear-gradient(to right, #0072ff, #00c6ff);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 64px;
+  color: #FFFFFF;
+  text-shadow: 0 1px 0 hsl(174, 5%, 80%),
+    0 2px 0 hsl(174, 5%, 75%),
+    0 3px 0 hsl(174, 5%, 70%),
+    0 4px 0 hsl(174, 5%, 66%),
+    0 5px 0 hsl(174, 5%, 64%),
+    0 6px 0 hsl(174, 5%, 62%),
+    0 7px 0 hsl(174, 5%, 61%),
+    0 8px 0 hsl(174, 5%, 60%),
+    0 0 5px rgba(0, 0, 0, .05),
+    0 1px 3px rgba(0, 0, 0, .2),
+    0 3px 5px rgba(0, 0, 0, .2),
+    0 5px 10px rgba(0, 0, 0, .2),
+    0 10px 10px rgba(0, 0, 0, .2),
+    0 20px 20px rgba(0, 0, 0, .3);
+}
+[class^=firework_] {
+  position: absolute;
+  width: 0.1rem;
+  height: 0.1rem;
+  border-radius: 50%;
+  transform: scale(8)
+}
+.firework_1 {
+  -webkit-animation: firework_lg 2s both infinite;
+  animation: firework_lg 2s both infinite;
+  -webkit-animation-delay: 0.3s;
+  animation-delay: 0.3s;
+  top: 5%;
+  left: 5%;
+}
+.firework_2 {
+  -webkit-animation: firework_md 2.5s both infinite;
+  animation: firework_md 2.5s both infinite;
+  -webkit-animation-delay: 1.1s;
+  animation-delay: 1.1s;
+  top: 8%;
+  left: 90%;
+}
+.firework_3 {
+  -webkit-animation: firework_lg 2s both infinite;
+  animation: firework_lg 2s both infinite;
+  -webkit-animation-delay: 0.3s;
+  animation-delay: 0.3s;
+  top: 95%;
+  left: 95%;
+}
+.firework_4 {
+  -webkit-animation: firework_md 2.5s both infinite;
+  animation: firework_md 2.5s both infinite;
+  -webkit-animation-delay: 0.4s;
+  animation-delay: 0.4s;
+  top: 90%;
+  left: 10%;
+}
+.firework_5 {
+  -webkit-animation: firework_md 2.5s both infinite;
+  animation: firework_md 2.5s both infinite;
+  -webkit-animation-delay: 0.9s;
+  animation-delay: 0.9s;
+  top: 15%;
+  left: 70%;
+}
+.firework_6 {
+  -webkit-animation: firework_sm 2.5s both infinite;
+  animation: firework_sm 2.5s both infinite;
+  -webkit-animation-delay: 1.3s;
+  animation-delay: 1.3s;
+  top: 95%;
+  left: 45%;
+}
+.firework_7 {
+  -webkit-animation: firework_md 2.5s both infinite;
+  animation: firework_md 2.5s both infinite;
+  -webkit-animation-delay: 0.5s;
+  animation-delay: 0.5s;
+  top: 95%;
+  left: 70%;
+}
+.firework_8 {
+  -webkit-animation: firework_sm 2.5s both infinite;
+  animation: firework_sm 2.5s both infinite;
+  -webkit-animation-delay: 0.8s;
+  animation-delay: 0.8s;
+  top: 10%;
+  left: 40%;
+}
+.firework_9 {
+  -webkit-animation: firework_sm 2.5s both infinite;
+  animation: firework_sm 2.5s both infinite;
+  -webkit-animation-delay: 0.3s;
+  animation-delay: 0.3s;
+  top: 40%;
+  left: 90%;
+}
+.firework_10 {
+  -webkit-animation: firework_lg 2.5s both infinite;
+  animation: firework_lg 2.5s both infinite;
+  -webkit-animation-delay: 0.8s;
+  animation-delay: 0.8s;
+  top: 35%;
+  left: 5%;
+}
+@-webkit-keyframes firework_sm {
+  0%, 100% {
+    opacity: 0;
+  }
+  10%, 70% {
+    opacity: 1;
+  }
+  100% {
+    box-shadow: -0.5rem 0rem 0 #fffc00, 0.5rem 0rem 0 #fffc00, 0rem -0.5rem 0 #fffc00, 0rem 0.5rem 0 #fffc00, 0.35rem -0.35rem 0 #fffc00, 0.35rem 0.35rem 0 #fffc00, -0.35rem -0.35rem 0 #fffc00, -0.35rem 0.35rem 0 #fffc00;
+  }
+}
+@keyframes firework_sm {
+  0%, 100% {
+    opacity: 0;
+  }
+  10%, 70% {
+    opacity: 1;
+  }
+  100% {
+    box-shadow: -0.5rem 0rem 0 #fffc00, 0.5rem 0rem 0 #fffc00, 0rem -0.5rem 0 #fffc00, 0rem 0.5rem 0 #fffc00, 0.35rem -0.35rem 0 #fffc00, 0.35rem 0.35rem 0 #fffc00, -0.35rem -0.35rem 0 #fffc00, -0.35rem 0.35rem 0 #fffc00;
+  }
+}
+@-webkit-keyframes firework_md {
+  0%, 100% {
+    opacity: 0;
+  }
+  10%, 70% {
+    opacity: 1;
+  }
+  100% {
+    box-shadow: -0.7rem 0rem 0 #fff, 0.7rem 0rem 0 #fff, 0rem -0.7rem 0 #fff, 0rem 0.7rem 0 #fff, 0.49rem -0.49rem 0 #fff, 0.49rem 0.49rem 0 #fff, -0.49rem -0.49rem 0 #fff, -0.49rem 0.49rem 0 #fff;
+  }
+}
+@keyframes firework_md {
+  0%, 100% {
+    opacity: 0;
+  }
+  10%, 70% {
+    opacity: 1;
+  }
+  100% {
+    box-shadow: -0.7rem 0rem 0 #fff, 0.7rem 0rem 0 #fff, 0rem -0.7rem 0 #fff, 0rem 0.7rem 0 #fff, 0.49rem -0.49rem 0 #fff, 0.49rem 0.49rem 0 #fff, -0.49rem -0.49rem 0 #fff, -0.49rem 0.49rem 0 #fff;
+  }
+}
+@-webkit-keyframes firework_lg {
+  0%, 100% {
+    opacity: 0;
+  }
+  10%, 70% {
+    opacity: 1;
+  }
+  100% {
+    box-shadow: -0.9rem 0rem 0 #fff, 0.9rem 0rem 0 #fff, 0rem -0.9rem 0 #fff, 0rem 0.9rem 0 #fff, 0.63rem -0.63rem 0 #fff, 0.63rem 0.63rem 0 #fff, -0.63rem -0.63rem 0 #fff, -0.63rem 0.63rem 0 #fff;
+  }
+}
+@keyframes firework_lg {
+  0%, 100% {
+    opacity: 0;
+  }
+  10%, 70% {
+    opacity: 1;
+  }
+  100% {
+    box-shadow: -0.9rem 0rem 0 #fff, 0.9rem 0rem 0 #fff, 0rem -0.9rem 0 #fff, 0rem 0.9rem 0 #fff, 0.63rem -0.63rem 0 #fff, 0.63rem 0.63rem 0 #fff, -0.63rem -0.63rem 0 #fff, -0.63rem 0.63rem 0 #fff;
+  }
+}
