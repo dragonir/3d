@@ -1,18 +1,16 @@
-# 1000粉！使用Three.js制作一个专属的3D奖牌🥇
+# 1000粉！使用Three.js制作一个专属3D奖牌🥇
 
 ![banner](./images/banner.gif)
 
 ## 背景
 
-> 1000粉破防了！制作一个专属的3D奖牌
-
-今天发现 `SegmentFault` 账号的粉丝数量已经突破 `1000` 了，它是我更新的三个博客平台掘金、博客园、`SegmentFault` 中首个粉丝突破 `1000` 的，于是设计开发这个页面，纪念一下，非常感谢大家的关注 `🙏`，今后我会更加专注前端知识的整理分享，写出更多高质量的文章。
+破防了 `😭`！突然发现 `SegmentFault` 平台的粉丝数量已经突破 `1000` 了，它是我的三个博客平台**掘金、博客园、SegmentFault**中首个粉丝突破 `1000` 的，于是设计开发这个页面，特此纪念一下。非常感谢大家的关注 `🙏`，后续我会更加专注前端知识的整理分享，写出更多高质量的文章。（希望其他平台也早日破千 `😂`）
 
 本文使用 `React + Three.js` 技术栈，实现粉丝突破 `1000` 的 `3D` 纪念页面，包含的主要知识点包括：`Three.js` 提供的光源、`DirectionLight` 平行光、`HemisphereLight` 半球光源、`AmbientLight` 环境光、奖牌素材生成、贴图知识、`MeshPhysicalMaterial` 物理材质、`TWEEN` 镜头补间动画、`CSS` 礼花动画等。
 
 ## 效果
 
-实现效果图如文章 `👆` `Banner图` 所示，页面由包含我的个人信息的奖牌 `🥇`、`1000+ Followers` 模型构成，通过以下链接可以实时预览 `🤣`。
+实现效果图如文章 `👆` `Banner图` 所示，页面由包含我的个人信息的奖牌 `🥇`、`1000+ Followers` 模型构成，通过以下链接可以实时预览哦 `🤣`。
 
 > `👀` 在线预览：<https://dragonir.github.io/3d/#/segmentfault>
 
@@ -63,7 +61,7 @@ controls.rotateSpeed = .2;
 
 ### 光照效果
 
-为了模拟真实的物理场景，本示例中使用了 `3种`光源。
+为了模拟真实的物理场景，本示例中使用了 `3种` 光源。
 
 ```js
 // 直射光
@@ -99,17 +97,17 @@ scene.add(hemisphereLight);
 
 | 光源名称            | 描述                                                                       |
 | ----------------------- | ---------------------------------------------------------------------------- |
-| `AmbientLight` (环境光） | 这是一种基础光源，它的颜色会添加到整个场景和所有对象的当前颜色上 |
-| `PointLight` (点光源)   | 空间中的一点，朝所有的方向发射光线                          |
-| `SpotLight` (聚光灯光源) | 这种光源有聚光的效果，类似台灯、天花板上的吊灯，或者手电筒 |
-| `DirectionLight` (平行光) | 也称为无限光。从这种光源发出的光线可以看着平行的。例如，太阳光 |
-| `HemishpereLight` (半球光) | 这是一种特殊光源，可以用来创建更加自然的室外光线，模拟放光面和光线微弱的天空 |
-| `AreaLight` (面光源)    | 使用这种光源可以指定散发光线的平面，而不是空间中的一个点 |
-| `LensFlare` (镜头眩光) | 这不是一种光源，但是通过 `LensFlare` 可以为场景中的光源添加眩光效果 |
+| `AmbientLight` 环境光 | 这是一种基础光源，它的颜色会添加到整个场景和所有对象的当前颜色上 |
+| `PointLight` 点光源   | 空间中的一点，朝所有的方向发射光线                          |
+| `SpotLight` 聚光灯光源 | 这种光源有聚光的效果，类似台灯、天花板上的吊灯，或者手电筒 |
+| `DirectionLight` 平行光 | 也称为无限光。从这种光源发出的光线可以看着平行的。例如，太阳光 |
+| `HemishpereLight` 半球光 | 这是一种特殊光源，可以用来创建更加自然的室外光线，模拟放光面和光线微弱的天空 |
+| `AreaLight` 面光源    | 使用这种光源可以指定散发光线的平面，而不是空间中的一个点 |
+| `LensFlare` 镜头眩光 | 这不是一种光源，但是通过 `LensFlare` 可以为场景中的光源添加眩光效果 |
 
 #### `💡` THREE.DirectionLight 平行光
 
-`THREE.DirectionLight` 可以看作是距离很远的光，它发出的所有光线都是相互平行的。平行光的一个范例就是太阳光。被平行光照亮的整个区域接受到的光强是一样的。
+`THREE.DirectionLight` 可以看作是距离很远的光，它发出的所有光线都是相互平行的。平行光的一个范例就是**太阳光**。被平行光照亮的整个区域接受到的光强是一样的。
 
 **构造函数**：
 
@@ -120,12 +118,12 @@ new THREE.DirectionLight(color);
 **属性说明**：
 
 * `position`：光源在场景中的位置。
-* `target`：目标。使用 `THREE.DirectionLight` 光源时，它的指向很重要。使用 `target` 属性，你可以将 `THREE.SpotLight` 光源指向场景中的特定对象或位置。注意，此属性需要一个 `THREE.Object3D` 对象（如 `THREE.Mesh`）。
-* `intensity`：光源照射的强度。默认值：`1`。
-* `castShadow`：投影。如果设置为 `true`，这个光源就会生成阴影。
-* `onlyShadow`：仅阴影。如果此属性设置为 `true`，则该光源只生成阴影，而不会在场景中添加任何光照。
-* `shadow.camera.near`：投影近点。表示距离光源的哪一个位置开始生成阴影。
-* `shadow.camera.far`：投影远点。表示到距离光源的哪一个位置可以生成阴影。
+* `target`：目标。它的指向很重要。使用 `target` 属性，你可以将光源指向场景中的特定对象或位置。此属性需要一个 `THREE.Object3D` 对象。
+* `intensity`：光源照射的强度，默认值：`1`。
+* `castShadow`：投影，如果设置为 `true`，这个光源就会生成阴影。
+* `onlyShadow`：仅阴影，如果此属性设置为 `true`，则该光源只生成阴影，而不会在场景中添加任何光照。
+* `shadow.camera.near`：投影近点，表示距离光源的哪一个位置开始生成阴影。
+* `shadow.camera.far`：投影远点，表示到距离光源的哪一个位置可以生成阴影。
 * `shadow.camera.left`：投影左边界。
 * `shadow.camera.right`：投影右边界。
 * `shadow.camera.top`：投影上边界。
@@ -134,7 +132,7 @@ new THREE.DirectionLight(color);
 
 #### `💡` THREE.HemisphereLight 半球光光源
 
-使用半球光光源，可以创建出更加贴近自然的光照效果。
+使用半球光光源，可以创建出**更加贴近自然的光照效果**。
 
 **构造函数**：
 
@@ -150,7 +148,7 @@ new THREE.HeimsphereLight(groundColor, color, intensity);
 
 #### `💡` THREE.AmbientLight 环境光
 
-在创建 `THREE.AmbientLight` 时，颜色会应用到全局。该光源并没有特别的来源方向，并且 `THREE.AmbientLight` 不会产生阴影。
+在创建 `THREE.AmbientLight` 时，颜色会应用到全局。该光源并没有特别的来源方向，并且**不会产生阴影**。
 
 **构造函数**：
 
@@ -160,13 +158,13 @@ new THREE.AmbientLight(color);
 
 **使用建议**：
 
-* 通常，不能将 `THREE.AmbientLight` 作为场景中唯一的光源，因为它会将场景中的所有物体渲染为相同的颜色，而不管是什么形状。
-* 在使用其他光源（如 `THREE.SpotLight` 或者 `THREE.DirectionLight`）的同时使用它，目的是弱化阴影或给场景添加一些额外的颜色。
-* 由于 `THREE.AmbientLight` 光源不需要指定位置并且会应用到全局，所以我们只需要指定个颜色，然后将其添加到场景中即可。
+* 通常不能将 `THREE.AmbientLight` 作为场景中唯一的光源，因为它会将场景中的所有物体渲染为相同的颜色。
+* 使用其他光源，如 `THREE.SpotLight` 或 `THREE.DirectionLight`的同时使用它，目的是弱化阴影或给场景添加一些额外颜色。
+* 由于 `THREE.AmbientLight` 光源不需要指定位置并且会应用到全局，所以只需要指定个颜色，然后将它添加到场景中即可。
 
 ### 添加网格和地面
 
-添加网格是为了方便开发，可以调整模型的合适的相对位置，本例中保留网格的目的是为了页面更有3D景深效果。透明材质的地面是为了显示模型的阴影。
+添加网格是为了方便开发，可以调整模型的合适的相对位置，本例中保留网格的目的是为了页面更有 `3D景深效果`。透明材质的地面是为了显示模型的阴影。
 
 ```js
 // 网格
@@ -187,21 +185,21 @@ scene.add(plane);
 
 ### 创建奖牌
 
-本示例由于时间关系，奖牌模型直接使用 `Three.js` 自带的基础立方体模型 `THREE.BoxGeometry` 实现，你也可以使用其他立方体如球体、圆珠等，甚至可以使用 `Blender` 等专业建模软件创建自己喜欢的奖牌形状。（`ps`：个人觉得立方体也挺好看的 `😂`)
+由于时间关系，本示例奖牌模型直接使用 `Three.js` 自带的基础立方体模型 `THREE.BoxGeometry` 来实现，你也可以使用其他立方体如球体、圆珠等，甚至可以使用 `Blender` 等专业建模软件创建自己喜欢的奖牌形状。（`ps`：个人觉得立方体也挺好看的 `😂`)
 
 #### `💡` 奖牌UI素材生成
 
-**`🌵` 奖牌上下面和侧面贴图制作**：
+**`🥇` 奖牌上下面和侧面贴图制作**：
 
 为了生成的奖牌有黄金质感，本例中使用 `👇` 该材质贴图，来生成**亮瞎眼的24K纯金**效果 `🤑`。
 
 ![metal](./images/metal.png)
 
-**`🌵` 奖牌正面和背面贴图制作**：
+**`🥇` 奖牌正面和背面贴图制作**：
 
-奖牌的正面和背面使用的贴图是SegmentFault个人中心页的截图，为了更具有金属效果，我用 `👆` 上面金属材质贴图给它添加了一个带有圆角的边框。
+奖牌的正面和背面使用的贴图是 `SegmentFault` 个人中心页的截图，为了更具有金属效果，我用 `👆` 上面金属材质贴图给它添加了一个**带有圆角的边框**。
 
-**生成圆角金属边框具体方法**：截图上面添加金属图层 `->` 使用框选工具框选需要删除的内容 `->` 点击选择 `->` 点击修改 `->` 点击平滑 `->` 输入合适的圆角大小 `->` 删除选区 `->` 合并图层 `->` 完成。
+**Photoshop 生成圆角金属边框具体方法**：截图上面添加金属图层 `->` 使用框选工具框选需要删除的内容 `->` 点击选择 `->` 点击修改 `->` 点击平滑 `->` 输入合适的圆角大小 `->` 删除选区 `->` 合并图层 `->` 完成并导出图片。
 
 ![photoshop](./images/photoshop.png)
 
@@ -209,9 +207,9 @@ scene.add(plane);
 
 ![texture](./images/texture.png)
 
-**`🌵` 奖牌正面和背面的法相贴图制作**：
+**`🥇` 奖牌正面和背面的法相贴图制作**：
 
-为了生成凹凸质感，就需要为模型添加 `法相贴图`。使用 `👆` 上面已经生成的材质贴图，就可以使用在线工具自动生成法相贴图。
+为了生成**凹凸质感**，就需要为模型添加**法相贴图**。使用 `👆` 上面已经生成的正面和背面的材质贴图，就可以使用在线工具自动生成法相贴图。生成时可以根据需要，通过调整 `Strength`、`Level`、`Blur`  等参数进行样式微调，并且能够实时预览。调整好后点击 `Download` 下载即可。
 
 ![normalMapEditor](./images/normalMapEditor.png)
 
@@ -224,7 +222,6 @@ scene.add(plane);
 使用上面生成的素材，现在进行奖牌模型的构建。正面和背面使用**个人信息材质**，其他面使用**金属材质**。然后遍历对所有面调整**金属度**和**粗糙度**样式。
 
 ```js
-// 添加自定义模型
 let segmentMap = new THREE.MeshPhysicalMaterial({map: new THREE.TextureLoader().load(segmentTexture), normalMap: new THREE.TextureLoader().load(normalMapTexture) });
 let metalMap = new THREE.MeshPhysicalMaterial({map: new THREE.TextureLoader().load(metalTexture)});
 // 创建纹理数组
@@ -232,6 +229,7 @@ const boxMaps = [metalMap, metalMap, metalMap, metalMap, segmentMap, segmentMap]
 // 💡 立方体长宽高比例需要和贴图的大小比例一致，厚度可以随便定
 box = new THREE.Mesh(new THREE.BoxGeometry(297, 456, 12), boxMaps);
 box.material.map(item => {
+  // 材质样式调整
   item.metalness = .5;
   item.roughness = .4;
   item.refractionRatio = 1;
@@ -246,7 +244,7 @@ scene.add(box);
 
 ![card](./images/card.png)
 
-`👆` 上图依次对应的是：
+`👆` 上面 `4` 张效果图依次对应的是：
 
 * `图1`：创建没有贴图的 `BoxGeometry`，只是一个白色的立方体。
 * `图2`：立方体添加 `材质贴图`，此时**没有凹凸效果**。
@@ -318,6 +316,8 @@ fbxLoader.load(textModel, mesh => {
 });
 ```
 
+![fbx](./images/fbx.png)
+
 #### 补间动画
 
 相机移动实现漫游等动画，页面打开时，模型加载完毕从大变小的动画就是通过 `TWEEN` 实现的。
@@ -382,7 +382,7 @@ function animate() {
 
 ### 礼花动画
 
-最后，通过简单的 `CSS` 动画，给页面添加 `🎉` 绽放动画，营造 `🎅` 欢庆氛围！
+最后，通过 `box-shadow` 和简单的 `CSS` 动画，给页面添加 `🎉` 绽放效果，营造 `🎅` 欢庆氛围！
 
 ```html
 <div className="firework_1"></div>
@@ -440,9 +440,9 @@ function animate() {
 * `TWEEN` 镜头补间动画
 * `CSS` 礼花动画
 
-## 附录
+想了解场景初始化、光照、阴影及其他 `Three.js` 的相关知识，可阅读我的其他文章。如果觉得文章对你有帮助，不要忘了 `一键三连 👍`。
 
-想了解场景初始化、光照、阴影及其他 `Three.js` 的相关知识，可阅读我的其他文章。如果觉得文章对你有帮助，不要忘了 `一键三连 😂`。
+## 附录
 
 * [1]. [Three.js 实现虎年春节3D创意页面](https://juejin.cn/post/7051745314914435102)
 * [2]. [Three.js 实现脸书元宇宙3D动态Logo](https://juejin.cn/post/7031893833163997220)
