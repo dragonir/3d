@@ -10,6 +10,7 @@ import Car from './containers/Car/index';
 import Zelda from './containers/Zelda/index';
 import Metaverse from './containers/Metaverse/index';
 import SegmentFault from './containers/SegmentFault/index';
+import Diamond from './containers/Diamond/index';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route element={ <Zelda /> } path="/zelda" />
           <Route element={ <Metaverse /> } path="/metaverse" />
           <Route element={ <SegmentFault /> } path="/segmentfault" />
+          <Route element={ <Diamond /> } path="/diamond" />
         </Routes>
       </Router>
     </div>
