@@ -11,6 +11,7 @@ import Zelda from './containers/Zelda/index';
 import Metaverse from './containers/Metaverse/index';
 import SegmentFault from './containers/SegmentFault/index';
 import Diamond from './containers/Diamond/index';
+import Human from './containers/Human/index';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route element={ <Metaverse /> } path="/metaverse" />
           <Route element={ <SegmentFault /> } path="/segmentfault" />
           <Route element={ <Diamond /> } path="/diamond" />
+          <Route element={ <Human /> } path="/human" />
         </Routes>
       </Router>
     </div>
