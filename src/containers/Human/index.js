@@ -26,7 +26,7 @@ export default class Human extends React.Component {
 
   initThree = () => {
     var container, controls, stats, mixer;
-    var camera, scene, renderer, light, meshes = [], cycle = null;;
+    var camera, frustumSize = 96, scene, renderer, light, meshes = [], cycle = null;;
     var clock = new THREE.Clock(), group = new THREE.Group;
     var _this = this;
     init();
@@ -41,44 +41,39 @@ export default class Human extends React.Component {
 
       scene = new THREE.Scene();
       scene.background = new THREE.Color(0x000000);
-      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.set(0, 8.5, 30);
+      let aspect = window.innerWidth / window.innerHeight;
+      camera = new THREE.OrthographicCamera(-frustumSize * aspect, frustumSize * aspect, frustumSize, -frustumSize, 1, 1000);
+      camera.position.set(0, 0, 600);
       camera.lookAt(new THREE.Vector3(0, 0, 0));
 
       var axes = new THREE.AxisHelper(30);
       scene.add(axes);
 
-      // 网格
-      // var grid = new THREE.GridHelper(100, 100, 0xefefef, 0xefefef);
-      // grid.position.set(0, -8, 0);
-      // grid.material.opacity = 0.2;
-      // grid.material.transparent = true;
-      // scene.add(grid);
-
       const cubeGeometry = new THREE.BoxGeometry(0.001, 0.001, 0.001);
-      const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xdc161a });
+      const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
       const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
       cube.position.set(0, 0, 0);
       light = new THREE.DirectionalLight(0xffffff, 1);
       light.intensity = 1;
-      light.position.set(20, 20, 8);
+      light.position.set(80, 4, 5);
       light.castShadow = true;
       light.target = cube;
       light.shadow.mapSize.width = 512 * 12;
       light.shadow.mapSize.height = 512 * 12;
-      light.shadow.camera.top = 80;
-      light.shadow.camera.bottom = -30;
-      light.shadow.camera.left = -30;
-      light.shadow.camera.right = 80;
+      light.shadow.camera.top = 160;
+      light.shadow.camera.bottom = -80;
+      light.shadow.camera.left = -80;
+      light.shadow.camera.right = 160;
       scene.add(light);
 
-      // const lightHelper = new THREE.DirectionalLightHelper(light, 1, 'red');
-      // scene.add(lightHelper);
-      // const lightCameraHelper = new THREE.CameraHelper(light.shadow.camera);
-      // scene.add(lightCameraHelper);
+      const lightHelper = new THREE.DirectionalLightHelper(light, 1, 'red');
+      scene.add(lightHelper);
+      const lightCameraHelper = new THREE.CameraHelper(light.shadow.camera);
+      scene.add(lightCameraHelper);
 
       // 环境光
       const ambientLight = new THREE.AmbientLight(0x8d8389);
+      ambientLight.intensity = .8;
       scene.add(ambientLight);
 
       // 头部模型
@@ -88,14 +83,14 @@ export default class Human extends React.Component {
         let mat = new THREE.MeshPhysicalMaterial({
           map: new THREE.TextureLoader().load(mapTexture),
           bumpMap: new THREE.TextureLoader().load(bumpMapTexture),
-          bumpScale: .05,
+          bumpScale: .01,
           specularMap: new THREE.TextureLoader().load(normalMapTexture)
         });
         let mesh = new THREE.Mesh(geometry, mat);
         mesh.receiveShadow = true;
         mesh.rotation.set(0, -Math.PI, 0)
-        mesh.scale.set(10, 10, 10);
-        mesh.position.set(-5, -28, 0);
+        mesh.scale.set(66, 66, 66);
+        mesh.position.set(-40, -200, 0);
         scene.add(mesh);
         meshes.push(scene);
       });
@@ -111,13 +106,13 @@ export default class Human extends React.Component {
         });
         let rightEye = new THREE.Mesh(geometry, mat);
         rightEye.rotation.set(0, -Math.PI, 0)
-        rightEye.scale.set(9, 9, 9);
-        rightEye.position.set(1.8, -24.88, 0);
+        rightEye.scale.set(66, 66, 66);
+        rightEye.position.set(4, -202, -2);
         scene.add(rightEye);
         meshes.push(rightEye);
 
         let leftEye = rightEye.clone();
-        rightEye.position.set(-5.2, -24.88, 0);
+        rightEye.position.set(-42, -202, -2);
         scene.add(leftEye);
         meshes.push(leftEye);
       });
@@ -126,6 +121,11 @@ export default class Human extends React.Component {
       controls.target.set(0, 0, 0);
       // 开启缓动动画
       controls.enableDamping = true;
+      controls.enablePan = false;
+      controls.enableZoom = false;
+      // 最大仰角
+      controls.minPolarAngle = 1.2;
+      controls.maxPolarAngle = 1.5;
       window.addEventListener('resize', onWindowResize, false);
       // 性能工具
       stats = new Stats();
@@ -133,7 +133,11 @@ export default class Human extends React.Component {
     }
 
     function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
+      let aspect = window.innerWidth / window.innerHeight;
+      camera.left = -frustumSize * aspect;
+      camera.right = frustumSize * aspect;
+      camera.top = frustumSize;
+      camera.bottom = -frustumSize;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     }

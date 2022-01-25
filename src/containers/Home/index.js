@@ -16,6 +16,7 @@ import scanImage from './images/scan.png';
 import carImage from './images/car.png';
 import developingImage from './images/developing.png';
 import segmentFaultImage from './images/segmengfault.png';
+import humanImage from './images/human.png';
 import './index.css';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -29,7 +30,7 @@ const workList = [
   {
     link: '#/city',
     title: '数字城市',
-    description: '🏙 3D数字城市',
+    description: '🏙 3D数字城市 【⚠优化中】',
     image: cityImage,
     three: true
   },
@@ -62,16 +63,23 @@ const workList = [
     three: true
   },
   {
+    link: '#/human',
+    title: 'Metahuman',
+    description: '👦 元宇宙数字人类【⚠优化中】',
+    image: humanImage,
+    three: true
+  },
+  {
     link: '#/earth',
     title: '地球',
-    description: '🌏 尽情探索3D Low Poly数字地球吧！',
+    description: '🌏 尽情探索3D Low Poly数字地球吧！【⚠优化中】',
     image: earthImage,
     three: true
   },
   {
     link: '#/cell',
     title: '动植物细胞结构',
-    description: '👻 可以查看动物细胞和植物细胞的内部组成结构。',
+    description: '👻 可以查看动物细胞和植物细胞的内部组成结构。【⚠优化中】',
     image: cellImage,
     three: true
   },
@@ -90,14 +98,14 @@ const workList = [
   {
     link: '#/car',
     title: 'Lamborghini Centenario LP-770',
-    description: '📷车辆模型展示',
+    description: '📷车辆模型展示【⚠优化中】',
     image: carImage,
     three: true
   },
   {
     link: '#/zelda',
     title: '塞尔达：旷野之息3D',
-    description: '📷 林克',
+    description: '📷 林克【⚠优化中】',
     image: zeldaImage,
     three: true
   },
