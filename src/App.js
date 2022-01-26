@@ -12,6 +12,7 @@ import Metaverse from './containers/Metaverse/index';
 import SegmentFault from './containers/SegmentFault/index';
 import Diamond from './containers/Diamond/index';
 import Human from './containers/Human/index';
+import Olympic from './containers/Olympic/index';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route element={ <SegmentFault /> } path="/segmentfault" />
           <Route element={ <Diamond /> } path="/diamond" />
           <Route element={ <Human /> } path="/human" />
+          <Route element={ <Olympic /> } path="/olympic" />
         </Routes>
       </Router>
     </div>
