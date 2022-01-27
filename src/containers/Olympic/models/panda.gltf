@@ -1,0 +1,232 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v1.3.48",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                0,
+                1,
+                2,
+                3
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "name" : "Light",
+            "rotation" : [
+                0.16907575726509094,
+                0.7558803558349609,
+                -0.27217137813568115,
+                0.570947527885437
+            ],
+            "translation" : [
+                4.076245307922363,
+                5.903861999511719,
+                -1.0054539442062378
+            ]
+        },
+        {
+            "name" : "Camera",
+            "rotation" : [
+                0.483536034822464,
+                0.33687159419059753,
+                -0.20870360732078552,
+                0.7804827094078064
+            ],
+            "translation" : [
+                7.358891487121582,
+                4.958309173583984,
+                6.925790786743164
+            ]
+        },
+        {
+            "mesh" : 0,
+            "name" : "\u5e73\u9762_1",
+            "rotation" : [
+                -0.5896493196487427,
+                0,
+                0.807659387588501,
+                7.263876966590033e-08
+            ],
+            "scale" : [
+                0.009999999776482582,
+                0.009999999776482582,
+                0.009999999776482582
+            ],
+            "translation" : [
+                0,
+                0.5100772976875305,
+                0
+            ]
+        },
+        {
+            "mesh" : 1,
+            "name" : "\u5e73\u9762",
+            "rotation" : [
+                -0.9880464673042297,
+                0,
+                0.1541563719511032,
+                7.459543382992706e-08
+            ],
+            "scale" : [
+                0.009999999776482582,
+                0.009999999776482582,
+                0.009999999776482582
+            ],
+            "translation" : [
+                0,
+                0.5100772976875305,
+                0
+            ]
+        }
+    ],
+    "materials" : [
+        {
+            "doubleSided" : true,
+            "name" : "\u6750\u8d28.001",
+            "pbrMetallicRoughness" : {}
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "\u7f51\u683c",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1,
+                        "TEXCOORD_0" : 2
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                }
+            ]
+        },
+        {
+            "name" : "\u7f51\u683c.001",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 4,
+                        "NORMAL" : 5,
+                        "TEXCOORD_0" : 6
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                }
+            ]
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 4,
+            "max" : [
+                28.603322982788086,
+                48.00337219238281,
+                0
+            ],
+            "min" : [
+                -28.603322982788086,
+                -48.00337219238281,
+                0
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 4,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 4,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5123,
+            "count" : 6,
+            "type" : "SCALAR"
+        },
+        {
+            "bufferView" : 4,
+            "componentType" : 5126,
+            "count" : 4,
+            "max" : [
+                28.603322982788086,
+                48.00337219238281,
+                0
+            ],
+            "min" : [
+                -28.603322982788086,
+                -48.00337219238281,
+                0
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 5,
+            "componentType" : 5126,
+            "count" : 4,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 6,
+            "componentType" : 5126,
+            "count" : 4,
+            "type" : "VEC2"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 48,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 48,
+            "byteOffset" : 48
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 32,
+            "byteOffset" : 96
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 12,
+            "byteOffset" : 128
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 48,
+            "byteOffset" : 140
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 48,
+            "byteOffset" : 188
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 32,
+            "byteOffset" : 236
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 268,
+            "uri" : "data:application/octet-stream;base64,m9PkQXQDQEIAAACAm9PkQXQDQMIAAACAm9PkwXQDQMIAAACAm9PkwXQDQEIAAACAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAgD8AAAEAAgAAAAIAAwCb0+RBdANAQgAAAICb0+RBdANAwgAAAICb0+TBdANAwgAAAICb0+TBdANAQgAAAIAAAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAIA/AACAPwAAgD8AAAAAAAAAAAAAAAAAAAAAAACAPw=="
+        }
+    ]
+}
