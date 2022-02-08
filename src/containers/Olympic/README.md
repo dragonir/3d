@@ -232,7 +232,7 @@ TorusGeometry(radius: Float, tube: Float, radialSegments: Integer, tubularSegmen
 **构造函数**：
 
 ```js
-MeshLambertMaterial( parameters : Object )
+MeshLambertMaterial(parameters : Object)
 ```
 
 * `parameters`：（可选）用于定义材质外观的对象，具有一个或多个属性。材质的任何属性都可以从此处传入。
@@ -282,7 +282,7 @@ loader.load(flagModel, mesh => {
 });
 ```
 
-### 创建树
+### 创建树木
 
 为了充实画面，营造冬日氛围，于是就添加了几棵松树 `🌲` 作为装饰。添加松树的时候用到一个技巧非常重要：我们知道因为树的模型非常复杂，有非常多的面数，面数太多会降低页面性能，造成卡顿。本文中使用两个如下图 `👇` 所示的两个交叉的面来作为树的基座，这样的话树只有两个面数，使用这个技巧可以和大程度上优化页面性能，而且树 `🌲` 的样子看起来也是有 `3D` 感的。
 
