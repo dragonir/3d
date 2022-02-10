@@ -2,6 +2,8 @@
 
 ![banner](./images/banner.gif)
 
+> 声明：本文涉及奥运元素3D模型仅用于个人学习、研究和欣赏，请勿二次修改、非法传播、转载、出版、商用、及进行其他获利行为。
+
 ## 背景
 
 迎冬奥，一起向未来！**2022冬奥会**马上就要开始了，本文使用 `Three.js + React` 技术栈，实现冬日和奥运元素，制作了一个充满趣味和纪念意义的冬奥主题 `3D` 页面。本文涉及到的知识点主要包括：`TorusGeometry` 圆环面、`MeshLambertMaterial` 非光泽表面材质、`MeshDepthMaterial` 深度网格材质、`custromMaterial` 自定义材质、`Points` 粒子、`PointsMaterial` 点材质等。
