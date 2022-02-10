@@ -49,6 +49,7 @@ export default class Olympic extends React.Component {
 
       scene = new THREE.Scene();
       scene.background = new THREE.TextureLoader().load(skyTexture);
+      scene.fog = new THREE.Fog(0xffffff, 10, 100);
       camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.set(0, 30, 100);
       camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -166,21 +167,23 @@ export default class Olympic extends React.Component {
           if (child.isMesh) {
             meshes.push(child)
             if (child.name === 'oldtiger001') {
-              child.material.metalness = .5
-              child.material.roughness = .8
+              child.material.metalness = .3;
+              child.material.roughness = .8;
             }
             if (child.name === 'oldtiger002') {
               child.material.transparent = true;
-              child.material.opacity = .5
-              child.material.metalness = .2
-              child.material.roughness = 0
-              child.material.refractionRatio = 1
+              child.material.opacity = .4;
+              child.material.metalness = .3;
+              child.material.roughness = 0;
+              child.material.refractionRatio = 1.6;
               child.castShadow = true;
+              child.material.envMap = new THREE.TextureLoader().load(skyTexture);
+              child.material.envMapIntensity = 1;
             }
           }
         });
         mesh.scene.rotation.y = Math.PI / 24;
-        mesh.scene.position.set(-8, -12, 0);
+        mesh.scene.position.set(-8, -11.5, -1);
         mesh.scene.scale.set(24, 24, 24);
         scene.add(mesh.scene);
       });
@@ -284,8 +287,8 @@ export default class Olympic extends React.Component {
       controls.minPolarAngle = 1.4;
       controls.maxPolarAngle = 1.8;
       // 水平旋转角度限制
-      controls.minAzimuthAngle = -.6;
-      controls.maxAzimuthAngle = .6;
+      controls.minAzimuthAngle = -.8;
+      controls.maxAzimuthAngle = .8;
       window.addEventListener('resize', onWindowResize, false);
     }
 
