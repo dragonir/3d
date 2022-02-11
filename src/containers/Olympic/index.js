@@ -183,7 +183,7 @@ export default class Olympic extends React.Component {
           }
         });
         mesh.scene.rotation.y = Math.PI / 24;
-        mesh.scene.position.set(-8, -11.5, -1);
+        mesh.scene.position.set(-8, -11.5, 0);
         mesh.scene.scale.set(24, 24, 24);
         scene.add(mesh.scene);
       });
