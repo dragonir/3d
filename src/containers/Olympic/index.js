@@ -41,7 +41,9 @@ export default class Olympic extends React.Component {
     animate();
     function init() {
       container = document.getElementById('container');
+      // 抗锯齿
       renderer = new THREE.WebGLRenderer({ antialias: true });
+      // 设置像素比
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.shadowMap.enabled = true;
