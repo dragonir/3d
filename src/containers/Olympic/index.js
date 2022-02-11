@@ -256,13 +256,6 @@ export default class Olympic extends React.Component {
       loader.load(treeModel, function (mesh) {
         mesh.scene.traverse(function (child) {
           if (child.isMesh) {
-            // child.castShadow = true;
-            // if (child.name === '平面_1') {
-            //   // child.castShadow = true;
-            // } else if (child.name === '平面') {
-            //   child.castShadow = true;
-            // }
-
             meshes.push(child)
             child.material = treeMaterial;
             child.custromMaterial = treeCustomDepthMaterial;
