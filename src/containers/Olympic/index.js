@@ -5,8 +5,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
 import Animations from '../../assets/utils/animations';
 import landModel from './models/land.glb';
-import treeModel from './models/panda.gltf';
-import bingdundunModel from './models/bingdundun.glb';
+import treeModel from './models/tree.gltf';
+import bingdundunModel from './models/bingdwendwen.glb';
 import flagModel from './models/flag.glb';
 import skyTexture from './images/sky.jpg';
 import snowTexture from './images/snow.png';
@@ -161,7 +161,7 @@ export default class Olympic extends React.Component {
         scene.add(mesh.scene);
       });
 
-      // bingdundun
+      // bingdwendwen
       loader.load(bingdundunModel, function (mesh) {
         mesh.scene.traverse(function (child) {
           if (child.isMesh) {
