@@ -7,6 +7,7 @@ import Animations from '../../assets/utils/animations';
 import landModel from './models/land.glb';
 import treeModel from './models/tree.gltf';
 import bingdundunModel from './models/bingdwendwen.glb';
+import xuerongrongModel from './models/xuerongrong.glb';
 import flagModel from './models/flag.glb';
 import skyTexture from './images/sky.jpg';
 import snowTexture from './images/snow.png';
@@ -25,7 +26,7 @@ export default class Olympic extends React.Component {
     loadingProcess: 0
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.initThree()
   }
 
@@ -37,19 +38,25 @@ export default class Olympic extends React.Component {
     var windowHalfX = window.innerWidth / 2;
     var windowHalfY = window.innerHeight / 2;
     var _this = this;
+
     init();
     animate();
-    function init() {
+
+    function init () {
       container = document.getElementById('container');
+
       renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.shadowMap.enabled = true;
+      // renderer.shadowMap.type = THREE.PCFSoftShadowMap; // // 0: THREE.BasicShadowMap, 1: THREE.PCFShadowMap, 2: THREE.PCFSoftShadowMap
+
       container.appendChild(renderer.domElement);
 
       scene = new THREE.Scene();
       scene.background = new THREE.TextureLoader().load(skyTexture);
       scene.fog = new THREE.Fog(0xffffff, 10, 100);
+
       camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.set(0, 30, 100);
       camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -60,8 +67,10 @@ export default class Olympic extends React.Component {
 
       const cubeGeometry = new THREE.BoxGeometry(0.001, 0.001, 0.001);
       const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xdc161a });
+
       const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
       cube.position.set(0, 0, 0);
+
       light = new THREE.DirectionalLight(0xffffff, 1);
       light.intensity = 1;
       light.position.set(16, 16, 8);
@@ -73,6 +82,7 @@ export default class Olympic extends React.Component {
       light.shadow.camera.bottom = -40;
       light.shadow.camera.left = -40;
       light.shadow.camera.right = 40;
+
       scene.add(light);
 
       // const lightHelper = new THREE.DirectionalLightHelper(light, 1, 'red');
@@ -82,17 +92,22 @@ export default class Olympic extends React.Component {
 
       var ambientLight = new THREE.AmbientLight(0xcfffff);
       ambientLight.intensity = 1;
+
       scene.add(ambientLight);
 
       const manager = new THREE.LoadingManager();
-      manager.onStart = (url, loaded, total) => {};
-      manager.onLoad = () => { console.log('Loading complete!')};
-      manager.onProgress = async(url, loaded, total) => {
+
+      manager.onStart = (url, loaded, total) => { };
+
+      manager.onLoad = () => { console.log('Loading complete!') };
+
+      manager.onProgress = async (url, loaded, total) => {
         if (Math.floor(loaded / total * 100) === 100) {
           _this.loadingProcessTimeout && clearTimeout(_this.loadingProcessTimeout);
+
           _this.loadingProcessTimeout = setTimeout(() => {
             _this.setState({ loadingProcess: Math.floor(loaded / total * 100) });
-            Animations.animateCamera(camera, controls, { x: 0, y: -1, z: 20 }, { x: 0, y: 0, z: 0 }, 3600, () => {});
+            Animations.animateCamera(camera, controls, { x: 0, y: -1, z: 20 }, { x: 0, y: 0, z: 5 }, 3600, () => { });
           }, 800);
         } else {
           _this.setState({ loadingProcess: Math.floor(loaded / total * 100) });
@@ -118,13 +133,16 @@ export default class Olympic extends React.Component {
               child.material.roughness = .8;
             }
             // 帽子
-            if (child.name === 'Mesh_17') {}
+            if (child.name === 'Mesh_17') { }
           }
         });
+
         mesh.scene.rotation.y = Math.PI / 4;
         mesh.scene.position.set(15, -20, 0);
         mesh.scene.scale.set(.9, .9, .9);
+
         land = mesh.scene;
+
         scene.add(land);
       });
 
@@ -134,12 +152,14 @@ export default class Olympic extends React.Component {
           if (child.isMesh) {
             meshes.push(child)
             child.castShadow = true;
+
             // 旗帜
             if (child.name === 'mesh_0001') {
               child.material.metalness = .1;
               child.material.roughness = .1;
               child.material.map = new THREE.TextureLoader().load(flagTexture);
             }
+
             // 旗杆
             if (child.name === '柱体') {
               child.material.metalness = .6;
@@ -149,14 +169,18 @@ export default class Olympic extends React.Component {
             }
           }
         });
+
         mesh.scene.rotation.y = Math.PI / 24;
         mesh.scene.position.set(2, -7, -1);
         mesh.scene.scale.set(4, 4, 4);
+
         // 动画
         let meshAnimation = mesh.animations[0];
         mixer = new THREE.AnimationMixer(mesh.scene);
+
         let animationClip = meshAnimation;
         let clipAction = mixer.clipAction(animationClip).play();
+
         animationClip = clipAction.getClip();
         scene.add(mesh.scene);
       });
@@ -166,10 +190,12 @@ export default class Olympic extends React.Component {
         mesh.scene.traverse(function (child) {
           if (child.isMesh) {
             meshes.push(child)
+
             if (child.name === 'oldtiger001') {
               child.material.metalness = .3;
               child.material.roughness = .8;
             }
+
             if (child.name === 'oldtiger002') {
               child.material.transparent = true;
               child.material.opacity = .4;
@@ -182,9 +208,27 @@ export default class Olympic extends React.Component {
             }
           }
         });
+
         mesh.scene.rotation.y = Math.PI / 24;
-        mesh.scene.position.set(-8, -11.5, 0);
+        mesh.scene.position.set(-5, -11.5, 0);
         mesh.scene.scale.set(24, 24, 24);
+
+        scene.add(mesh.scene);
+      });
+
+      // xuerongrong
+      loader.load(xuerongrongModel, function (mesh) {
+        mesh.scene.traverse(function (child) {
+          if (child.isMesh) {
+            child.castShadow = true;
+            meshes.push(child)
+          }
+        });
+
+        mesh.scene.rotation.y = Math.PI / 3;
+        mesh.scene.position.set(-20, -10.8, 0);
+        mesh.scene.scale.set(12, 12, 12);
+
         scene.add(mesh.scene);
       });
 
@@ -202,11 +246,13 @@ export default class Olympic extends React.Component {
         reflectivity: 0.1,
         refractionRatio: 0,
       });
+
       let treeCustomDepthMaterial = new THREE.MeshDepthMaterial({
         depthPacking: THREE.RGBADepthPacking,
         map: new THREE.TextureLoader().load(treeTexture),
         alphaTest: 0.5
       });
+
       loader.load(treeModel, function (mesh) {
         mesh.scene.traverse(function (child) {
           if (child.isMesh) {
@@ -215,13 +261,16 @@ export default class Olympic extends React.Component {
             child.custromMaterial = treeCustomDepthMaterial;
           }
         });
+
         mesh.scene.position.set(14, -9, 0);
         mesh.scene.scale.set(16, 16, 16);
         scene.add(mesh.scene);
+
         let tree2 = mesh.scene.clone();
         tree2.position.set(10, -8, -15);
         tree2.scale.set(18, 18, 18);
         scene.add(tree2)
+
         let tree3 = mesh.scene.clone();
         tree3.position.set(-18, -8, -16);
         tree3.scale.set(22, 22, 22);
@@ -230,22 +279,25 @@ export default class Olympic extends React.Component {
 
       // 创建五环
       const fiveCycles = [
-        { key: 'cycle_0', color: 0x0885c2, position: { x: -250, y: 0, z: 0 }},
-        { key: 'cycle_1', color: 0x000000, position: { x: -10, y: 0, z: 5 }},
-        { key: 'cycle_2', color: 0xed334e, position: { x: 230, y: 0, z: 0 }},
-        { key: 'cycle_3', color: 0xfbb132, position: { x: -125, y: -100, z: -5 }},
-        { key: 'cycle_4', color: 0x1c8b3c, position: { x: 115, y: -100, z: 10 }}
+        { key: 'cycle_0', color: 0x0885c2, position: { x: -250, y: 0, z: 0 } },
+        { key: 'cycle_1', color: 0x000000, position: { x: -10, y: 0, z: 5 } },
+        { key: 'cycle_2', color: 0xed334e, position: { x: 230, y: 0, z: 0 } },
+        { key: 'cycle_3', color: 0xfbb132, position: { x: -125, y: -100, z: -5 } },
+        { key: 'cycle_4', color: 0x1c8b3c, position: { x: 115, y: -100, z: 10 } }
       ];
+
       fiveCycles.map(item => {
         let cycleMesh = new THREE.Mesh(new THREE.TorusGeometry(100, 10, 10, 50), new THREE.MeshLambertMaterial({
           color: new THREE.Color(item.color),
           side: THREE.DoubleSide
         }));
+
         cycleMesh.castShadow = true;
         cycleMesh.position.set(item.position.x, item.position.y, item.position.z);
         meshes.push(cycleMesh);
         fiveCyclesGroup.add(cycleMesh);
       });
+
       fiveCyclesGroup.scale.set(.036, .036, .036);
       fiveCyclesGroup.position.set(0, 10, -8);
       scene.add(fiveCyclesGroup);
@@ -262,6 +314,7 @@ export default class Olympic extends React.Component {
         sizeAttenuation: true,
         depthTest: false
       });
+
       let range = 100;
       let vertices = []
       for (let i = 0; i < 1500; i++) {
@@ -273,6 +326,7 @@ export default class Olympic extends React.Component {
         // 将顶点加入几何
         geometry.vertices.push(vertice);
       }
+
       geometry.center();
       points = new THREE.Points(geometry, pointsMaterial);
       points.position.y = -30;
@@ -283,22 +337,25 @@ export default class Olympic extends React.Component {
       controls.enableDamping = true;
       controls.enablePan = false;
       controls.enableZoom = false;
+
       // 垂直旋转角度限制
       controls.minPolarAngle = 1.4;
       controls.maxPolarAngle = 1.8;
+
       // 水平旋转角度限制
       controls.minAzimuthAngle = -.8;
       controls.maxAzimuthAngle = .8;
+
       window.addEventListener('resize', onWindowResize, false);
     }
 
-    function onWindowResize() {
+    function onWindowResize () {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    function animate() {
+    function animate () {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
       stats && stats.update();
@@ -306,14 +363,17 @@ export default class Olympic extends React.Component {
       TWEEN && TWEEN.update();
       fiveCyclesGroup && (fiveCyclesGroup.rotation.y += .01);
       let vertices = points.geometry.vertices;
+
       vertices.forEach(function (v) {
         v.y = v.y - (v.velocityY);
         v.x = v.x - (v.velocityX);
         if (v.y <= 0) v.y = 60;
         if (v.x <= -20 || v.x >= 20) v.velocityX = v.velocityX * -1;
       });
+
       // 顶点变动之后需要更新，否则无法实现雨滴特效
       points.geometry.verticesNeedUpdate = true;
+
       let time = clock.getDelta();
       mixer && mixer.update(time);
     }
@@ -321,7 +381,7 @@ export default class Olympic extends React.Component {
     // 增加点击事件，声明raycaster和mouse变量
     var raycaster = new THREE.Raycaster();
     var mouse = new THREE.Vector2();
-    function onMouseClick(event) {
+    function onMouseClick (event) {
       // 通过鼠标点击的位置计算出raycaster所需要的点的位置，以屏幕中心为原点，值的范围为-1到1.
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
@@ -329,10 +389,12 @@ export default class Olympic extends React.Component {
       raycaster.setFromCamera(mouse, camera);
       // 获取raycaster直线和所有模型相交的数组集合
       var intersects = raycaster.intersectObjects(meshes);
+
       if (intersects.length > 0) {
         console.log(intersects[0].object)
       }
     }
+
     window.addEventListener('click', onMouseClick, false);
   }
 
@@ -345,7 +407,7 @@ export default class Olympic extends React.Component {
             <div className="box">{this.state.loadingProcess} %</div>
           </div>
         )
-      }
+        }
       </div>
     )
   }
