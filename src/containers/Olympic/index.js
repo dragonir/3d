@@ -192,20 +192,27 @@ export default class Olympic extends React.Component {
           if (child.isMesh) {
             meshes.push(child)
 
-            if (child.name === 'oldtiger001') {
+            if (child.name === '皮肤') {
               child.material.metalness = .3;
               child.material.roughness = .8;
             }
 
-            if (child.name === 'oldtiger002') {
+            if (child.name === '外壳') {
               child.material.transparent = true;
               child.material.opacity = .4;
-              child.material.metalness = .3;
+              child.material.metalness = .4;
               child.material.roughness = 0;
               child.material.refractionRatio = 1.6;
               child.castShadow = true;
               child.material.envMap = new THREE.TextureLoader().load(skyTexture);
               child.material.envMapIntensity = 1;
+            }
+
+            if (child.name === '围脖') {
+              child.material.transparent = true;
+              child.material.opacity = .6;
+              child.material.metalness = .4;
+              child.material.roughness = .6;
             }
           }
         });
