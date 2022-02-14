@@ -13,6 +13,8 @@ import SegmentFault from './containers/SegmentFault/index';
 import Diamond from './containers/Diamond/index';
 import Human from './containers/Human/index';
 import Olympic from './containers/Olympic/index';
+import Layers from './containers/Layers/index';
+
 
 function App() {
   return (
@@ -32,6 +34,7 @@ function App() {
           <Route element={ <Diamond /> } path="/diamond" />
           <Route element={ <Human /> } path="/human" />
           <Route element={ <Olympic /> } path="/olympic" />
+          <Route element={ <Layers /> } path="/layers" />
         </Routes>
       </Router>
     </div>
