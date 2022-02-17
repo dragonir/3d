@@ -18,6 +18,9 @@ import developingImage from './images/developing.png';
 import segmentFaultImage from './images/segmengfault.png';
 import humanImage from './images/human.png';
 import olympicImage from './images/olympic.png';
+import comicImage from './images/comic.png';
+import lowployImage from './images/lowploy.png';
+
 import './index.css';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -35,18 +38,32 @@ const workList = [
     image: cityImage,
     three: true
   },
-  {
-    link: 'https://dragonir.github.io/3d-meta-logo/',
-    title: '脸书Meta元宇宙Logo',
-    description: '🪐 Three.js + Blender 实现炫酷的Facebook元宇宙Logo.',
-    image: metaImage,
-    three: true
-  },
+  // {
+  //   link: '#/cityLowploy',
+  //   title: '低面数城市',
+  //   description: '🏙 3D数字城市 【⚠优化中】',
+  //   image: lowployImage,
+  //   three: true
+  // },
   {
     link: '#/olympic',
     title: '2022冬奥会3D趣味页面',
     description: '🐼一只萌萌的冰墩墩送给大家！',
     image: olympicImage,
+    three: true
+  },
+  {
+    link: '#/comic',
+    title: '3D漫画',
+    description: '🕷 spider man',
+    image: comicImage,
+    three: true
+  },
+  {
+    link: 'https://dragonir.github.io/3d-meta-logo/',
+    title: '脸书Meta元宇宙Logo',
+    description: '🪐 Three.js + Blender 实现炫酷的Facebook元宇宙Logo.',
+    image: metaImage,
     three: true
   },
   {
@@ -152,7 +169,7 @@ export default class Home extends React.Component {
     return (
       <div className="home" style={{ padding: '24px'}}>
         <Box>
-          <h1 className="page_title">dragonir's work list</h1>
+          <h1 className="page_title">3D Example List</h1>
         </Box>
         <Box sx={{ width: '100%' }} style={{ maxWidth: '1200px', margin: 'auto' }}>
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
