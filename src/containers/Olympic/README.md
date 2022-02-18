@@ -520,7 +520,7 @@ function animate() {
 
 * 《`Metahuman`元人类！`Three.js`人像优化》
 
->想了解场景初始化、光照、阴影、基础几何体、网格、材质及其他 `Three.js` 的相关知识，可阅读我往期文章。如果觉得文章对你有帮助，不要忘了**一键三连哦 👍**。
+> 想了解场景初始化、光照、阴影、基础几何体、网格、材质及其他 `Three.js` 的相关知识，可阅读我往期文章。如果觉得文章对你有帮助，不要忘了**一键三连哦 👍**。
 
 ## 附录
 
@@ -532,4 +532,3 @@ function animate() {
 * [6]. [3dx模型转换为blender支持格式](https://anyconv.com/tw/max-zhuan-obj/)
 
 ![panda](images/panda.png)
-

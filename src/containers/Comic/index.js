@@ -70,9 +70,10 @@ export default class Comic extends React.Component {
         layerGroup.add(mesh);
         // 文字
         if (i === 5) {
-          mesh.material.metalness = .5;
+          mesh.material.metalness = .6;
           mesh.material.emissive = new THREE.Color(0x55cfff);
-          mesh.material.emissiveIntensity = 1.4;
+          mesh.material.emissiveIntensity = 1.6;
+          mesh.material.opacity = .9;
         }
         // 会话框
         if (i === 6) {
@@ -85,10 +86,12 @@ export default class Comic extends React.Component {
       const boom = new THREE.Mesh(new THREE.PlaneGeometry(36.76, 27.05), new THREE.MeshPhongMaterial({
         map: new THREE.TextureLoader().load(boomImage),
         transparent: true,
-        emissiveIntensity: 1.6
+        shininess: 160,
+        specular: new THREE.Color(0xff6d00),
+        opacity: .7
       }));
       boom.scale.set(.8, .8, .8);
-      boom.position.set(0, 0, -4);
+      boom.position.set(0, 0, -3);
       layerGroup.add(boom)
       scene.add(layerGroup);
 
