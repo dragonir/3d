@@ -1,4 +1,5 @@
-# 使用Three.js把喜欢的漫画图片改成惊艳的3D视觉吧🌟
+<!-- # 使用Three.js把喜欢的漫画图片改成惊艳的3D视觉吧💥 -->
+# 拜托！使用Three.js这样展示图片超酷的好吗💥
 
 ![banner](./images/banner.gif)
 
@@ -6,11 +7,12 @@
 
 ## 背景
 
+
 ## 效果
 
-![preview](./images/preview.gif)
+实现效果如下图所示：页面主要有背景图、漫画图片主题以及 `💥 boom` 爆炸背景图片构成。
 
-![preview_2](./images/preview_2.gif)
+![preview](./images/preview.gif)
 
 已适配:
 
@@ -21,157 +23,136 @@
 
 ## 实现
 
+本文实现比较简单，和我前面几篇文章实现基本上是相同的，没有用到新知识，主要是素材准备流程比较复杂。下面看看具体是怎么实现的。
+
 ### 素材制作
 
-挑选一张自己喜欢的图片作为素材原图。
+准备一张自己喜欢的图片作为素材原图，最好图片内容可以分成多个层级，以实现 `3D` 景深效果。
 
 ![origin](./images/origin.png)
 
-在Photoshop中打开图片，根据自己需要的分层数量，创建若干
+在 `Photoshop` 中打开图片，根据自己需要的分层数量，创建若干图层，并将地图复制到每个图层上，然后根据对图层景深层级的划分，编辑每个图层，结合使用**魔棒工具**和**套索工具**删除多余的部分，然后将每个图层单独导出作为素材。我分为👆如上 `7` 个图层，外加一个边框，一共有 `8` 个图层。
 
 ![ps](./images/ps.png)
 
-### 场景初始化
+### 资源引入
 
 ```js
 import React from 'react';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
-import Animations from '../../assets/utils/animations';
-import layer_0 from './images/layer_0.png';
-import layer_1 from './images/layer_1.png';
-import layer_2 from './images/layer_2.png';
-import layer_3 from './images/layer_3.png';
-import layer_4 from './images/layer_4.png';
-import layer_5 from './images/layer_5.png';
-import layer_6 from './images/layer_6.png';
-import layer_7 from './images/layer_7.png';
-import background from './images/background.png';
-import boomImage from './images/boom.png';
+```
 
-export default class Comic extends React.Component {
+### 场景初始化
 
-  componentDidMount() {
-    this.initThree()
+初始化渲染容器、场景、摄像机、光源。
+
+```js
+// 场景
+container = document.getElementById('container');
+renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+container.appendChild(renderer.domElement);
+scene = new THREE.Scene();
+scene.background = new THREE.TextureLoader().load(background);
+// 相机
+camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(-12, 0, 0);
+camera.lookAt(new THREE.Vector3(0, 0, 0));
+// 光源
+const cube = new THREE.Mesh(new THREE.BoxGeometry(0.001, 0.001, 0.001), new THREE.MeshLambertMaterial({}));
+cube.position.set(0, 0, 0,);
+light = new THREE.DirectionalLight(0xffffff, 1);
+light.intensity = .2;
+light.position.set(10, 10, 30);
+light.castShadow = true;
+light.target = cube;
+light.shadow.mapSize.width = 512 * 12;
+light.shadow.mapSize.height = 512 * 12;
+light.shadow.camera.top = 100;
+light.shadow.camera.bottom = - 50;
+light.shadow.camera.left = - 50;
+light.shadow.camera.right = 100;
+scene.add(light);
+const ambientLight = new THREE.AmbientLight(0xdddddd);
+scene.add(ambientLight);
+```
+
+### 创建漫画主题
+
+首先创建一个Group，用来添加图层网格，然后遍历图层背景图片数组，在循环体中创建每个面的网格，该网格使用平面立方体PlaneGeometry，材质使用物理材质MeshPhysicalMaterial，对每个网格位置设置相同的x轴和y轴值和不同的z轴值以创建景深效果。最后将Group添加到Scene中。
+
+```js
+var layerGroup = new THREE.Group();
+let aspect = 18;
+for (let i=0; i<layers.length; i++) {
+  let mesh = new THREE.Mesh(new THREE.PlaneGeometry(10.41, 16), new THREE.MeshPhysicalMaterial({
+    map: new THREE.TextureLoader().load(layers[i]),
+    transparent: true,
+    side: THREE.DoubleSide
+  }));
+  mesh.position.set(0, 0, i);
+  mesh.scale.set(1 - (i / aspect), 1 - (i / aspect), 1 - (i / aspect));
+  layerGroup.add(mesh);
+  // 文字
+  if (i === 5) {
+    mesh.material.metalness = .6;
+    mesh.material.emissive = new THREE.Color(0x55cfff);
+    mesh.material.emissiveIntensity = 1.6;
+    mesh.material.opacity = .9;
   }
-
-  initThree = () => {
-    var container, controls, stats, camera, scene, renderer, light, animateLayer = null, step = 0, layerGroup = new THREE.Group();
-    var layers = [layer_0, layer_1, layer_2, layer_3, layer_4, layer_5, layer_6, layer_7];
-    init();
-    animate();
-    function init() {
-      container = document.getElementById('container');
-      renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.shadowMap.enabled = true;
-      container.appendChild(renderer.domElement);
-
-      scene = new THREE.Scene();
-      scene.background = new THREE.TextureLoader().load(background);
-      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.set(-12, 0, 0);
-      camera.lookAt(new THREE.Vector3(0, 0, 0));
-
-      const cube = new THREE.Mesh(new THREE.BoxGeometry(0.001, 0.001, 0.001), new THREE.MeshLambertMaterial({}));
-      cube.position.set(0, 0, 0,);
-      light = new THREE.DirectionalLight(0xffffff, 1);
-      light.intensity = .2;
-      light.position.set(10, 10, 30);
-      light.castShadow = true;
-      light.target = cube;
-      light.shadow.mapSize.width = 512 * 12;
-      light.shadow.mapSize.height = 512 * 12;
-      light.shadow.camera.top = 100;
-      light.shadow.camera.bottom = - 50;
-      light.shadow.camera.left = - 50;
-      light.shadow.camera.right = 100;
-      scene.add(light);
-
-      const ambientLight = new THREE.AmbientLight(0xdddddd);
-      scene.add(ambientLight);
-
-      // 创建8个面
-      let aspect = 18;
-      for (let i=0; i<layers.length; i++) {
-        let mesh = new THREE.Mesh(new THREE.PlaneGeometry(10.41, 16), new THREE.MeshPhysicalMaterial({
-          map: new THREE.TextureLoader().load(layers[i]),
-          transparent: true,
-          side: THREE.DoubleSide
-        }));
-        mesh.position.set(0, 0, i);
-        mesh.scale.set(1 - (i / aspect), 1 - (i / aspect), 1 - (i / aspect));
-        layerGroup.add(mesh);
-        // 文字
-        if (i === 5) {
-          mesh.material.metalness = .6;
-          mesh.material.emissive = new THREE.Color(0x55cfff);
-          mesh.material.emissiveIntensity = 1.6;
-          mesh.material.opacity = .9;
-        }
-        // 会话框
-        if (i === 6) {
-          mesh.scale.set(1.5, 1.5, 1.5);
-          animateLayer = mesh;
-        }
-      }
-      layerGroup.scale.set(1.2, 1.2, 1.2);
-      // 创建boom背景
-      const boom = new THREE.Mesh(new THREE.PlaneGeometry(36.76, 27.05), new THREE.MeshPhongMaterial({
-        map: new THREE.TextureLoader().load(boomImage),
-        transparent: true,
-        shininess: 160,
-        specular: new THREE.Color(0xff6d00),
-        opacity: .7
-      }));
-      boom.scale.set(.8, .8, .8);
-      boom.position.set(0, 0, -3);
-      layerGroup.add(boom)
-      scene.add(layerGroup);
-
-      controls = new OrbitControls(camera, renderer.domElement);
-      controls.target.set(0, 0, 0);
-      controls.enableDamping = true;
-      controls.enablePan = false;
-      // 垂直旋转角度限制
-      controls.minPolarAngle = 1.2;
-      controls.maxPolarAngle = 1.8;
-      // 水平旋转角度限制
-      controls.minAzimuthAngle = -.6;
-      controls.maxAzimuthAngle = .6;
-      window.addEventListener('resize', onWindowResize, false);
-      Animations.animateCamera(camera, controls, { x: 0, y: 0, z: 20 }, { x: 0, y: 0, z: 0 }, 3600, () => { });
-    }
-
-    function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-    function animate() {
-      requestAnimationFrame(animate);
-      renderer.render(scene, camera);
-      stats && stats.update();
-      controls && controls.update();
-      TWEEN && TWEEN.update();
-      step += 0.01;
-      animateLayer.position.x = 2.4 + Math.cos(step);
-      animateLayer.position.y = .4 + Math.abs(Math.sin(step));
-    }
-  }
-
-  render () {
-    return (
-      <div id="container"></div>
-    )
+  // 会话框
+  if (i === 6) {
+    mesh.scale.set(1.5, 1.5, 1.5);
+    animateLayer = mesh;
   }
 }
+layerGroup.scale.set(1.2, 1.2, 1.2);
 ```
 
+![preview_2](./images/preview_2.gif)
+
+#### `💡` THREE.Group
+
+将具有相同主体的网格可以通过Group合并在一起，以便于提高运行效率。
+
+Three.js层级模型Group
+本文通过Three.js的一个类Group来介绍Threejs层级模型的概念，如果你对WebGL层级模型已经有一定的概念，直接把重点放在Group的了解上，如果没有层级模型的概念，就借着对Three.js APIGroup的介绍了解下该概念。
+
+这里以一个机器人三维模型来说下层级模型的概念，比如一整个机器人通过一个组对象Group表示，然后一条腿用一个组对象Group表示，一条腿假设包含大腿和小腿两个网格模型Mesh，大腿和小腿两个网格模型可以作为父对象腿Group的两个字对象，Group表示的两条腿又可以作为机器人Group的两个子对象，这样的话就构成了机器人——腿——大腿、小腿三个层级，就像一颗树一样可以一直分叉，如果根对象机器人的位置变化，那么腿也会跟着变化。对于Threejs中一样，如果Mesh是Group的子对象，如果Group平移变化，Mesh的位置同样跟着父对象Group平移变化。
+
+Group的基类是Object3D，自然Group的方法和属性可以查看文档中Object3D的介绍。在Three.js编程指南中会通过Object3D创建一个父对象，这两个类用哪个都行，Group相比较Object3D更语义化，建议使用Group作为点、线、网格等模型的父对象，用来构建一个层级模型。
+
+.add()方法
+如果你已经有一定的Threejs基础，那么一定不陌生场景对象Scene的方法.add()，用来把模型对象、光源对象添加到场景中。
+
+组对象Group和场景对象Scene一样，.add()方法都继承自基类Object3D。
+
+### 创建boom背景
+
+为了加强视觉效果，我添加了一个Boom爆炸图形平面作为背景，用鼠标移动的时候看以看到该图案有**金属渐变效果**，这种效果主要使用发光材质MeshPhongMaterial的specular属性实现的。
+
+![boom](./images/boom.png)
+
+```js
+const boom = new THREE.Mesh(new THREE.PlaneGeometry(36.76, 27.05), new THREE.MeshPhongMaterial({
+  map: new THREE.TextureLoader().load(boomImage),
+  transparent: true,
+  shininess: 160,
+  specular: new THREE.Color(0xff6d00),
+  opacity: .7
+}));
+boom.scale.set(.8, .8, .8);
+boom.position.set(0, 0, -3);
+layerGroup.add(boom)
+scene.add(layerGroup);
 ```
-Phong网格材质(MeshPhongMaterial)
+
+#### Phong网格材质(MeshPhongMaterial)
+
 一种用于具有镜面高光的光泽表面的材质。
 
 该材质使用非物理的Blinn-Phong模型来计算反射率。 与MeshLambertMaterial中使用的Lambertian模型不同，该材质可以模拟具有镜面高光的光泽表面（例如涂漆木材）。
@@ -304,8 +285,36 @@ alpha贴图是一张灰度纹理，用于控制整个表面的不透明度。（
 
 由于OpenGL Core Profile与 大多数平台上WebGL渲染器的限制，无论如何设置该值，线宽始终为1。
 
-方法(Methods)
-共有方法请参见其基类Material。
+### 镜头控制、缩放适配、动画
+
+```js
+controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 0, 0);
+controls.enableDamping = true;
+controls.enablePan = false;
+// 垂直旋转角度限制
+controls.minPolarAngle = 1.2;
+controls.maxPolarAngle = 1.8;
+// 水平旋转角度限制
+controls.minAzimuthAngle = -.6;
+controls.maxAzimuthAngle = .6;
+window.addEventListener('resize', onWindowResize, false);
+Animations.animateCamera(camera, controls, { x: 0, y: 0, z: 20 }, { x: 0, y: 0, z: 0 }, 3600, () => { });
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+function animate() {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+  stats && stats.update();
+  controls && controls.update();
+  TWEEN && TWEEN.update();
+  step += 0.01;
+  animateLayer.position.x = 2.4 + Math.cos(step);
+  animateLayer.position.y = .4 + Math.abs(Math.sin(step));
+}
 ```
 
 ## 总结

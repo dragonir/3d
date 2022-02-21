@@ -13,6 +13,7 @@ import layer_6 from './images/layer_6.png';
 import layer_7 from './images/layer_7.png';
 import background from './images/background.png';
 import boomImage from './images/boom.png';
+import './index.css'
 
 export default class Comic extends React.Component {
 
@@ -99,6 +100,7 @@ export default class Comic extends React.Component {
       controls.target.set(0, 0, 0);
       controls.enableDamping = true;
       controls.enablePan = false;
+      controls.enableZoom = false;
       // 垂直旋转角度限制
       controls.minPolarAngle = 1.2;
       controls.maxPolarAngle = 1.8;
