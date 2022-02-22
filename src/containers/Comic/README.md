@@ -144,6 +144,9 @@ layerGroup.add(boom)
 scene.add(layerGroup);
 ```
 
+添加后效果
+
+![comic](./images/comic.png)
 #### `💡` MeshPhongMaterial 高光网格材质
 
 `MeshPhongMaterial` 是一种用于**具有镜面高光的光泽表面**的材质。该材质使用非物理的 `Blinn-Phong` 模型来计算反射率。 与 `MeshLambertMaterial` 中使用的 `Lambertian` 模型不同，该材质可以模拟具有镜面高光的光泽表面，如涂漆木材。
