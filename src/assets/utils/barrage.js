@@ -19,10 +19,7 @@ export const Barrage = function (canvas, data) {
   var _Barrage = function (obj, index) {
     // 随机x坐标也就是横坐标，对于y纵坐标，以及变化量moveX
     this.x = (1 + index * 0.1 / Math.random()) * canvas.width;
-    this.y =
-      obj.range[0] * canvas.height +
-      (obj.range[1] - obj.range[0]) * canvas.height * Math.random() +
-      36;
+    this.y = obj.range[0] * canvas.height + (obj.range[1] - obj.range[0]) * canvas.height * Math.random() + 36;
     if (this.y < fontSize) {
       this.y = fontSize;
     } else if (this.y > canvas.height - fontSize) {
@@ -80,3 +77,100 @@ export const Barrage = function (canvas, data) {
   };
   render();
 };
+
+export const barrageList = [{
+  value: "使用的是静态死数据",
+  color: "blue",
+  range: [0, 0.5]
+},
+{
+  value: "安可！安可！安可！安可！安可！",
+  color: "blue",
+  range: [0, 0.6]
+},
+{
+  value: "可以控制区域和垂直分布范围",
+  color: "blue",
+  range: [0, 0.5]
+},
+{
+  value: "字体大小和速度在方法内设置",
+  color: "black",
+  range: [0.1, 1]
+},
+{
+  value: "适合用在一些静态页面上",
+  color: "black",
+  range: [0.2, 1]
+},
+{
+  value: "❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤",
+  color: "red",
+  range: [0.2, 0.9]
+},
+{
+  value: "卡哇伊 ❤ 卡哇伊 ❤ 卡哇伊 ❤ 卡哇伊 ❤ 卡哇伊 ❤ 卡哇伊 ❤ 卡哇伊 ❤ 卡哇伊 ❤",
+  color: "black",
+  range: [0.2, 1]
+},
+{
+  value: "可以设置边框颜色",
+  color: "black",
+  range: [0.2, 1]
+},
+{
+  value: "文字颜色默认都是白色",
+  color: "black",
+  range: [0.2, 0.9]
+},
+{
+  value: "若文字颜色不想白色",
+  color: "black",
+  range: [0.2, 1]
+},
+{
+  value: "初音未来，miku miku miku miku miku miku miku",
+  color: "black",
+  range: [0.6, 0.7]
+},
+{
+  value: "初音未来，老婆！初音未来，老婆！初音未来，老婆！初音未来，老婆！",
+  color: "red",
+  range: [0.2, 1]
+},
+{
+  value: "可以回到原文",
+  color: "black",
+  range: [0, 0.9]
+},
+{
+  value: "⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡",
+  color: "yellow",
+  range: [0.7, 1]
+},
+{
+  value: "下面就是占位弹幕了",
+  color: "black",
+  range: [0.7, 0.95]
+},
+{
+  value: "前方高能预警！！！",
+  color: "orange",
+  range: [0.5, 0.8]
+},
+{
+  value: "前方高能预警！！！",
+  color: "green",
+  range: [0.5, 0.9]
+},
+{
+  value: "前方高能预警！！！",
+  color: "orange",
+  range: [0, 1]
+},
+{
+  value: "前方高能预警！！！",
+  color: "yellow",
+  range: [0, 1]
+}
+];

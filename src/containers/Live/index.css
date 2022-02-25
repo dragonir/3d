@@ -19,7 +19,6 @@
   top: 0;
   left: 0;
 }
-
 .decorate {
   position: fixed;
   top: 0;
@@ -31,13 +30,13 @@
 .decorate .live_icon {
   display: inline-block;
   height: 32px;
-  width: 70px;
+  width: 60px;
   line-height: 32px;
   background: rgba(240, 50, 0, .8);
-  font-size: 24px;
+  font-size: 22px;
   position: absolute;
   right: 24px;
-  top: 100px;
+  top: 60px;
   text-decoration: none;
   font-style: normal;
   border-radius: 8px;
@@ -103,6 +102,12 @@
   padding: 0 24px;
   text-align: left;
   line-height: 60px;
+  font-size: 14px;
+  color: #666666;
+}
+.input_zone .tips b {
+  padding: 4px;
+  color: #1089FF;
 }
 .input_zone .send_button {
   height: 32px;
@@ -130,11 +135,35 @@
   padding: 0 16px;
   box-sizing: border-box;
   cursor: text;
+  color: #2D2D2D;
+  transition: all .25s ease-in-out;
 }
 .input_zone .input:focus {
-  border-color: #1089FF;
+  border: 1px solid #1089FF
 }
 
+@-webkit-keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .2;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-moz-keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .2;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 @keyframes blink {
   0% {
     opacity: 1;
@@ -147,6 +176,22 @@
   }
 }
 
+@-webkit-keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+@-moz-keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
 @keyframes marquee {
   0% {
     transform: translateX(0);

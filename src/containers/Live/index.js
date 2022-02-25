@@ -3,109 +3,13 @@ import React from 'react';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Stats from "three/examples/jsm/libs/stats.module";
-import MikuModel from './models/Miku.glb';
 import Animations from '../../assets/utils/animations';
-import { Barrage } from '../../assets/utils/barrage';
+import { Barrage, barrageList } from '../../assets/utils/barrage';
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import './index.css';
-
-const barrageList = [{
-    value: "使用的是静态死数据",
-    color: "blue",
-    range: [0, 0.5]
-  },
-  {
-    value: "随机循环播放",
-    color: "blue",
-    range: [0, 0.6]
-  },
-  {
-    value: "可以控制区域和垂直分布范围",
-    color: "blue",
-    range: [0, 0.5]
-  },
-  {
-    value: "字体大小和速度在方法内设置",
-    color: "black",
-    range: [0.1, 1]
-  },
-  {
-    value: "适合用在一些静态页面上",
-    color: "black",
-    range: [0.2, 1]
-  },
-  {
-    value: "基于canvas实现",
-    color: "black",
-    range: [0.2, 0.9]
-  },
-  {
-    value: "因此IE9+浏览器才支持",
-    color: "black",
-    range: [0.2, 1]
-  },
-  {
-    value: "可以设置边框颜色",
-    color: "black",
-    range: [0.2, 1]
-  },
-  {
-    value: "文字颜色默认都是白色",
-    color: "black",
-    range: [0.2, 0.9]
-  },
-  {
-    value: "若文字颜色不想白色",
-    color: "black",
-    range: [0.2, 1]
-  },
-  {
-    value: "需要自己调整下JS",
-    color: "black",
-    range: [0.6, 0.7]
-  },
-  {
-    value: "如果需要的是真实和视频交互的弹幕",
-    color: "black",
-    range: [0.2, 1]
-  },
-  {
-    value: "可以回到原文",
-    color: "black",
-    range: [0, 0.9]
-  },
-  {
-    value: "查看另外一个demo",
-    color: "black",
-    range: [0.7, 1]
-  },
-  {
-    value: "下面就是占位弹幕了",
-    color: "black",
-    range: [0.7, 0.95]
-  },
-  {
-    value: "前方高能预警！！！",
-    color: "orange",
-    range: [0.5, 0.8]
-  },
-  {
-    value: "前方高能预警！！！",
-    color: "orange",
-    range: [0.5, 0.9]
-  },
-  {
-    value: "前方高能预警！！！",
-    color: "orange",
-    range: [0, 1]
-  },
-  {
-    value: "前方高能预警！！！",
-    color: "orange",
-    range: [0, 1]
-  }
-];
+import MikuModel from './models/Miku.glb';
+import heartModel from './models/heart.glb';
 
 export default class Live extends React.Component {
 
@@ -113,11 +17,19 @@ export default class Live extends React.Component {
     super(props);
     this.scene = null;
     this.renderer = null;
+    this.camera = null;
+    this.stats = null;
+    this.mixer = null;
+    this.controls = null;
+    this.clock = new THREE.Clock();
+    this.miku = null;
+    this.barrageList = barrageList;
+    this.heart = null;
   }
 
   state = {
-    // 页面模型加载进度，0：未加载，100：加载完成
-    loadingProcess: 0
+    loadingProcess: 0,
+    inputValue: ''
   }
 
   componentDidMount() {
@@ -132,12 +44,10 @@ export default class Live extends React.Component {
   }
 
   initThree = () => {
-    var container, controls, stats, mixer;
-    var camera, scene, renderer, light, interactableMeshes = [];
-    var clock = new THREE.Clock();
     let _this = this;
+    var container;
+    var camera, scene, renderer, light, interactableMeshes = [];
     init();
-    animate();
     function init() {
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setPixelRatio(window.devicePixelRatio);
@@ -147,20 +57,15 @@ export default class Live extends React.Component {
       _this.renderer = renderer;
       container = document.getElementById('container');
       container.appendChild(renderer.domElement);
-
       // 场景
       scene = new THREE.Scene();
-    //   scene.background = new THREE.Color(0x582424);
       scene.fog = new THREE.Fog(0xeeeeee, 0, 100);
       _this.scene = scene;
       // 透视相机：视场、长宽比、近面、远面
       camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.set(0, 0, 20);
+      camera.position.set(4, 0, 20);
       camera.lookAt(new THREE.Vector3(0, 0, 0));
-
-      // threejs中采用的是右手坐标系，红线是X轴，绿线是Y轴，蓝线是Z轴
-      const axes = new THREE.AxesHelper(100);
-      scene.add(axes);
+      _this.camera = camera;
 
       // 半球光源：创建室外效果更加自然的光源
       const cubeGeometry = new THREE.BoxGeometry(0.001, 0.001, 0.001);
@@ -179,23 +84,15 @@ export default class Live extends React.Component {
       light.shadow.camera.right = 80;
       scene.add(light);
 
-      const lightHelper = new THREE.DirectionalLightHelper(light, 1, 'red');
-      scene.add(lightHelper);
-      const lightCameraHelper = new THREE.CameraHelper(light.shadow.camera);
-      scene.add(lightCameraHelper);
+      // const lightHelper = new THREE.DirectionalLightHelper(light, 1, 'red');
+      // scene.add(lightHelper);
+      // const lightCameraHelper = new THREE.CameraHelper(light.shadow.camera);
+      // scene.add(lightCameraHelper);
 
       // 环境光
       var ambientLight = new THREE.AmbientLight(0xffffff);
       scene.add(ambientLight);
 
-      // 网格
-      // var grid = new THREE.GridHelper(50, 100, 0x000000, 0x000000);
-      // grid.position.set(0, 0, 0)
-      // grid.material.opacity = 0.2;
-      // grid.material.transparent = true;
-      // scene.add(grid);
-
-      // 加载模型
       // 模型加载进度管理
       const manager = new THREE.LoadingManager();
       manager.onStart = (url, loaded, total) => {};
@@ -219,11 +116,11 @@ export default class Live extends React.Component {
           if (child.isMesh) {
             console.log(child)
             interactableMeshes.push(child)
-            if (child.name === 'body') {
+            if (child.name === 'mesh_0') {
               child.material.metalness = 0;
               child.material.roughness = .3;
             }
-            if (child.name === 'ts_bot205_wp') {
+            if (child.name === 'mesh_1') {
               child.material.metalness = .6;
               child.material.roughness = .4;
               child.material.emissiveIntensity = 1.6;
@@ -231,39 +128,45 @@ export default class Live extends React.Component {
           }
         });
         mesh.scene.position.set(9, -9, 0);
-        mesh.scene.scale.set(600, 600, 600);
-        console.log(mesh)
-        let meshAnimation = mesh.animations[0];
-        mixer = new THREE.AnimationMixer(mesh.scene);
-        let animationClip = meshAnimation;
-        let clipAction = mixer.clipAction(animationClip).play();
-        animationClip = clipAction.getClip();
-        scene.add(mesh.scene)
+        mesh.scene.scale.set(7, 7, 7);
+        scene.add(mesh.scene);
+        _this.miku = mesh;
+        _this.playAnimation(5);
       });
 
-      controls = new OrbitControls(camera, renderer.domElement);
+      gltfLoader.load(heartModel, mesh => {
+        mesh.scene.traverse(child => {
+          if (child.name === 'mesh_0') {
+            child.material.metalness = .6;
+            child.material.roughness = .4;
+            child.material.color = new THREE.Color(0xfe3f47)
+            child.material.emissiveIntensity = 1.6;
+          }
+        });
+        mesh.scene.position.set(-16, -8, 0);
+        mesh.scene.scale.set(.02, .02, .02);
+        _this.heart = mesh.scene;
+        scene.add(mesh.scene);
+      });
+
+      const controls = new OrbitControls(camera, renderer.domElement);
       controls.target.set(0, 0, 0);
-      controls.enableDamping = true;
+      controls.enableRotate = false;
+      controls.enablePan = false;
+      controls.enableZoom = false;
+      _this.controls = controls;
       window.addEventListener('resize', onWindowResize, false);
 
-      stats = new Stats();
-      document.documentElement.appendChild(stats.dom);
+      // const stats = new Stats();
+      // _this.stats = stats
+      // document.documentElement.appendChild(stats.dom);
+      _this.animate();
     }
 
     function onWindowResize() {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-
-    function animate() {
-      requestAnimationFrame(animate);
-      renderer.render(scene, camera);
-      stats && stats.update();
-      TWEEN && TWEEN.update();
-      let time = clock.getDelta();
-      mixer && mixer.update(time);
-      controls && controls.update();
     }
 
     // 增加点击事件，声明raycaster和mouse变量
@@ -283,6 +186,58 @@ export default class Live extends React.Component {
     }
     renderer.domElement.style.touchAction = 'none';
     renderer.domElement.addEventListener('click', handleMouseClick, false);
+  }
+
+  animate = () => {
+    requestAnimationFrame(this.animate);
+    this.renderer.render(this.scene, this.camera);
+    this.stats && this.stats.update();
+    TWEEN && TWEEN.update();
+    this.mixer && this.mixer.update(this.clock.getDelta());
+    this.controls && this.controls.update();
+    this.heart && (this.heart.rotation.y += 0.05);
+  }
+
+  playAnimation = (animationIndex) => {
+    let meshAnimation = this.miku.animations[animationIndex];
+    this.mixer = new THREE.AnimationMixer(this.miku.scene);
+    let animationClip = meshAnimation;
+    let clipAction = this.mixer.clipAction(animationClip).play();
+    animationClip = clipAction.getClip();
+  }
+
+  handleInputChange = (e) => {
+    this.setState({
+      inputValue: e.target.value
+    });
+  }
+
+  handleInputKeypress = (e) => {
+    console.log(e)
+    if (e.charCode === 13 || e.keyCode === 13) {
+      this.handleSend();
+    }
+  }
+
+  handleSend = () => {
+    let val = this.state.inputValue;
+    // 发送弹幕
+    this.barrageList.push({
+      value: '随机循环播放',
+      color: 'red',
+      range: [.2, 1]
+    });
+    // 触发动画
+    let keywordMap = ['慢直播', '虚拟主播', '初音未来', '安可', '元宇宙', '卡哇伊'];
+    keywordMap.map((item, index) => {
+      if (val.includes(item)) {
+        this.playAnimation(index);
+      }
+    });
+    // 清空输入
+    this.setState({
+      inputValue: ''
+    })
   }
 
   render () {
@@ -306,9 +261,14 @@ export default class Live extends React.Component {
           </div>
         </div>
         <div className='input_zone'>
-          <div className='tips'>1566人正在看，已填装8896条弹幕！</div>
-          <input className='input' placeholder='输入“慢直播、初音未来、安可”等字样可以触发彩蛋哦！' />
-          <button className='send_button'>发送</button>
+          <div className='tips'><b>1566</b>人正在看，已填装<b>8896</b>条弹幕！</div>
+          <input
+            className='input' placeholder='输入“慢直播、虚拟主播、初音未来、安可、元宇宙、卡哇伊 ❤”等字样可以触发彩蛋哦！'
+            onChange={this.handleInputChange.bind(this)}
+            onKeyPress={this.handleInputKeypress.bind(this)}
+            value={this.state.inputValue}
+          />
+          <button className='send_button' onClick={this.handleSend}>发送</button>
         </div>
       </div>
     )
