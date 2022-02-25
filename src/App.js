@@ -15,6 +15,7 @@ import Human from './containers/Human/index';
 import Olympic from './containers/Olympic/index';
 import Comic from './containers/Comic/index';
 import CityLowploy from './containers/CityLowploy/index';
+import Live from './containers/Live/index';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route element={ <Olympic /> } path="/olympic" />
           <Route element={ <Comic /> } path="/comic" />
           <Route element={ <CityLowploy /> } path="/cityLowploy" />
+          <Route element={ <Live /> } path="/live" />
         </Routes>
       </Router>
     </div>
