@@ -119,12 +119,12 @@ export const barrageList = [{
   range: [0.2, 1]
 },
 {
-  value: "文字颜色默认都是白色",
+  value: "这也太好看了吧，绝绝子！",
   color: "black",
   range: [0.2, 0.9]
 },
 {
-  value: "若文字颜色不想白色",
+  value: "HongKong HongKong HongKong HongKong HongKong",
   color: "black",
   range: [0.2, 1]
 },
