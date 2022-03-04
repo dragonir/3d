@@ -1,8 +1,31 @@
 .floating_page
+  background #2D6C40
+  background-image linear-gradient(rgba(3, 192, 60, .3) 1px, transparent 1px), linear-gradient(90deg, rgba(3, 192, 60, .3) 1px, transparent 1px)
+  background-size 1em 1em
   .color_pick
     position fixed
-    top 0
-    right 0
+    top 4px
+    right 4px
     outline none
     border none
     -webkit-appearance none
+    width 60px
+    padding 0 6px
+    background rgba(0, 0, 0, .4)
+    box-shadow 0 1px 4px rgba(0, 0, 0, .25)
+    border-radius 4px
+  .meta
+    position fixed
+    bottom 0
+    left 0
+    padding 16px
+    .text
+      text-align left
+      font-size 14px
+      color rgba(255, 255, 255, .5)
+      text-shadow 1px 1px 1px rgba(0, 0, 0, .1), 2px 2px 2px rgba(0, 0, 0, .1), 3px 3px 3px rgba(0, 0, 0, .1)
+      a
+        color rgba(255, 255, 0, .6)
+        transition color .25s ease-in-out
+        &:hover
+          color rgba(255, 255, 80, 1)
