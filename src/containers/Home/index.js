@@ -19,7 +19,7 @@ import segmentFaultImage from './images/segmengfault.png';
 import humanImage from './images/human.png';
 import olympicImage from './images/olympic.png';
 import comicImage from './images/comic.png';
-import lowployImage from './images/lowploy.png';
+// import lowployImage from './images/lowploy.png';
 
 import './index.css';
 

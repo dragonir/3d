@@ -16,6 +16,7 @@ import Olympic from './containers/Olympic/index';
 import Comic from './containers/Comic/index';
 import CityLowploy from './containers/CityLowploy/index';
 import Live from './containers/Live/index';
+import Floating from './containers/Floating/index';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route element={ <Comic /> } path="/comic" />
           <Route element={ <CityLowploy /> } path="/cityLowploy" />
           <Route element={ <Live /> } path="/live" />
+          <Route element={ <Floating /> } path="/floating" />
         </Routes>
       </Router>
     </div>
