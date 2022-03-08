@@ -19,6 +19,7 @@ import segmentFaultImage from './images/segmengfault.png';
 import humanImage from './images/human.png';
 import olympicImage from './images/olympic.png';
 import comicImage from './images/comic.png';
+import floatingImage from './images/floating.png';
 // import lowployImage from './images/lowploy.png';
 
 import './index.css';
@@ -48,8 +49,15 @@ const workList = [
   {
     link: '#/olympic',
     title: '2022冬奥会3D趣味页面',
-    description: '🐼一只萌萌的冰墩墩送给大家！',
+    description: '🐼 萌萌的冰墩墩和雪容融送给大家！',
     image: olympicImage,
+    three: true
+  },
+  {
+    link: '#/floating',
+    title: '悬浮文字',
+    description: '🎋 Fantastic floating text',
+    image: floatingImage,
     three: true
   },
   {
@@ -67,17 +75,17 @@ const workList = [
     three: true
   },
   {
-    link: 'https://dragonir.github.io/3d-panoramic-vision/',
-    title: '全景侦探小游戏',
-    description: '🕵️‍ 使用Three.js全景功能实现侦探小游戏。',
-    image: panoramicImage,
-    three: true
-  },
-  {
     link: '#/lunar',
     title: '虎年春节创意',
     description: '🐅 2022虎虎生威！',
     image: lunarImage,
+    three: true
+  },
+  {
+    link: 'https://dragonir.github.io/3d-panoramic-vision/',
+    title: '全景侦探小游戏',
+    description: '🕵️‍ 使用Three.js全景功能实现侦探小游戏。',
+    image: panoramicImage,
     three: true
   },
   {
@@ -107,18 +115,6 @@ const workList = [
     description: '👻 可以查看动物细胞和植物细胞的内部组成结构。【⚠优化中】',
     image: cellImage,
     three: true
-  },
-  {
-    link: 'https://dragonir.github.io/zelda-map/',
-    title: '塞尔达：旷野之息地图',
-    description: '🗺 在地图上标记神庙、查询回忆点！',
-    image: zeldaMapImage,
-  },
-  {
-    link: 'https://dragonir.github.io/h5-scan-qrcode/',
-    title: '浏览器扫码',
-    description: '📷 使用原生浏览器就可以在h5页面实现扫码功能了，试试看！',
-    image: scanImage,
   },
   {
     link: '#/car',
@@ -161,7 +157,19 @@ const workList = [
     description: '开发中...',
     image: developingImage,
     three: true
-  }
+  },
+  {
+    link: 'https://dragonir.github.io/h5-scan-qrcode/',
+    title: '浏览器扫码',
+    description: '📷 使用原生浏览器就可以在h5页面实现扫码功能了，试试看！',
+    image: scanImage,
+  },
+  {
+    link: 'https://dragonir.github.io/zelda-map/',
+    title: '塞尔达：旷野之息地图',
+    description: '🗺 在地图上标记神庙、查询回忆点！',
+    image: zeldaMapImage,
+  },
 ];
 
 export default class Home extends React.Component {
