@@ -1,14 +1,16 @@
-# 使用Three.js内置方法实现惊艳的浮动文字效果
+# 使用Three.js实现神奇的的3D文字悬浮效果
 
 ![banner](./images/banner.gif)
 
+> 声明：本文涉及图文和模型素材仅用于个人学习、研究和欣赏，请勿二次修改、非法传播、转载、出版、商用、及进行其他获利行为。
+
 ## 背景
 
-在 Three.js Journey 课程示例中，提供了一个仅通过Three.js内置方法实现的浮动文字效果的[示例](https://www.ilithya.rocks/)，于是本文参照示例，实现类似的效果。本文使用React+Three.js技术栈，本文中涉及到的知识点主要包括：
+在 `Three.js Journey` 课程[示例](https://www.ilithya.rocks/)中，提供了一个仅通过Three.js内置方法实现的 `3D` 文字悬浮效果，于是本文参照示例，实现类似的效果。本文使用React+Three.js技术栈，本文中涉及到的知识点主要包括：`CSS` 网格背景、`MeshNormalMaterial` 法向材质、`FontLoader` 字体加载器、`TextGeometry` 文本缓冲几何体、`TorusBufferGeometry` 圆环缓冲几何体、`ConeBufferGeometry` 圆锥缓冲几何体、`OctahedronBufferGeometry` 八面缓冲几何体、`Three.js` 后期渲染、`GlitchPass` 通道、`Element.requestFullscreen`、`Document.exitFullscreen` 等。
 
 ## 效果
 
-本文实现效果：
+本文实现效果如 `banner` 图所示，页面主体由位于中心的**文字网格模型以及四周的圆环面、圆锥以及八面体**构成。随着鼠标在页面上移动或点击，页面上的模型也跟着移动。页面右上角有 `2` 个按钮，可以切换页面背景色和切换**故障风格**后期特效。**双击屏幕**可以进入或退出全屏。
 
 ![mobile](./images/mobile.png)
 
@@ -46,13 +48,11 @@ import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass.js';
 </div>
 ```
 
-ios safari，因此手机端默认关闭后期特效、pc端默认开启
+### 网格背景
 
-```js
-state = {
-  backgroundColor: '#164CCA',
-  renderGlithPass: !(window.navigator.userAgent.toLowerCase().indexOf('mobile') > 0)
-}
+```css
+background-image: linear-gradient(rgba(3, 192, 60, .3) 1px, transparent 1px), linear-gradient(90deg, rgba(3, 192, 60, .3) 1px, transparent 1px);
+background-size: 1em 1em;
 ```
 
 ### 场景初始化
@@ -65,7 +65,6 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearAlpha(0);
 canvas.appendChild(renderer.domElement);
 scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0xeeeeee, 0, 100);
 camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, .1, 10000);
 camera.position.set(-2 * 10000, 0, 780);
 ```
@@ -102,7 +101,6 @@ MeshNormalMaterial(parameters : Object)
 ### 创建文字模型
 
 ```js
-// 字体
 const loader = new FontLoader();
 loader.load('./fonts/helvetiker_regular.typeface.json', font => {
   textMesh.geometry = new TextGeometry('@dragonir\nfantastic\nthree.js\nart work', {
@@ -117,70 +115,59 @@ loader.load('./fonts/helvetiker_regular.typeface.json', font => {
     bevelSegments: 12
   });
   textMesh.material = material;
-  textMesh.position.x = 120 * -2;
-  textMesh.position.z = 120 * -1;
   scene.add(textMesh);
 });
 ```
 
 ![font](./images/font.png)
 
-#### `💡` FontLoader
+#### `💡` FontLoader 字体加载器
 
-使用JSON格式中加载字体的一个类。返回Font, 返回值是表示字体的Shape类型的数组。
-其内部使用FileLoader来加载文件。
-
-你可以使用facetype.js(https://gero3.github.io/facetype.js/)在线转换字体。
+使用 `JSON` 格式中加载字体的一个类，返回Font, 返回值是表示字体的Shape类型的数组，其内部使用 `FileLoader` 来加载文件。
 
 **构造函数**：
 
 ```js
-FontLoader(manager : LoadingManager)
+FontLoader(manager: LoadingManager)
 ```
 
-manager — 加载器所使用的loadingManager。默认值为THREE.DefaultLoadingManager.
+* `manager`：加载器所使用的`loadingManager`。默认值为`THREE.DefaultLoadingManager`。
 
-创建一个新的FontLoader.
+`方法`：
 
-属性
-共有属性请参见其基类Loader。
+* `.load` 从 `URL` 中进行加载，并将被加载的 `texture` 传递给 `onLoad`。
+  * 语法：`.load(url: String, onLoad: Function, onProgress: Function, onError: Function ): null`
+  * `url`：文件的URL或者路径，也可以为 `Data URI`.
+  * `onLoad`：加载完成时将调用。回调参数是将要被加载的 `texture`.
+  * `onProgress`：将在加载过程中进行调用。参数为 `XMLHttpRequest` 实例，实例包含 `total` 和 `loaded` 字节。
+  * `onError`：在加载错误时被调用。
+* `.parse` 以 `JSON` 格式进行解析，并返回一个 `Font`。
+  * 语法：`.parse (json: Object ): Font`
+  * `json`：用于解析的 `JSON` 结构.
 
-方法
-共有方法请参见其基类Loader。
-
-.load ( url : String, onLoad : Function, onProgress : Function, onError : Function ) : null
-url — 文件的URL或者路径，也可以为
-Data URI.
-onLoad — 加载完成时将调用。回调参数是将要被加载的texture.
-onProgress — 将在加载过程中进行调用。参数为XMLHttpRequest实例，实例包含total和loaded字节。
-onError — 在加载错误时被调用。
-
-从URL中进行加载，并将被加载的texture传递给onLoad。
-
-.parse ( json : Object ) : Font
-json — The JSON structure to parse.
-
-以JSON格式进行解析，并返回一个Font.
+> `🔗` 可以使用[facetype.js](https://gero3.github.io/facetype.js/)在线转换 `Three.js` 支持的字体。
 
 #### `💡` TextGeometry 文本缓冲几何体
 
 一个用于将文本生成为单一的几何体的类。
-它是由一串给定的文本，以及由加载的Font（字体）和该几何体ExtrudeGeometry父类中的设置所组成的参数来构造的。可用的字体:文本几何体使用 typeface.json所生成的字体。
+它是由一串给定的文本，以及由加载的 `Font` 字体和该几何体 `ExtrudeGeometry` 父类中的设置所组成的参数来构造的。可用的字体:文本几何体使用 `typeface.json` 所生成的字体。
 
 **构造函数**：
 
+```js
 TextGeometry(text : String, parameters : Object)
-text — 将要显示的文本。
-parameters — 包含有下列参数的对象：
+```
 
-font — THREE.Font的实例。
-size — Float。字体大小，默认值为100。
-height — Float。挤出文本的厚度。默认值为50。
-curveSegments — Integer。（表示文本的）曲线上点的数量。默认值为12。
-bevelEnabled — Boolean。是否开启斜角，默认为false。
-bevelThickness — Float。文本上斜角的深度，默认值为20。
-bevelSize — Float。斜角与原始文本轮廓之间的延伸距离。默认值为8。
-bevelSegments — Integer。斜角的分段数。默认值为3。
+* `text`：将要显示的文本。
+* `parameters`：包含有下列参数的对象：
+  * `font[Font]`：`THREE.Font` 的实例。
+  * `size[Float]`：字体大小，默认值为 `100`。
+  * `height[Float]`：挤出文本的厚度，默认值为 `50`。
+  * `curveSegments[Integer]`：表示文本的曲线上点的数量，默认值为 `12`。
+  * `bevelEnabled[Boolean]`：是否开启斜角，默认为 `false`。
+  * `bevelThickness[Float]`：文本上斜角的深度，默认值为 `20`。
+  * `bevelSize[Float]`：斜角与原始文本轮廓之间的延伸距离。默认值为 `8`。
+  * `bevelSegments[Integer]`：斜角的分段数，默认值为 `3`。
 
 ### 创建几何体模型
 
@@ -190,13 +177,12 @@ function generateRandomMesh(geometry, material, count){
     let mesh = new THREE.Mesh(geometry, material);
     let dist = farDist / 3;
     let distDouble = dist * 2;
-    let tau = 2 * Math.PI;
     mesh.position.x = Math.random() * distDouble - dist;
     mesh.position.y = Math.random() * distDouble - dist;
     mesh.position.z = Math.random() * distDouble - dist;
-    mesh.rotation.x = Math.random() * tau;
-    mesh.rotation.y = Math.random() * tau;
-    mesh.rotation.z = Math.random() * tau;
+    mesh.rotation.x = Math.random() * 2 * Math.PI;
+    mesh.rotation.y = Math.random() * 2 * Math.PI;
+    mesh.rotation.z = Math.random() * 2 * Math.PI;
     // 手动控制何时重新计算 3D 变换以获得更好的性能
     mesh.matrixAutoUpdate = false;
     mesh.updateMatrix();
@@ -205,8 +191,9 @@ function generateRandomMesh(geometry, material, count){
 }
 ```
 
+`BufferAttribute` 允许更有效地将数据传递到 `GPU`
+
 ```js
-// BufferAttribute 允许更有效地将数据传递到 GPU
 const octahedronGeometry = new THREE.OctahedronBufferGeometry(80);
 const material = new THREE.MeshNormalMaterial();
 generateRandomMesh(octahedronGeometry, material, 100);
@@ -221,43 +208,67 @@ scene.add(group);
 
 #### `💡` TorusBufferGeometry 圆环缓冲几何体
 
-一个用于生成圆环几何体的类。
+用于生成圆环几何体的类。
 
 **构造函数**：
 
 ```js
-TorusGeometry(radius : Float, tube : Float, radialSegments : Integer, tubularSegments : Integer, arc : Float)
+TorusBufferGeometry(radius: Float, tube: Float, radialSegments: Integer, tubularSegments: Integer, arc: Float)
 ```
 
-radius – 圆环的半径，从圆环的中心到管道（横截面）的中心。默认值是1。
-tube — 管道的半径，默认值为0.4。
-radialSegments — 圆环的分段数，默认值为8。
-tubularSegments — 管道的分段数，默认值为6。
-arc — 圆环的圆心角（单位是弧度），默认值为Math.PI * 2。
+* `radius`：圆环的半径，从圆环的中心到管道横截面的中心，默认值是 `1`。
+* `tube`：管道的半径，默认值为 `0.4`。
+* `radialSegments`：圆环的分段数，默认值为 `8`。
+* `tubularSegments`：管道的分段数，默认值为 `6`。
+* `arc`：圆环的圆心角，单位是弧度，默认值为 `Math.PI * 2`。
 
 #### `💡` ConeBufferGeometry 圆锥缓冲几何体
 
+用于生成圆锥几何体的类。
+
 **构造函数**：
 
 ```js
-ConeGeometry(radius : Float, height : Float, radialSegments : Integer, heightSegments : Integer, openEnded : Boolean, thetaStart : Float, thetaLength : Float)
+ConeBufferGeometry(radius: Float, height: Float, radialSegments: Integer, heightSegments: Integer, openEnded: Boolean, thetaStart: Float, thetaLength: Float)
 ```
 
-radius — 圆锥底部的半径，默认值为1。
-height — 圆锥的高度，默认值为1。
-radialSegments — 圆锥侧面周围的分段数，默认为8。
-heightSegments — 圆锥侧面沿着其高度的分段数，默认值为1。
-openEnded — 一个Boolean值，指明该圆锥的底面是开放的还是封顶的。默认值为false，即其底面默认是封顶的。
-thetaStart — 第一个分段的起始角度，默认为0。（three o’clock position）
-thetaLength — 圆锥底面圆扇区的中心角，通常被称为“θ”（西塔）。默认值是2*Pi，这使其成为一个完整的圆锥。
+* `radius`：圆锥底部的半径，默认值为 `1`。
+* `height`：圆锥的高度，默认值为 `1`。
+* `radialSegments`：圆锥侧面周围的分段数，默认为 `8`。
+* `heightSegments`：圆锥侧面沿着其高度的分段数，默认值为 `1`。
+* `openEnded`：一个 `Boolean` 值，指明该圆锥的底面是开放的还是封顶的。默认值为false，即其底面默认是封顶的。
+* `thetaStart`：第一个分段的起始角度，默认为 `0`。
+* `thetaLength`：圆锥底面圆扇区的中心角，通常被称为 `θ`。默认值是 `2*PI`，这使其成为一个完整的圆锥。
 
 #### `💡` OctahedronBufferGeometry 八面缓冲几何体
 
+用于创建八面体的类。
+
 **构造函数**：
 
-OctahedronGeometry(radius : Float, detail : Integer)
-radius — 八面体的半径，默认值为1。
-detail — 默认值为0，将这个值设为一个大于0的数将会为它增加一些顶点，使其不再是一个八面体。
+```js
+OctahedronBufferGeometry(radius: Float, detail: Integer)
+```
+
+* `radius`：八面体的半径，默认值为 `1`。
+* `detail`：默认值为 `0`，将这个值设为一个大于 `0` 的数将会为它增加一些顶点，使其不再是一个八面体。
+
+### 鼠标事件监听
+
+```js
+const mouseFX = {
+  windowHalfX: window.innerWidth / 2,
+  windowHalfY: window.innerHeight / 2,
+  coordinates: (coordX, coordY) => {
+    mouseX = (coordX - mouseFX.windowHalfX) * 5;
+    mouseY = (coordY - mouseFX.windowHalfY) * 5;
+  },
+  onMouseMove: e => { mouseFX.coordinates(e.clientX, e.clientY) },
+  onTouchMove: e => { mouseFX.coordinates(e.changedTouches[0].clientX, e.changedTouches[0].clientY)}
+};
+document.addEventListener('mousemove', mouseFX.onMouseMove, false);
+document.addEventListener('touchmove', mouseFX.onTouchMove, false);
+```
 
 ### 动画效果
 
@@ -279,39 +290,41 @@ function animate() {
   textMesh.rotation.y = ry;
   textMesh.rotation.z = rx;
   renderer.render(scene, camera);
-  _this.state.renderGlithPass && composer.render();
+  composer.render();
   stats && stats.update();
 }
 ```
 
 ![preview_1](./images/preview_1.gif)
 
-### 背景颜色切换
+### 背景色切换
 
 ```js
 handleInputChange = e => {
-  this.setState({
-    backgroundColor: e.target.value
-  })
+  this.setState({ backgroundColor: e.target.value });
 }
 ```
 
 ![preview_2](./images/preview_2.png)
 
-### 后期渲染开关
-
-```js
-handleRenderChange = () => {
-  this.setState({
-    renderGlithPass: !this.state.renderGlithPass
-  })
-}
-```
-
 ### 后期渲染
 
 ```js
-// 后期
+handleRenderChange = () => {
+  this.setState({ renderGlithPass: !this.state.renderGlithPass });
+}
+```
+
+ios safari，因此手机端默认关闭后期特效、pc端默认开启
+
+```js
+state = {
+  backgroundColor: '#164CCA',
+  renderGlithPass: !(window.navigator.userAgent.toLowerCase().indexOf('mobile') > 0)
+}
+```
+
+```js
 composer = new EffectComposer(renderer);
 composer.addPass( new RenderPass(scene, camera));
 glitchPass = new GlitchPass();
@@ -323,26 +336,22 @@ composer.addPass(glitchPass);
 #### `💡` 后期渲染
 
 .1 认识后期处理
-后期处理，其实就是原有的页面效果不能满足审美需求，通过一些技术手段以达到预期的效果，实现的过程就是后期处理。
-在three.js中实现后期处理，需要经过以下几步
+后期处理，其实就是原有的页面效果不能满足审美需求，通过一些技术手段以达到预期的效果，实现的过程就是后期处理。在 `three.js` 中实现后期处理，需要经过以下几步：
 
-创建效果组合器
-效果组合器是各种处理通道的入口，three.js提供了一个 EffectComposer 对象，使用它来创建一个效果组合器，从某种程度上说这个效果组合器是各种通道的容器，创建时需要一个渲染器的实例
+* 创建效果组合器：效果组合器是各种处理通道的入口，`three.js` 提供了一个 `EffectComposer` 对象，使用它来创建一个效果组合器，从某种程度上说这个效果组合器是各种通道的容器，创建时需要一个渲染器的实例
+* 添加通道：在后期处理过程中 `renderPass` 通道 必须要有，这个通道在指定的场景和相机的基础上渲染出一个新的场景，这里需要通过 `RenderPass` 对象创建一个通道实例，然后将它添加到效果组合器中；`three.js` 中提供了很多后期处理的通道，你可以直接来使用它们，只需要创建对应的通道，配置一些参数，将它们添加到效果组合器就可以了，这里特别说一下，`three.js` 还提供了一个 `ShaderPass` 通道，它支持使用自定义的 `Shader` 创建高级的后期处理通道
+* 更新通道：在 `render` 循环中，调用效果组合器的 `render` 函数，效果组合器会依次使用添加的处理通道来处理场景将最终的结果输出。
 
-添加通道
-在后期处理过程中 renderPass 通道 必须要有，这个通道在指定的场景和相机的基础上渲染出一个新的场景，这里需要通过RenderPass对象创建一个通道实例，然后将它添加到效果组合器中；three.js 中提供了很多后期处理的通道，你可以直接来使用它们，只需要创建对应的通道，配置一些参数，将它们添加到效果组合器就可以了，这里特别说一下，three.js还提供了一个 ShaderPass 通道，它支持使用自定义的Shader创建高级的后期处理通道
+#### `💡` GlitchPass通道
 
-更新通道
-在render循环中，调用效果组合器的render函数，效果组合器会依次使用添加的处理通道来处理场景将最终的结果输出
+故障风格
 
-GlitchPass通道介绍
-GlitchPass通道产生模拟电磁风暴效果，它只有一个参数配置
-goWild 该属性接收一个布尔值，指定是否持续产生电磁风暴效果
+`GlitchPass` 通道产生模拟电磁风暴效果，它只有一个参数配置
+`goWild` 该属性接收一个布尔值，指定是否持续产生电磁风暴效果
 
 ### 缩放适配
 
 ```js
-// 页面缩放
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -353,8 +362,9 @@ window.addEventListener('resize', () => {
 
 ### 双击全屏
 
+监听页面双击 `dblclick` 事件，通过调用 `requestFullscreen` 和 `exitFullscreen` 进入或退出全屏状态。
+
 ```js
-// 双击全屏
 window.addEventListener('dblclick', () => {
   let fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement;
   if (!fullscreenElement) {
@@ -363,30 +373,21 @@ window.addEventListener('dblclick', () => {
     } else if (canvas.webkitRequestFullscreen) {
       canvas.webkitRequestFullscreen();
     }
-    console.log('go fullscrenn')
-    scene.background = new THREE.Color(_this.state.backgroundColor)
+    console.log('进入全屏')
   } else {
     if (document.exitFullscreen) {
       document.exitFullscreen();
     } else if (document.webkitExitFullscreen) {
       document.webkitExitFullscreen();
     }
-    console.log('leave fullscrenn')
-    scene.background = '';
-    composer.render();
+    console.log('退出全屏')
   }
 })
 ```
 
-#### `💡` Element.requestFullscreen()
+#### `💡` Element.requestFullscreen
 
-Element.requestFullscreen() 方法用于发出异步请求使元素进入全屏模式。
-
-调用此API并不能保证元素一定能够进入全屏模式。如果元素被允许进入全屏幕模式，返回的Promise会resolve，并且该元素会收到一个fullscreenchange (en-US)事件，通知它已经进入全屏模式。如果全屏请求被拒绝，返回的promise会变成rejected并且该元素会收到一个fullscreenerror (en-US)事件。如果该元素已经从原来的文档中分离，那么该文档将会收到这些事件。
-
-早期的Fullscreen API实现总是会把这些事件发送给document，而不是调用的元素，所以你自己可能需要处理这样的情况。参考 Browser compatibility in [Page not yet written] 来得知哪些浏览器做了这个改动。
-
-注意：这个方法只能在用户交互或者设备方向改变的时候调用，否则将会失败。
+`Element.requestFullscreen()` 方法用于发出异步请求使元素进入全屏模式。调用此 `API` 并不能保证元素一定能够进入全屏模式。如果元素被允许进入全屏幕模式，返回的 `Promise` 会 `resolve`，并且该元素会收到一个 `fullscreenchange` 事件，通知它已经进入全屏模式。如果全屏请求被拒绝，返回的 `promise` 会变成 `rejected` 并且该元素会收到一个 `fullscreenerror` 事件。如果该元素已经从原来的文档中分离，那么该文档将会收到这些事件。
 
 **语法**：
 
@@ -394,26 +395,13 @@ Element.requestFullscreen() 方法用于发出异步请求使元素进入全屏�
 var Promise = Element.requestFullscreen(options);
 ```
 
-参数
-options 可选，一个FullscreenOptions (en-US)对象提供切换到全屏模式的控制选项。目前，唯一的选项是navigationUI (en-US)，这控制了是否在元素处于全屏模式时显示导航条UI。默认值是"auto"，表明这将由浏览器来决定是否显示导航条。
+* `options`：可选，一个 `FullscreenOptions` 对象提供切换到全屏模式的控制选项。目前，唯一的选项是 `navigationUI`，这控制了是否在元素处于全屏模式时显示导航条 `UI`。默认值是 `auto`，表明这将由浏览器来决定是否显示导航条。
 
-返回值
-在完成切换全屏模式后，返回一个已经用值 undefined resolved的Promise
+> `📌` 这个方法只能在用户交互或者设备方向改变的时候调用，否则将会失败。
 
-异常
-requestFullscreen() 通过拒绝返回的 Promise来生成错误条件，而不是抛出一个传统的异常。拒绝控制器接收以下的某一个值：
+#### `💡` Document.exitFullscreen
 
-TypeError
-在以下几种情况下，会抛出TypeError：
-文档中包含的元素未完全激活，也就是说不是当前活动的元素。
-元素不在文档之内。
-因为功能策略限制配置或其他访问控制，元素不被允许使用"fullscreen"功能。
-元素和它的文档是同一个节点。
-
-#### `💡` Document.exitFullscreen()
-
-Document.exitFullscreen() 方法用于让当前文档退出全屏模式（原文表述不准确，详见备注）。调用这个方法会让文档回退到上一个调用Element.requestFullscreen()方法进入全屏模式之前的状态。
-备注: 如果一个元素A在请求进去全屏模式之前，已经存在其他元素处于全屏状态，当这个元素A退出全屏模式之后，之前的元素仍然处于全屏状态。浏览器内部维护了一个全屏元素栈用于实现这个目的。
+`Document.exitFullscreen()` 方法用于让当前文档退出全屏模式。调用这个方法会让文档回退到上一个调用 `Element.requestFullscreen()` 方法进入全屏模式之前的状态。
 
 **语法**：
 
@@ -421,36 +409,25 @@ Document.exitFullscreen() 方法用于让当前文档退出全屏模式（原文
 document.exitFullscreen();
 ```
 
-### 鼠标事件监听
-
-```js
-const mouseFX = {
-  windowHalfX: window.innerWidth / 2,
-  windowHalfY: window.innerHeight / 2,
-  coordinates: (coordX, coordY) => {
-    mouseX = (coordX - mouseFX.windowHalfX) * 5;
-    mouseY = (coordY - mouseFX.windowHalfY) * 5;
-  },
-  onMouseMove: e => { mouseFX.coordinates(e.clientX, e.clientY) },
-  onTouchMove: e => { mouseFX.coordinates(e.changedTouches[0].clientX, e.changedTouches[0].clientY)}
-};
-document.addEventListener('mousemove', mouseFX.onMouseMove, false);
-document.addEventListener('touchmove', mouseFX.onTouchMove, false);
-```
-
-### 网格背景
-
-```css
-background: #164CCA;
-background-image: linear-gradient(rgba(3, 192, 60, .3) 1px, transparent 1px), linear-gradient(90deg, rgba(3, 192, 60, .3) 1px, transparent 1px);
-background-size: 1em 1em;
-```
+本文全部内容到这里都总结完毕了。
 
 > `🔗` 完整代码：<https://github.com/dragonir/3d/tree/master/src/containers/Floating>
 
 ## 总结
 
 本文知识点主要包含的的新知识：
+
+* `CSS` 网格背景
+* `MeshNormalMaterial` 法向材质
+* `FontLoader` 字体加载器
+* `TextGeometry` 文本缓冲几何体
+* `TorusBufferGeometry` 圆环缓冲几何体
+* `ConeBufferGeometry` 圆锥缓冲几何体
+* `OctahedronBufferGeometry` 八面缓冲几何体
+* `Three.js` 后期渲染
+* `GlitchPass` 通道
+* `Element.requestFullscreen`
+* `Document.exitFullscreen`
 
 > 想了解场景初始化、光照、阴影、基础几何体、网格、材质及其他 `Three.js` 的相关知识，可阅读我往期文章。**转载请注明原文地址和作者**。如果觉得文章对你有帮助，不要忘了**一键三连哦 👍**。
 
@@ -464,3 +441,5 @@ background-size: 1em 1em;
 * [6]. [Three.js 实现3D全景侦探小游戏](https://juejin.cn/post/7042298964468564005)
 * [7]. [Three.js实现炫酷的酸性风格3D页面](https://juejin.cn/post/7012996721693163528)
 * [8]. [www.ilithya.rocks](https://www.ilithya.rocks/)
+* [9]. [MDN requestFullScreen](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/requestFullScreen)
+* [10]. [MDN exitFullscreen](https://developer.mozilla.org/zh-CN/docs/Web/API/Document/exitFullscreen)
