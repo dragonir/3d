@@ -17,6 +17,7 @@ import Comic from './containers/Comic/index';
 import CityLowploy from './containers/CityLowploy/index';
 import Live from './containers/Live/index';
 import Floating from './containers/Floating/index';
+import Heart from './containers/Heart/index';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Route element={ <CityLowploy /> } path="/cityLowploy" />
           <Route element={ <Live /> } path="/live" />
           <Route element={ <Floating /> } path="/floating" />
+          <Route element={ <Heart /> } path="/heart" />
         </Routes>
       </Router>
     </div>
