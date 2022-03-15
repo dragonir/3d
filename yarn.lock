@@ -4665,6 +4665,11 @@ fs.realpath@^1.0.0:
   resolved "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
   integrity sha1-FQStJSMVjKpA20onh8sBQRmU6k8=
 
+fs@0.0.2:
+  version "0.0.2"
+  resolved "http://npm.tech.21cn.com/fs/-/fs-0.0.2.tgz#e1f244ef3933c1b2a64bd4799136060d0f5914f8"
+  integrity sha1-4fJE7zkzwbKmS9R5kTYGDQ9ZFPg=
+
 fsevents@^2.3.2, fsevents@~2.3.2:
   version "2.3.2"
   resolved "https://registry.npmjs.org/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
@@ -6704,6 +6709,11 @@ path-type@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
+
+path@^0.11.14:
+  version "0.11.14"
+  resolved "http://npm.tech.21cn.com/path/-/path-0.11.14.tgz#cbc7569355cb3c83afeb4ace43ecff95231e5a7d"
+  integrity sha1-y8dWk1XLPIOv60rOQ+z/lSMeWn0=
 
 performance-now@^2.1.0:
   version "2.1.0"
@@ -8874,6 +8884,14 @@ webpack-dev-server@^4.6.0:
     strip-ansi "^7.0.0"
     webpack-dev-middleware "^5.3.0"
     ws "^8.1.0"
+
+webpack-glsl-loader@^1.0.1:
+  version "1.0.1"
+  resolved "http://npm.tech.21cn.com/webpack-glsl-loader/-/webpack-glsl-loader-1.0.1.tgz#72a0e30192bd57947d60d6d505c915be680d0acc"
+  integrity sha1-cqDjAZK9V5R9YNbVBckVvmgNCsw=
+  dependencies:
+    fs "0.0.2"
+    path "^0.11.14"
 
 webpack-manifest-plugin@^4.0.2:
   version "4.0.2"
