@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React from 'react';
-import Stats from "three/examples/jsm/libs/stats.module";
+// import Stats from "three/examples/jsm/libs/stats.module";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
 import './libs/CTMLoader';
@@ -148,8 +148,8 @@ export default class Human extends React.Component {
       controls.maxPolarAngle = 1.5;
       window.addEventListener('resize', onWindowResize, false);
       // 性能工具
-      stats = new Stats();
-      document.documentElement.appendChild(stats.dom);
+      // stats = new Stats();
+      // document.documentElement.appendChild(stats.dom);
     }
 
     function onWindowResize() {
@@ -166,7 +166,7 @@ export default class Human extends React.Component {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
       _this.cube && (_this.cube.rotation.z += .05);
-      stats && stats.update();
+      // stats && stats.update();
       let time = clock.getDelta();
       TWEEN && TWEEN.update();
       controls && controls.update();

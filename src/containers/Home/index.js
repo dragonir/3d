@@ -21,6 +21,9 @@ import olympicImage from './images/olympic.png';
 import comicImage from './images/comic.png';
 import floatingImage from './images/floating.png';
 // import lowployImage from './images/lowploy.png';
+import liveImage from './images/live.png';
+import ringImage from './images/ring.png';
+
 
 import './index.css';
 
@@ -33,24 +36,24 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const workList = [
   {
-    link: '#/city',
-    title: '数字城市',
-    description: '🏙 3D数字城市 【⚠优化中】',
-    image: cityImage,
+    link: '#/human',
+    title: 'Metahuman',
+    description: '👦 元宇宙数字人类【⚠优化中】',
+    image: humanImage,
     three: true
   },
-  // {
-  //   link: '#/cityLowploy',
-  //   title: '低面数城市',
-  //   description: '🏙 3D数字城市 【⚠优化中】',
-  //   image: lowployImage,
-  //   three: true
-  // },
   {
     link: '#/olympic',
     title: '2022冬奥会3D趣味页面',
     description: '🐼 萌萌的冰墩墩和雪容融送给大家！',
     image: olympicImage,
+    three: true
+  },
+  {
+    link: '#/ring',
+    title: '艾尔登法环Logo',
+    description: '🔥 火焰效果老头环logo？',
+    image: ringImage,
     three: true
   },
   {
@@ -65,6 +68,13 @@ const workList = [
     title: '3D漫画',
     description: '🕷 spider man',
     image: comicImage,
+    three: true
+  },
+  {
+    link: '#/city',
+    title: '数字城市',
+    description: '🏙 3D数字城市 【⚠优化中】',
+    image: cityImage,
     three: true
   },
   {
@@ -96,10 +106,10 @@ const workList = [
     three: true
   },
   {
-    link: '#/human',
-    title: 'Metahuman',
-    description: '👦 元宇宙数字人类【⚠优化中】',
-    image: humanImage,
+    link: '#/live',
+    title: '虚拟主播',
+    description: '💃 虚拟主播初音未来【⚠优化中】',
+    image: liveImage,
     three: true
   },
   {
@@ -170,6 +180,13 @@ const workList = [
     description: '🗺 在地图上标记神庙、查询回忆点！',
     image: zeldaMapImage,
   },
+  // {
+  //   link: '#/cityLowploy',
+  //   title: '低面数城市',
+  //   description: '🏙 3D数字城市 【⚠优化中】',
+  //   image: lowployImage,
+  //   three: true
+  // },
 ];
 
 export default class Home extends React.Component {
