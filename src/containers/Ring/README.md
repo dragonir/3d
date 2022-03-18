@@ -1,3 +1,6 @@
+# Three.js 火焰效果实现艾尔登法环动态logo 🔥
+
+```js
 import './index.styl';
 import React from 'react';
 import * as THREE from './libs/three.module.js';
@@ -29,6 +32,7 @@ export default class Ring extends React.Component {
 
     const stats = new Stats();
     // document.documentElement.appendChild(stats.dom);
+
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
@@ -58,9 +62,9 @@ export default class Ring extends React.Component {
     ring.drag = 0.4;
     ring.airSpeed = 18;
     ring.windX = 0.1;
-		ring.windY = 0.2;
-	  ring.speed = 100;
-	  ring.massConservation = false;
+    ring.windY = 0.2;
+    ring.speed = 100;
+    ring.massConservation = false;
     ring.position.y = 4;
     ring.position.z = -6;
     scene.add(ring)
@@ -88,3 +92,4 @@ export default class Ring extends React.Component {
     )
   }
 }
+```
