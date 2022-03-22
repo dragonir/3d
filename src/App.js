@@ -19,6 +19,7 @@ import Live from './containers/Live/index';
 import Floating from './containers/Floating/index';
 import Heart from './containers/Heart/index';
 import Ring from './containers/Ring/index';
+import Scroll from './containers/Scroll/index';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           <Route element={ <Floating /> } path="/floating" />
           <Route element={ <Heart /> } path="/heart" />
           <Route element={ <Ring /> } path="/ring" />
+          <Route element={ <Scroll /> } path="/scroll" />
         </Routes>
       </Router>
     </div>
