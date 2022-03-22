@@ -2,11 +2,15 @@
 
 ![banner](./images/banner.gif)
 
+> 声明：本文涉及图文和模型素材仅用于个人学习、研究和欣赏，请勿二次修改、非法传播、转载、出版、商用、及进行其他获利行为。
+
 ## 背景
 
-本文使用 `React + Three.js` 技术栈，实现基于 `Fire.js` 的艾尔登法环 `Logo` 火焰效果，本文中涉及到的知识点包括：`Fire.js` 基本使用方法。
+《艾尔登法环》是最近比较火的一款游戏，观察可以发现它的 `Logo` 是由几个圆弧和线段构成。本文使用 `React + Three.js` 技术栈，实现具有火焰效果艾尔登法环 `Logo`，本文中涉及到的知识点包括：`Fire.js` 基本使用方法及 `Three.js` 的其他基础知识。
 
 ## 效果
+
+实现效果如 `👆` `banner` 图所示，页面主体由 `Logo` 图形构成，`Logo` 具有由远及近的加载效果，加载完毕后具有上下缓动动画效果。
 
 ![mobile](./images/mobile.png)
 
@@ -22,13 +26,13 @@
 
 ## 实现
 
-开始实现之前，先来了解一下 `Fire.js` 的基本使用方法。
+`Logo` 的火焰效果主要是通过 `Fire.js` 实现的， 开始实现之前先来了解一下它的基本用法。
 
 ### `💡 Fire.js`
 
-`Threejs` 提供了一个可以实现火焰和烟雾效果的扩展包，通过引用这个包，通过设置某些参数实现需要的效果。**（已经从新版中移除）**
+`Threejs` 提供了一个可以实现火焰和烟雾效果的扩展包，通过引用并设置参数可以实现非常逼真的火焰和厌恶效果。**【不过该扩展包已经从新版中移除】**
 
-**火焰设置可选属性参数**：
+**火焰设置可选属性**：
 
 * `color1`：内焰颜色
 * `color2`：外焰颜色
@@ -41,39 +45,41 @@
 * `swirl`：旋转
 * `drag`：拖拽
 * `airSpeed`：空气速度
-* `windX`：`X轴` 风向
-* `windY`：`Y轴` 风向
+* `windX`：`X` 轴风向
+* `windY`：`Y` 轴风向
 * `speed`：火焰速度
 * `massConservation`：质量守恒
 
-常用方法：
+**常用方法**：
 
 * 添加资源：`addSource(u, v, radius, density, windX, windY)`
 * 清除资源：`clearSources()`
 * 设置贴图：`setSourceMap(texture)`
 
-基本用法：
+**基本用法**：
+
+通过简单几步：创建载体、使用Fire构造函数初始化、添加火焰、添加到场景等简单几步，就可实现火焰效果。可以创建多个火源，多种火焰效果也可以叠加到同一个载体上。
 
 ```js
-var cube=new THREE.BoxBufferGeometry(30,30,30);
-fire=new THREE.Fire(cube,{
-  textureWidth:512,
-  textureHeight:512,
+const geometry = new THREE.PlaneBufferGeometry(10, 10);
+const fire = new THREE.Fire(geometry,{
+  textureWidth: 10,
+  textureHeight: 10,
   debug:false
 });
-fire.position.z=-2;
+fire.addSource(0.5, 0.1, 0.1, 1.0, 0.0, 1.0);
 scene.add(fire);
 ```
 
-实现效果：
+**实现效果**：
 
 ![fire](./images/fire.png)
 
-> `🔗` 亲手尝试在线调整火焰各种参数效果：[threejs/examples/webgl_fire.html](https://techbrood.com/threejs/examples/webgl_fire.html)
+> `🔗` 在线亲手尝试调整火焰各种参数效果：[threejs/examples/webgl_fire.html](https://techbrood.com/threejs/examples/webgl_fire.html)
 
 ### 资源引入
 
-引入开发所需的的模块资源，注意 `Three.js` 和 `Fire.js` 是从当前目录引入的**旧版**，**新版本已删除** `Fire.js`。`TWEEN` 用于实现简单的镜头补间动画、`ringTexture` 是需要显示火焰效果轮廓的贴图。
+引入开发所需的的模块资源，注意 `Three.js` 和 `Fire.js` 是从当前目录引入的**旧版本**，**新版本已删除** `Fire.js`。`TWEEN` 用于实现简单的镜头补间动画、`ringTexture` 是需要显示火焰效果轮廓的贴图。
 
 ```js
 import React from 'react';
@@ -83,13 +89,15 @@ import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
 import ringTexture from './images/ring.png';
 ```
 
-页面 `DOM` 结构非常简单，只包含一个渲染 `WEBGL`的容器 `#container`。
+页面 `DOM` 结构非常简单，只包含一个渲染 `WEBGL` 的容器 `#container`。
 
 ```js
 <div className='ring_page' id="container"></div>
 ```
 
 ### 场景初始化
+
+初始化渲染场景、相机和光源。（如若需要详细了解这部分知识可翻阅我往期的文章或阅读官网文档，本文不再赘述）
 
 ```js
 const container = document.getElementById('container');
@@ -111,11 +119,13 @@ scene.add(ambientLight);
 * `alpha`：`canvas` 是否开启透明度，默认为 `false`。
 * `renderer.setClearAlpha(alpha : Float)`：设置 `alpha` 透明度值，合法参数是一个 `0.0` 到 `1.0` 之间的浮点数。
 
-在上面代码中，通过设置 `new THREE.WebGLRenderer({ antialias: true,  alpha: true })` 和 `renderer.setClearAlpha(0)` 可以将 `canvas` 背景设置为透明，这样就可以通过 `CSS` 设置背景样式。，本例中的背景图片就是通过 `CSS` 设置的，而不是 `Sence.background`。
+以上代码中，通过设置 `new THREE.WebGLRenderer({ antialias: true,  alpha: true })` 和 `renderer.setClearAlpha(0)` 可以将 `canvas` 背景设置为透明，这样就可以通过 `CSS` 设置背景样式。本例中的背景图片就是通过 `CSS` 设置的，而不是 `Sence.background`。
 
 > `🌵` 当开启 `alpha: true` 时，透明度默认为 `0`，可以不用写 `renderer.setClearAlpha(0)`。
 
 ### 添加Logo主体
+
+创建一个 `PlaneBufferGeometry` 平面作为火焰 `Logo` 载体，`Logo` 形状通过调用 `setSourceMap` 使用贴图生成，然后添加 `Fire.js` 的各种参数，调整平面的位置，最后将它添加到场景中即可。
 
 ```js
 const ring = new Fire(new THREE.PlaneBufferGeometry(20, 25), {
@@ -146,9 +156,9 @@ scene.add(ring)
 
 ![texture](./images/texture.png)
 
-> `🌵` 实际应用中要使用白色，为了展示示例我显示了黑色。
+> `🌵` `Logo` 形状也可直接使用圆环等几何体拼接生成，本文为了简单省时并且更加逼真，直接使用了自己在 `Photoshop` 中绘制的贴图。注意贴图主体部分实际应用中要使用**白色**，为了便于展示我改成了黑色。
 
-### 缩放适配
+### 页面缩放适配
 
 ```js
 window.addEventListener('resize', () => {
@@ -160,6 +170,8 @@ window.addEventListener('resize', () => {
 
 ### 镜头补间动画
 
+页面刚开始加载完成时由远及近的镜头补间动画。
+
 ```js
 const controls = new OrbitControls(camera, renderer.domElement);
 Animations.animateCamera(camera, controls, { x: 0, y: 0, z: 22 }, { x: 0, y: 0, z: 0 }, 2400, () => {
@@ -169,6 +181,8 @@ Animations.animateCamera(camera, controls, { x: 0, y: 0, z: 22 }, { x: 0, y: 0, 
 
 ### 页面重绘动画
 
+图案上线往复运动的缓动动画及渲染更新。
+
 ```js
 let step = 0;
 const animate = () => {
@@ -177,11 +191,11 @@ const animate = () => {
   stats && stats.update();
   TWEEN && TWEEN.update();
   step += .03;
-  ring && (ring.position.y = Math.abs(2.2 + Math.sin(step)))
+  ring && (ring.position.y = Math.abs(2.2 + Math.sin(step)));
 }
 ```
 
-到这里，一个**低配版**的艾尔登法环 `Logo` 所有效果都全部实现了 `😂`，希望随着自己图形学方面知识的积累，后续可以通过 `shader` 实现更加炫酷的效果。 完整代码可通过下方链接查看。
+到这里，一个**低配版**的艾尔登法环 `Logo` 所有效果都全部实现了 `😂`，希望随着自己图形学方面知识的积累，后续可以通过 `shader` 实现更加炫酷的效果 `🔥`。 完整代码可通过下方链接查看。
 
 ![banner](./images/banner.gif)
 
@@ -190,6 +204,9 @@ const animate = () => {
 ## 总结
 
 本文知识点主要包含的的新知识：
+
+* `Fire.js`
+* 设置渲染背景透明度
 
 > 想了解场景初始化、光照、阴影、基础几何体、网格、材质及其他**Three.js**的相关知识，可阅读我往期文章。**转载请注明原文地址和作者**。如果觉得文章对你有帮助，不要忘了**一键三连哦 👍**。
 
