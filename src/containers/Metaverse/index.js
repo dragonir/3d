@@ -1,10 +1,24 @@
 import './index.styl';
 import React from 'react';
-import * as THREE from "three";
+import * as THREE from './libs/three.module.js';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import astronautModel from './models/astronaut.glb';
 import CANNON from 'cannon';
 import heightMapImage from './images/Heightmap.png';
+import CannonHelper from './CannonHelper';
+import JoyStick from './JoyStick';
+import { ModifierStack, Cloth } from './libs/modifier';
+import flagTexture from './images/flag.png';
+import snowflakeTexture from './images/snowflake.png';
+
+// import './libs/EffectComposer.js';
+// import './libs/ShaderPass.js';
+// import './libs/RenderPass.js';
+// import './libs/MaskPass.js';
+
+import './libs/LegacyJSONLoader.js';
+import './libs/CopyShader.js';
+import './libs/HorizontalTiltShiftShader.js';
 
 export default class Metaverse extends React.Component {
   componentDidMount() {
@@ -34,10 +48,34 @@ export default class Metaverse extends React.Component {
     camera.position.set(1, 1, -1);
     camera.lookAt(scene.position);
 
+    // cannon
+    var fixedTimeStep = 1.0 / 60.0;
+    var helper = new CannonHelper(scene);
+    // var physics = {};/
+
+    // world
+    const world = new CANNON.World();
+    world.broadphase = new CANNON.SAPBroadphase(world);
+    world.gravity.set(0, -10, 0);
+    world.defaultContactMaterial.friction = 0;
+    console.log(world)
+    const groundMaterial = new CANNON.Material('groundMaterial');
+    const wheelMaterial = new CANNON.Material('wheelMaterial');
+    const wheelGroundContactMaterial = new CANNON.ContactMaterial(wheelMaterial, groundMaterial, {
+      friction: 0,
+      restitution: 0,
+      contactEquationStiffness: 1000
+    });
+    world.addContactMaterial(wheelGroundContactMaterial);
+
+    var light = new THREE.DirectionalLight(new THREE.Color("gray"), 1);
+    light.position.set(1, 1, 1).normalize();
+    scene.add(light);
+
     // mesh
-    const geometry = new THREE.BoxBufferGeometry(.5, 1, .5);
+    var geometry = new THREE.BoxBufferGeometry(.5, 1, .5);
     geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, .5, 0));
-    const material = new THREE.MeshNormalMaterial({
+    var material = new THREE.MeshNormalMaterial({
       transparent: true,
       opacity: 0
     });
@@ -45,11 +83,11 @@ export default class Metaverse extends React.Component {
     scene.add(mesh);
 
     // 光源
-    const light = new THREE.DirectionalLight(0xffffff, .5);
-    light.position.set(0, 1, 0);
-    light.castShadow = true;
-    light.target = mesh;
-    mesh.add(light);
+    var directionalLight = new THREE.DirectionalLight(0xffffff, .5);
+    directionalLight.position.set(0, 1, 0);
+    directionalLight.castShadow = true;
+    directionalLight.target = mesh;
+    mesh.add(directionalLight);
 
     // 模型
     const mixers = [];
@@ -73,60 +111,60 @@ export default class Metaverse extends React.Component {
     });
 
     // add tweening
-    // Object.defineProperty(THREE.Object3D.prototype, {
-    //   x: {
-    //     get: () => {
-    //       return this.position.x;
-    //     },
-    //     set: v => {
-    //       this.position.x = v;
-    //     }
-    //   },
-    //   y: {
-    //     get: () => {
-    //       return this.position.y;
-    //     },
-    //     set: v => {
-    //       this.position.y = v;
-    //     }
-    //   },
-    //   z: {
-    //     get: () => {
-    //       return this.position.z;
-    //     },
-    //     set: v => {
-    //       this.position.z = v;
-    //     }
-    //   },
-    //   rotationX: {
-    //     get: () => {
-    //       return this.rotation.x;
-    //     },
-    //     set: v => {
-    //       this.rotation.x = v;
-    //     }
-    //   },
-    //   rotationY : {
-    //     get: () => {
-    //       return this.rotation.y;
-    //     },
-    //     set: v => {
-    //       this.rotation.y = v;
-    //     }
-    //   },
-    //   rotationZ: {
-    //     get: () => {
-    //       return this.rotation.z;
-    //     },
-    //     set: v => {
-    //       this.rotation.z = v;
-    //     }
-    //   }
-    // });
+    Object.defineProperties(THREE.Object3D.prototype, {
+      x: {
+        get: () => {
+          return this.position.x;
+        },
+        set: v => {
+          this.position.x = v;
+        }
+      },
+      y: {
+        get: () => {
+          return this.position.y;
+        },
+        set: v => {
+          this.position.y = v;
+        }
+      },
+      z: {
+        get: () => {
+          return this.position.z;
+        },
+        set: v => {
+          this.position.z = v;
+        }
+      },
+      rotationX: {
+        get: () => {
+          return this.rotation.x;
+        },
+        set: v => {
+          this.rotation.x = v;
+        }
+      },
+      rotationY : {
+        get: () => {
+          return this.rotation.y;
+        },
+        set: v => {
+          this.rotation.y = v;
+        }
+      },
+      rotationZ: {
+        get: () => {
+          return this.rotation.z;
+        },
+        set: v => {
+          this.rotation.z = v;
+        }
+      }
+    });
 
     // 添加地形
     var sizeX = 128, sizeY = 128, minHeight = 0, maxHeight = 60;
-    var startPosition = new CANNON.Vec3(0, maxHeight - 3, sizeY * .5 - 10);
+    // var startPosition = new CANNON.Vec3(0, maxHeight - 3, sizeY * .5 - 10);
     const img2matrix = {
       fromImage: (image, width, depth, minHeight, maxHeight) => {
         width = width | 0;
@@ -168,6 +206,103 @@ export default class Metaverse extends React.Component {
       }
     }
 
+    // 旗帜
+    var flagGeometry = new THREE.BoxBufferGeometry(.15, 2, .15);
+    flagGeometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, 1, 0));
+    var flagMaterial = new THREE.MeshNormalMaterial({
+      transparent: true,
+      opacity: 0
+    });
+    var flagLocation = new THREE.Mesh(flagGeometry, flagMaterial);
+    scene.add(flagLocation);
+    flagLocation.position.x = 10;
+    flagLocation.position.z = 50;
+    flagLocation.rotateY(Math.PI);
+
+    //flag pole
+    var flagPoleGeometry = new THREE.CylinderGeometry(.03, .03, 4, 32);
+    var flagPoleMaterial = new THREE.MeshPhongMaterial({
+      color: new THREE.Color('gray')
+    });
+    var cylinder = new THREE.Mesh(flagPoleGeometry, flagPoleMaterial);
+    cylinder.geometry.center();
+    cylinder.castShadow = true;
+    flagLocation.add(cylinder);
+
+    //flag light
+    var pointflagLight = new THREE.PointLight(new THREE.Color('red'), 1.5, 5);
+    pointflagLight.position.set(0, 0, 0);
+    flagLocation.add(pointflagLight);
+
+    var flagLight = new THREE.DirectionalLight(new THREE.Color('white'), 0);
+    flagLight.position.set(0, 0, 0);
+    flagLight.castShadow = true;
+    flagLight.target = flagLocation;
+    scene.add(flagLight);
+
+    //flag
+    var texture = new THREE.TextureLoader().load(flagTexture);
+    var plane = new THREE.Mesh(new THREE.PlaneGeometry(600, 430, 20, 20, true), new THREE.MeshBasicMaterial({
+      map: texture,
+      side: THREE.DoubleSide
+    }));
+    plane.scale.set(.0025, .0025, .0025);
+    plane.position.set(0, 1.5, 0);
+    plane.position.x = .75;
+    plane.castShadow = true;
+
+    flagLocation.add(plane);
+    addModifier(plane);
+
+    // 天空
+    var textureLoader = new THREE.TextureLoader();
+    textureLoader.crossOrigin = '';
+
+    const imageSrc = textureLoader.load(snowflakeTexture);
+    const shaderPoint = THREE.ShaderLib.points;
+
+    var uniforms = THREE.UniformsUtils.clone(shaderPoint.uniforms);
+    uniforms.map.value = imageSrc;
+
+    var matts = new THREE.PointsMaterial({
+      size: 2,
+      color: new THREE.Color('white'),
+      map: uniforms.map.value,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      transparent: true,
+      opacity: 0.75
+    });
+
+    var geo = new THREE.Geometry();
+    for (var i = 0; i < 1000; i++) {
+      var star = new THREE.Vector3();
+      geo.vertices.push(star);
+    }
+
+    var sparks = new THREE.Points(geo, matts);
+    sparks.scale.set(1, 1, 1);
+    scene.add(sparks);
+
+    const randnum = (min, max) => Math.round(Math.random() * (max - min) + min);
+
+    sparks.geometry.vertices.map((d, i) => {
+      d.y = randnum(30, 40);
+      d.x = randnum(-500, 500);
+      d.z = randnum(-500, 500);
+      return true;
+    });
+
+    //flag wave animation
+    var modifier, cloth;
+    function addModifier(mesh) {
+      modifier = new ModifierStack(mesh);
+      cloth = new Cloth(3, 0);
+      cloth.setForce(0.2, -0.2, -0.2);
+    }
+    modifier.addModifier(cloth);
+    cloth.lockXMin(0);
+
     var check;
     Promise.all([
       img2matrix.fromUrl(heightMapImage, sizeX, sizeY, minHeight, maxHeight)()
@@ -179,6 +314,7 @@ export default class Metaverse extends React.Component {
       terrainBody.position.set(-sizeX * terrainShape.elementSize / 2, -10, sizeY * terrainBody.elementSize / 2);
       terrainBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
       world.add(terrainBody);
+      helper.addVisual(terrainBody, 'landscape');
 
       var raycastHelperGeometry = new THREE.CylinderBufferGeometry(0, 1, 5, 1.5);
       raycastHelperGeometry.translate(0, 0, 0);
@@ -186,41 +322,62 @@ export default class Metaverse extends React.Component {
       const raycastHelperMesh = new THREE.Mesh(raycastHelperGeometry, new THREE.MeshNormalMaterial());
       scene.add(raycastHelperMesh);
 
-      // const check = () => {
-      //   var raycaster = new THREE.Raycaster(mesh.position, new THREE.Vector3(0, -1, 0));
-      //   var intersects = raycaster.intersectObject(terrainBody.threemesh.children[0]);
-      //   if (intersects.length > 0) {
-      //     raycastHelperMesh.position.set(0, 0, 0);
-      //     raycastHelperMesh.lookAt(intersects[0].face.normal);
-      //     raycastHelperMesh.position.copy(intersects[0].point);
-      //   }
-      //   mesh.position.y = intersects && intersects[0] ? intersects[0].point.y + .1 : 30;
+      check = function () {
+        var raycaster = new THREE.Raycaster(mesh.position, new THREE.Vector3(0, -1, 0));
+        var intersects = raycaster.intersectObject(terrainBody.threemesh.children[0]);
+        if (intersects.length > 0) {
+          raycastHelperMesh.position.set(0, 0, 0);
+          raycastHelperMesh.lookAt(intersects[0].face.normal);
+          raycastHelperMesh.position.copy(intersects[0].point);
+        }
+        mesh.position.y = intersects && intersects[0] ? intersects[0].point.y + .1 : 30;
 
-      //   var raycaster2 = new THREE.Raycaster(flagLocation.position, new THREE.Vector3(0, -1, 0));
-      //   var intersects2 = raycaster2.intersectObject(terrainBody.threemesh.children[0]);
-      //   flagLocation.position.y = intersects2 && intersects2[0] ? intersects2[0].point.y + .5 : 30;
-      //   flagLight.position.x = flagLocation.position.x + 5;
-      //   flagLight.position.y = flagLocation.position.y + 50;
-      //   flagLight.position.z = flagLocation.position.z;
-      // }
+        var raycaster2 = new THREE.Raycaster(flagLocation.position, new THREE.Vector3(0, -1, 0));
+        var intersects2 = raycaster2.intersectObject(terrainBody.threemesh.children[0]);
+        flagLocation.position.y = intersects2 && intersects2[0] ? intersects2[0].point.y + .5 : 30;
+        flagLight.position.x = flagLocation.position.x + 5;
+        flagLight.position.y = flagLocation.position.y + 50;
+        flagLight.position.z = flagLocation.position.z;
+      }
     });
 
-
-
-    // world
-    const world = new CANNON.World();
-    world.broadphase = new CANNON.SAPBroadphase(world);
-    world.gravity.set(0, -10, 0);
-    world.defaultContactMaterial.friction = 0;
-    console.log(world)
-    const groundMaterial = new CANNON.Material('groundMaterial');
-    const wheelMaterial = new CANNON.Material('wheelMaterial');
-    const wheelGroundContactMaterial = new CANNON.ContactMaterial(wheelMaterial, groundMaterial, {
-      friction: 0,
-      restitution: 0,
-      contactEquationStiffness: 1000
+    // joystick 控制器
+    var js = { forward: 0, turn: 0 };
+    new JoyStick({
+      onMove: joystickCallback
     });
-    world.addContactMaterial(wheelGroundContactMaterial);
+    function joystickCallback(forward, turn) {
+      js.forward = forward;
+      js.turn = -turn;
+    }
+    function updateDrive(forward = js.forward, turn = js.turn) {
+      const maxSteerVal = .05;
+      const maxForce = .15;
+      const force = maxForce * forward;
+      const steer = maxSteerVal * turn;
+      if (forward !== 0) {
+        mesh.translateZ(force);
+        if (clip2) clip2.play();
+        if (clip1) clip1.stop();
+      } else {
+        if (clip2) clip2.stop();
+        if (clip1) clip1.play();
+      }
+      mesh.rotateY(steer);
+    }
+
+    // 第三人称视角
+    var followCam = new THREE.Object3D();
+    followCam.position.copy(camera.position);
+    scene.add(followCam);
+    followCam.parent = mesh;
+
+    function updateCamera () {
+      if (followCam) {
+        camera.position.lerp(followCam.getWorldPosition(new THREE.Vector3()), .05);
+        camera.lookAt(mesh.position.x, mesh.position.y + .5, mesh.position.z);
+      }
+    }
 
     // 缩放监听
     window.addEventListener('resize', () => {
@@ -230,14 +387,51 @@ export default class Metaverse extends React.Component {
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     }, false);
 
-    const ambientLight = new THREE.AmbientLight(0xdddddd);
-    scene.add(ambientLight);
+    // 特效
+    // var SCALE = 2;
+    // var hTilt = new THREE.ShaderPass(THREE.HorizontalTiltShiftShader);
+    // hTilt.enabled = false;
+    // hTilt.uniforms.h.value = 4 / (SCALE * window.innerHeight);
 
-    // const clock = new THREE.Clock();
+    // var renderPass = new THREE.RenderPass(scene, camera);
+    // var effectCopy = new THREE.ShaderPass(THREE.CopyShader);
+    // effectCopy.renderToScreen = true;
+
+    // var composer = new THREE.EffectComposer(renderer);
+    // composer.addPass(renderPass);
+    // composer.addPass(hTilt);
+    // composer.addPass(effectCopy);
+
+    // var controls = new function () {
+    //   this.hTilt = false;
+    //   this.hTiltR = 0.5;
+    //   this.onChange = function () {
+    //     hTilt.enabled = controls.hTilt;
+    //     hTilt.uniforms.r.value = controls.hTiltR;
+    //   }
+    // };
+
+    const clock = new THREE.Clock();
+    var lastTime;
     const animate = () => {
-      // const elapsedTime = clock.getElapsedTime();
+      updateCamera();
+      updateDrive();
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
+
+      let delta = clock.getDelta();
+      mixers.map(x => x.update(delta));
+      const now = Date.now();
+      if (lastTime === undefined) lastTime = now;
+      const dt = (Date.now() - lastTime) / 1000.0;
+      lastTime = now;
+      world.step(fixedTimeStep, dt);
+      helper.updateBodies(world);
+      if (check) check();
+      // display coordinates
+      // info.innerHTML = `<span>X: </span>${mesh.position.x.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Y: </span>${mesh.position.y.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Z: </span>${mesh.position.z.toFixed(2)}`
+      // flag
+      modifier && modifier.apply();
     }
     animate();
   }

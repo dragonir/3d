@@ -1,4 +1,9 @@
-class CannonHelper {
+// import * as THREE from './libs/three.min.js';
+// const THREE = require('./libs/three.min.js');
+import * as THREE from './libs/three.module.js';
+import CANNON from 'cannon';
+
+export default class CannonHelper {
   constructor(scene) {
     this.scene = scene;
   }
@@ -92,7 +97,7 @@ class CannonHelper {
       body.threemesh = mesh;
       mesh.castShadow = castShadow;
       mesh.receiveShadow = receiveShadow;
-      this.scene.add(nesh);
+      this.scene.add(mesh);
     }
   }
 
@@ -206,7 +211,7 @@ class CannonHelper {
             }
           ];
           setGradient (geometry, cols, 'z', rev);
-          function setGradient(geometry, colors, axix, reverse) {
+          function setGradient(geometry, colors, axis, reverse) {
             geometry.computeBoundingBox();
             var bbox = geometry.boundingBox;
             var size = new THREE.Vector3().subVectors(bbox.max, bbox.min);
@@ -231,15 +236,65 @@ class CannonHelper {
             }
           }
           var mat = new THREE.MeshLambertMaterial({
-            vertexColors: THREE.vertexColors,
+            vertexColors: THREE.VertexColors,
             wireframe: false
           });
           mesh = new THREE.Mesh(geometry, mat);
           break;
         case CANNON.Shape.types.TRIMESH:
+          geometry = new THREE.Geometry();
+          v0 = new CANNON.Vec3();
+          v1 = new CANNON.Vec3();
+          v2 = new CANNON.Vec3();
+          for (let i=0; i< shape.indices.length / 3; i++) {
+            shape.getTriangleVertices(i, v0, v1, v2);
+            geometry.vertices.push(
+              new THREE.Vector3(v0.x, v0.y, v0.z),
+              new THREE.Vector3(v1.x, v1.y, v1.z),
+              new THREE.Vector3(v2.x, v2.y, v2.z)
+            );
+            var j = geometry.vertices.length - 3;
+            geometry.faces.push(new THREE.Face3(j, j + 1, j + 2));
+          }
+          geometry.computeBoundingSphere();
+          geometry.computeFaceNormals();mesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({
+            color: 0x888888,
+            wireframe: true,
+            transparent: true,
+            opacity: 0
+          }));
           break;
+        default:
+          throw new Error('Visual type not recognized: ' + shape.type);
       }
-    })
+
+      mesh.receiveShadow = receiveShadow;
+      mesh.castShadow = castShadow;
+
+      mesh.traverse(function (child) {
+        if (child.isMesh) {
+          child.castShadow = castShadow;
+          child.receiveShadow = receiveShadow;
+        }
+      });
+
+      var o = body.shapeOffsets[index];
+      var q = body.shapeOrientations[index++];
+      mesh.position.set(o.x, o.y, o.z);
+      mesh.quaternion.set(q.x, q.y, q.z, q.w);
+
+      obj.add(mesh);
+    });
+
+    return obj;
   }
 
+  updateBodies (world) {
+    world.bodies.forEach(function(body) {
+      if (body.threemesh !== undefined) {
+        body.threemesh.position.copy(body.position);
+        body.threemesh.quaternion.copy(body.quaternion);
+      }
+    });
+  }
 }
