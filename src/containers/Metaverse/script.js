@@ -214,7 +214,7 @@ class CannonHelper {
           var rev = true;
           var cols = [{
             stop: 0,
-            color: new THREE.Color('#B0E0E6')
+            color: new THREE.Color('#03c03c')
           }, {
             stop: .25,
             color: new THREE.Color('#CD853F')

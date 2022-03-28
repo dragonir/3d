@@ -1,5 +1,5 @@
 /* eslint-disable */
-THREE.GLTFLoader = ( function () {
+export const GLTFLoader = ( function () {
 
 	function GLTFLoader( manager ) {
 
