@@ -2,28 +2,31 @@ import './index.styl';
 import React from 'react';
 import * as THREE from './libs/three.module';
 import { GLTFLoader } from './libs/GLTFLoader';
-import { ModifierStack, Cloth } from './libs/modifier';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
-import { CopyShader } from 'three/examples/jsm/shaders/CopyShader';
-import { HorizontalTiltShiftShader } from 'three/examples/jsm/shaders/HorizontalTiltShiftShader';
+import { img2matrix, randnum } from './scripts/Utils';
 import CANNON from 'cannon';
 import CannonHelper from './scripts/CannonHelper';
 import JoyStick from './scripts/JoyStick';
-import { img2matrix, randnum } from './scripts/Utils';
 import foxModel from './models/Fox.glb';
+import Shelter from './models/Shelter.glb';
 import heightMapImage from './images/Heightmap.png';
-import flagTexture from './images/flag.png';
 import snowflakeTexture from './images/snowflake.png';
 import Stats from "three/examples/jsm/libs/stats.module";
 
 export default class Metaverse extends React.Component {
+  constructor(props) {
+    super(props);
+    this.scene = null;
+  }
+
   componentDidMount() {
     this.initThree();
   }
 
+  componentWillUnmount () {
+  }
+
   initThree = () => {
+
     const stats = new Stats();
     document.documentElement.appendChild(stats.dom);
 
@@ -34,11 +37,13 @@ export default class Metaverse extends React.Component {
       alpha: true
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMapSoft = true;
     renderer.shadowMap.type = THREE.PCFShadowMap;
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .01, 100000);
+    const scene = new THREE.Scene();
+    this.scene = scene;
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .01, 100000);
     camera.position.set(1, 1, -1);
     camera.lookAt(scene.position);
 
@@ -50,12 +55,12 @@ export default class Metaverse extends React.Component {
       camera.updateProjectionMatrix();
     }, false);
 
-    const AmbientLigh = new THREE.AmbientLight(0xffffff, 1);
-    scene.add(AmbientLigh)
+    const ambientLight = new THREE.AmbientLight(0xffffff, .4);
+    scene.add(ambientLight)
 
     // cannon
     var fixedTimeStep = 1.0 / 60.0;
-    var helper = new CannonHelper(scene);
+    const helper = new CannonHelper(scene);
     const world = new CANNON.World();
     world.broadphase = new CANNON.SAPBroadphase(world);
     world.gravity.set(0, -10, 0);
@@ -67,7 +72,7 @@ export default class Metaverse extends React.Component {
       restitution: 0,
       contactEquationStiffness: 1000
     });
-    // 给世界添加contactMaterial
+    // 给世界添加 contactMaterial
     world.addContactMaterial(wheelGroundContactMaterial);
 
     // 添加 front & back 光源
@@ -75,68 +80,44 @@ export default class Metaverse extends React.Component {
     light.position.set(1, 1, 1).normalize();
     scene.add(light);
 
-    // 后期特效
-    var SCALE = 2;
-    var hTilt = new ShaderPass(HorizontalTiltShiftShader);
-    hTilt.enabled = false;
-    hTilt.uniforms.h.value = 4 / (SCALE * window.innerHeight);
-
-    var renderPass = new RenderPass(scene, camera);
-    var effectCopy = new ShaderPass(CopyShader);
-    effectCopy.renderToScreen = true;
-
-    var composer = new EffectComposer(renderer);
-    composer.addPass(renderPass);
-    composer.addPass(hTilt);
-    composer.addPass(effectCopy);
-
-    //===================================================== model
+    // target
     var geometry = new THREE.BoxBufferGeometry(.5, 1, .5);
     geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0.5, 0));
-    var material = new THREE.MeshNormalMaterial({
+    const target = new THREE.Mesh(geometry, new THREE.MeshNormalMaterial({
       transparent: true,
       opacity: 0
-    });
-    var mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
+    }));
+    scene.add(target);
 
     var directionalLight = new THREE.DirectionalLight(new THREE.Color('white'), .5);
     directionalLight.position.set(0, 1, 0);
     directionalLight.castShadow = true;
-    directionalLight.target = mesh;
-    mesh.add(directionalLight);
+    directionalLight.target = target;
+    target.add(directionalLight);
 
-    // 添加模型
-    var mixers = [];
-    var clip1;
-    var clip2;
-    var loader = new GLTFLoader();
-    loader.load(foxModel, function (object) {
-      object.scene.traverse(function (node) {
-        if (node instanceof THREE.Mesh) {
-          node.castShadow = true;
-          node.material.side = THREE.DoubleSide;
+    // 添加狐狸模型
+    var mixers = [], clip1, clip2;
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load(foxModel, mesh => {
+      mesh.scene.traverse(child => {
+        if (child instanceof THREE.Mesh) {
+          child.castShadow = true;
+          child.material.side = THREE.DoubleSide;
         }
       });
-      var player = object.scene;
-      player.position.set(0, -.1, 0);
+      var player = mesh.scene;
+      player.position.set(0, -.01, 0);
       player.scale.set(.008, .008, .008);
-      mesh.add(player);
-
+      target.add(player);
       var mixer = new THREE.AnimationMixer(player);
-      clip1 = mixer.clipAction(object.animations[0]);
-      clip2 = mixer.clipAction(object.animations[1]);
+      clip1 = mixer.clipAction(mesh.animations[0]);
+      clip2 = mixer.clipAction(mesh.animations[1]);
       clip2.timeScale = 1.6;
       mixers.push(mixer);
     });
 
     // 添加地形
-    var sizeX = 128,
-      sizeY = 128,
-      minHeight = 0,
-      maxHeight = 60;
-    // can add an array if things
-    var check;
+    var sizeX = 128, sizeY = 128, minHeight = 0, maxHeight = 60, check = null;
     Promise.all([
       img2matrix.fromUrl(heightMapImage, sizeX, sizeY, minHeight, maxHeight)(),
     ]).then(function (data) {
@@ -153,8 +134,8 @@ export default class Metaverse extends React.Component {
       raycastHelperGeometry.rotateX(Math.PI / 2);
       var raycastHelperMesh = new THREE.Mesh(raycastHelperGeometry, new THREE.MeshNormalMaterial());
       scene.add(raycastHelperMesh);
-      check = function () {
-        var raycaster = new THREE.Raycaster(mesh.position, new THREE.Vector3(0, -1, 0));
+      check = () => {
+        var raycaster = new THREE.Raycaster(target.position, new THREE.Vector3(0, -1, 0));
         var intersects = raycaster.intersectObject(terrainBody.threemesh.children[0]);
         if (intersects.length > 0) {
           raycastHelperMesh.position.set(0, 0, 0);
@@ -162,78 +143,61 @@ export default class Metaverse extends React.Component {
           raycastHelperMesh.position.copy(intersects[0].point);
         }
         // 将模型放置在地形上
-        mesh.position.y = intersects && intersects[0] ? intersects[0].point.y + 0.1 : 30;
-        // 标志旗帜
-        var raycaster2 = new THREE.Raycaster(flagLocation.position, new THREE.Vector3(0, -1, 0));
+        target.position.y = intersects && intersects[0] ? intersects[0].point.y + 0.1 : 30;
+        // 标志避难所
+        var raycaster2 = new THREE.Raycaster(shelterLocation.position, new THREE.Vector3(0, -1, 0));
         var intersects2 = raycaster2.intersectObject(terrainBody.threemesh.children[0]);
-        flagLocation.position.y = intersects2 && intersects2[0] ? intersects2[0].point.y + .5 : 30;
-        flagLight.position.y = flagLocation.position.y + 50;
-        flagLight.position.x = flagLocation.position.x + 5
-        flagLight.position.z = flagLocation.position.z;
+        shelterLocation.position.y = intersects2 && intersects2[0] ? intersects2[0].point.y + .5 : 30;
+        shelterLight.position.y = shelterLocation.position.y + 50;
+        shelterLight.position.x = shelterLocation.position.x + 5
+        shelterLight.position.z = shelterLocation.position.z;
       }
     });
 
-    // 旗帜
-    var flagGeometry = new THREE.BoxBufferGeometry(0.15, 2, 0.15);
-    flagGeometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 1, 0));
-    var flagMaterial = new THREE.MeshNormalMaterial({
+    // 避难所
+    const shelterGeometry = new THREE.BoxBufferGeometry(0.15, 2, 0.15);
+    shelterGeometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 1, 0));
+    const shelterLocation = new THREE.Mesh(shelterGeometry, new THREE.MeshNormalMaterial({
       transparent: true,
       opacity: 0
-    });
-    var flagLocation = new THREE.Mesh(flagGeometry, flagMaterial);
-    scene.add(flagLocation);
-    flagLocation.position.x = 10;
-    flagLocation.position.z = 50;
-    flagLocation.rotateY(Math.PI);
-
-    // 旗帜点
-    var flagPoleGeometry = new THREE.CylinderGeometry(.03, .03, 4, 32);
-    var flagPloeMaterial = new THREE.MeshPhongMaterial({
-      color: new THREE.Color('gray')
-    });
-    var cylinder = new THREE.Mesh(flagPoleGeometry, flagPloeMaterial);
-    cylinder.geometry.center();
-    cylinder.castShadow = true;
-    flagLocation.add(cylinder);
-
-    // 旗帜点光源
-    var pointflagLight = new THREE.PointLight(new THREE.Color('red'), 1.5, 5);
-    pointflagLight.position.set(0, 0, 0);
-    flagLocation.add(pointflagLight);
-    var flagLight = new THREE.DirectionalLight(new THREE.Color('white'), 0);
-    flagLight.position.set(0, 0, 0);
-    flagLight.castShadow = true;
-    flagLight.target = flagLocation;
-    scene.add(flagLight);
-    // 旗帜
-    var plane = new THREE.Mesh(new THREE.PlaneGeometry(600, 430, 20, 20, true), new THREE.MeshBasicMaterial({
-      map: new THREE.TextureLoader().load(flagTexture),
-      side: THREE.DoubleSide
     }));
-    plane.scale.set(.0025, .0025, .0025);
-    plane.position.set(0, 1.5, 0);
-    plane.position.x = .75;
-    plane.castShadow = true;
-    flagLocation.add(plane);
-    addModifier(plane);
+    shelterLocation.position.x = 10;
+    shelterLocation.position.z = 50;
+    shelterLocation.rotateY(Math.PI);
+    scene.add(shelterLocation);
 
-    // 旗帜摆动动画
-    var modifier, cloth;
-    function addModifier(mesh) {
-      modifier = new ModifierStack(mesh);
-      cloth = new Cloth(3, 0);
-      cloth.setForce(0.2, -0.2, -0.2);
-    }
-    modifier.addModifier(cloth);
-    cloth.lockXMin(0);
+    // 避难所模型
+    gltfLoader.load(Shelter, mesh => {
+      mesh.scene.traverse(child => {
+        child.castShadow = true;
+      });
+      mesh.scene.scale.set(5, 5, 5);
+      mesh.scene.position.y = -.5;
+      shelterLocation.add(mesh.scene)
+    })
+
+    // 避难所点光源
+    var shelterPointLight = new THREE.PointLight(0x1089ff, 2);
+    shelterPointLight.position.set(0, 0, 0);
+    shelterLocation.add(shelterPointLight);
+    var shelterLight = new THREE.DirectionalLight(0xffffff, 0);
+    shelterLight.position.set(0, 0, 0);
+    shelterLight.castShadow = true;
+    shelterLight.target = shelterLocation;
+    scene.add(shelterLight);
 
     // 星空粒子
-    var textureLoader = new THREE.TextureLoader();
+    const textureLoader = new THREE.TextureLoader();
     const imageSrc = textureLoader.load(snowflakeTexture);
     const shaderPoint = THREE.ShaderLib.points;
-    var uniforms = THREE.UniformsUtils.clone(shaderPoint.uniforms);
+    const uniforms = THREE.UniformsUtils.clone(shaderPoint.uniforms);
     uniforms.map.value = imageSrc;
-    var matts = new THREE.PointsMaterial({
+    var geo = new THREE.Geometry();
+    for (var i = 0; i < 1000; i++) {
+      var star = new THREE.Vector3();
+      geo.vertices.push(star);
+    }
+    const sparks = new THREE.Points(geo, new THREE.PointsMaterial({
       size: 2,
       color: new THREE.Color(0xffffff),
       map: uniforms.map.value,
@@ -241,54 +205,49 @@ export default class Metaverse extends React.Component {
       depthWrite: false,
       transparent: true,
       opacity: 0.75
-    });
-    var geo = new THREE.Geometry();
-    for (var i = 0; i < 1000; i++) {
-      var star = new THREE.Vector3();
-      geo.vertices.push(star);
-    }
-    var sparks = new THREE.Points(geo, matts);
+    }));
     sparks.scale.set(1, 1, 1);
     scene.add(sparks);
-    sparks.geometry.vertices.map((d, i) => {
-      d.y = randnum(30, 40);
-      d.x = randnum(-500, 500);
-      d.z = randnum(-500, 500);
+    sparks.geometry.vertices.map(spark => {
+      spark.y = randnum(30, 40);
+      spark.x = randnum(-500, 500);
+      spark.z = randnum(-500, 500);
       return true;
     });
 
     // 轮盘控制器
     var setup = { forward: 0, turn: 0 };
-    new JoyStick({ onMove: joystickCallback });
-    function joystickCallback(forward, turn) {
+    new JoyStick({ onMove: (forward, turn) => {
       setup.forward = forward;
       setup.turn = -turn;
-    }
-    function updateDrive(forward = setup.forward, turn = setup.turn) {
-      const maxSteerVal = 0.05;
-      const maxForce = .15;
-      const force = maxForce * forward;
-      const steer = maxSteerVal * turn;
+    }});
+
+    const updateDrive = (forward = setup.forward, turn = setup.turn) => {
+      let maxSteerVal = 0.05;
+      let maxForce = .15;
+      let force = maxForce * forward;
+      let steer = maxSteerVal * turn;
       if (forward !== 0) {
-        mesh.translateZ(force);
+        target.translateZ(force);
         clip2 && clip2.play();
         clip1 && clip1.stop();
       } else {
         clip2 && clip2.stop();
         clip1 && clip1.play();
       }
-      mesh.rotateY(steer);
+      target.rotateY(steer);
     }
 
     // 第三人称视角
-    var followCam = new THREE.Object3D();
-    followCam.position.copy(camera.position);
-    scene.add(followCam);
-    followCam.parent = mesh;
-    function updateCamera() {
-      if (followCam) {
-        camera.position.lerp(followCam.getWorldPosition(new THREE.Vector3()), 0.05);
-        camera.lookAt(mesh.position.x, mesh.position.y + .5, mesh.position.z);
+    const followCamera = new THREE.Object3D();
+    followCamera.position.copy(camera.position);
+    scene.add(followCamera);
+    followCamera.parent = target;
+
+    const updateCamera = () => {
+      if (followCamera) {
+        camera.position.lerp(followCamera.getWorldPosition(new THREE.Vector3()), 0.1);
+        camera.lookAt(target.position.x, target.position.y + .5, target.position.z);
       }
     }
 
@@ -296,27 +255,24 @@ export default class Metaverse extends React.Component {
     const info = document.getElementById('info');
     var clock = new THREE.Clock();
     var lastTime;
-    (function animate() {
-      requestAnimationFrame(animate);
+    const animate = () => {
       updateCamera();
       updateDrive();
-      renderer.render(scene, camera);
-      composer.render();
       let delta = clock.getDelta();
       mixers.map(x => x.update(delta));
-      const now = Date.now();
-      if (lastTime === undefined) lastTime = now;
-      const dt = (Date.now() - lastTime) / 1000.0;
+      let now = Date.now();
+      lastTime === undefined && (lastTime = now);
+      let dt = (Date.now() - lastTime) / 1000.0;
       lastTime = now;
       world.step(fixedTimeStep, dt);
       helper.updateBodies(world);
       check && check();
-      // 显示坐标
-      info.innerHTML = `<span>X: </span>${mesh.position.x.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Y: </span>${mesh.position.y.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Z: </span>${mesh.position.z.toFixed(2)}`
-      // 旗帜
-      modifier && modifier.apply();
+      info.innerHTML = `<span>X: </span>${target.position.x.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Y: </span>${target.position.y.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Z: </span>${target.position.z.toFixed(2)}`
       stats && stats.update();
-    })();
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    };
+    animate();
   }
 
   render () {

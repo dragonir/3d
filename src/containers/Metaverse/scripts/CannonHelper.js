@@ -196,19 +196,19 @@ export default class CannonHelper {
           var rev = true;
           var cols = [{
             stop: 0,
-            color: new THREE.Color('#03c03c')
+            color: new THREE.Color(0xf12711)
           }, {
             stop: .25,
-            color: new THREE.Color('#CD853F')
+            color: new THREE.Color(0xf5af19)
           }, {
             stop: .5,
-            color: new THREE.Color('#EEE8AA')
+            color: new THREE.Color(0xfffc00)
           }, {
             stop: .75,
-            color: new THREE.Color('#bf8040')
+            color: new THREE.Color(0x00e969)
           }, {
             stop: 1,
-            color: new THREE.Color('#666')
+            color: new THREE.Color(0x053105)
           }];
           setGradient(geometry, cols, 'z', rev);
           function setGradient(geometry, colors, axis, reverse) {

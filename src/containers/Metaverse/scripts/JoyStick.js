@@ -3,24 +3,26 @@ export default class JoyStick {
     const circle = document.createElement('div');
     circle.style.cssText = `
       position: absolute;
-      bottom: 35px;
-      width: 80px;
-      height: 80px;
-      background: rgba(126, 126, 126, 0.5);
-      border: 2px solid rgba(0, 0, 0, .25);
+      bottom: 16px;
+      width: 100px;
+      height: 100px;
+      background: rgba(120, 120, 120, 0.3);
       border-radius: 50%;
       left: 50%;
       transform: translateX(-50%);
+      box-sizing: border-box;
+      filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, .25));
     `;
     const thumb = document.createElement('div');
     thumb.style.cssText = `
       position: absolute;
       left: 20px;
       top: 20px;
-      width: 40px;
-      height: 40px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      background: #fff;
+      background: rgba(255, 255, 255, .6);
+      box-shadow: 0px 1px 2px rgba(200, 200, 200, .25);
     `;
     circle.appendChild(thumb);
     document.body.appendChild(circle);
