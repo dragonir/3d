@@ -16,6 +16,20 @@ export default class Metaverse extends React.Component {
   constructor(props) {
     super(props);
     this.scene = null;
+    this.camera = null;
+    this.player = null;
+    this.target = null;
+    this.playPosition = { x: 0, y: -.01, z: 0 };
+    this.shelterPosition = { x: 93, y: -2, z: 25.5 };
+  }
+
+  state = {
+    loadingProcess: 0,
+    showLoading: true,
+    showResult: false,
+    resultText: '失败',
+    countdown: 60,
+    freeDiscover: false
   }
 
   componentDidMount() {
@@ -23,6 +37,7 @@ export default class Metaverse extends React.Component {
   }
 
   componentWillUnmount () {
+    clearInterval(this.interval);
   }
 
   initThree = () => {
@@ -45,6 +60,7 @@ export default class Metaverse extends React.Component {
     this.scene = scene;
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .01, 100000);
     camera.position.set(1, 1, -1);
+    this.camera = camera;
     camera.lookAt(scene.position);
 
     window.addEventListener('resize', () => {
@@ -80,6 +96,35 @@ export default class Metaverse extends React.Component {
     light.position.set(1, 1, 1).normalize();
     scene.add(light);
 
+    // 星空粒子
+    const textureLoader = new THREE.TextureLoader();
+    const imageSrc = textureLoader.load(snowflakeTexture);
+    const shaderPoint = THREE.ShaderLib.points;
+    const uniforms = THREE.UniformsUtils.clone(shaderPoint.uniforms);
+    uniforms.map.value = imageSrc;
+    var geo = new THREE.Geometry();
+    for (var i = 0; i < 1000; i++) {
+      var star = new THREE.Vector3();
+      geo.vertices.push(star);
+    }
+    const sparks = new THREE.Points(geo, new THREE.PointsMaterial({
+      size: 2,
+      color: new THREE.Color(0xffffff),
+      map: uniforms.map.value,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      transparent: true,
+      opacity: 0.75
+    }));
+    sparks.scale.set(1, 1, 1);
+    scene.add(sparks);
+    sparks.geometry.vertices.map(spark => {
+      spark.y = randnum(30, 40);
+      spark.x = randnum(-500, 500);
+      spark.z = randnum(-500, 500);
+      return true;
+    });
+
     // target
     var geometry = new THREE.BoxBufferGeometry(.5, 1, .5);
     geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0.5, 0));
@@ -94,27 +139,6 @@ export default class Metaverse extends React.Component {
     directionalLight.castShadow = true;
     directionalLight.target = target;
     target.add(directionalLight);
-
-    // 添加狐狸模型
-    var mixers = [], clip1, clip2;
-    const gltfLoader = new GLTFLoader();
-    gltfLoader.load(foxModel, mesh => {
-      mesh.scene.traverse(child => {
-        if (child instanceof THREE.Mesh) {
-          child.castShadow = true;
-          child.material.side = THREE.DoubleSide;
-        }
-      });
-      var player = mesh.scene;
-      player.position.set(0, -.01, 0);
-      player.scale.set(.008, .008, .008);
-      target.add(player);
-      var mixer = new THREE.AnimationMixer(player);
-      clip1 = mixer.clipAction(mesh.animations[0]);
-      clip2 = mixer.clipAction(mesh.animations[1]);
-      clip2.timeScale = 1.6;
-      mixers.push(mixer);
-    });
 
     // 添加地形
     var sizeX = 128, sizeY = 128, minHeight = 0, maxHeight = 60, check = null;
@@ -154,6 +178,42 @@ export default class Metaverse extends React.Component {
       }
     });
 
+    // 模型加载进度管理
+    const loadingManager = new THREE.LoadingManager();
+    loadingManager.onProgress = async(url, loaded, total) => {
+      if (Math.floor(loaded / total * 100) === 100) {
+        this.loadingProcessTimeout && clearTimeout(this.loadingProcessTimeout);
+        this.loadingProcessTimeout = setTimeout(() => {
+          this.setState({ loadingProcess: Math.floor(loaded / total * 100) });
+        }, 800);
+      } else {
+        this.setState({ loadingProcess: Math.floor(loaded / total * 100) });
+      }
+    };
+
+    // 添加狐狸模型
+    var mixers = [], clip1, clip2;
+    const gltfLoader = new GLTFLoader(loadingManager);
+    gltfLoader.load(foxModel, mesh => {
+      mesh.scene.traverse(child => {
+        if (child instanceof THREE.Mesh) {
+          child.castShadow = true;
+          child.material.side = THREE.DoubleSide;
+        }
+      });
+      var player = mesh.scene;
+      player.position.set(this.playPosition.x, this.playPosition.y, this.playPosition.z);
+      player.scale.set(.008, .008, .008);
+      target.add(player);
+      this.target = target;
+      this.player = player;
+      var mixer = new THREE.AnimationMixer(player);
+      clip1 = mixer.clipAction(mesh.animations[0]);
+      clip2 = mixer.clipAction(mesh.animations[1]);
+      clip2.timeScale = 1.6;
+      mixers.push(mixer);
+    });
+
     // 避难所
     const shelterGeometry = new THREE.BoxBufferGeometry(0.15, 2, 0.15);
     shelterGeometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 1, 0));
@@ -161,8 +221,7 @@ export default class Metaverse extends React.Component {
       transparent: true,
       opacity: 0
     }));
-    shelterLocation.position.x = 10;
-    shelterLocation.position.z = 50;
+    shelterLocation.position.set(this.shelterPosition.x, this.shelterPosition.y, this.shelterPosition.z);
     shelterLocation.rotateY(Math.PI);
     scene.add(shelterLocation);
 
@@ -174,7 +233,7 @@ export default class Metaverse extends React.Component {
       mesh.scene.scale.set(5, 5, 5);
       mesh.scene.position.y = -.5;
       shelterLocation.add(mesh.scene)
-    })
+    });
 
     // 避难所点光源
     var shelterPointLight = new THREE.PointLight(0x1089ff, 2);
@@ -185,35 +244,6 @@ export default class Metaverse extends React.Component {
     shelterLight.castShadow = true;
     shelterLight.target = shelterLocation;
     scene.add(shelterLight);
-
-    // 星空粒子
-    const textureLoader = new THREE.TextureLoader();
-    const imageSrc = textureLoader.load(snowflakeTexture);
-    const shaderPoint = THREE.ShaderLib.points;
-    const uniforms = THREE.UniformsUtils.clone(shaderPoint.uniforms);
-    uniforms.map.value = imageSrc;
-    var geo = new THREE.Geometry();
-    for (var i = 0; i < 1000; i++) {
-      var star = new THREE.Vector3();
-      geo.vertices.push(star);
-    }
-    const sparks = new THREE.Points(geo, new THREE.PointsMaterial({
-      size: 2,
-      color: new THREE.Color(0xffffff),
-      map: uniforms.map.value,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-      transparent: true,
-      opacity: 0.75
-    }));
-    sparks.scale.set(1, 1, 1);
-    scene.add(sparks);
-    sparks.geometry.vertices.map(spark => {
-      spark.y = randnum(30, 40);
-      spark.x = randnum(-500, 500);
-      spark.z = randnum(-500, 500);
-      return true;
-    });
 
     // 轮盘控制器
     var setup = { forward: 0, turn: 0 };
@@ -236,6 +266,14 @@ export default class Metaverse extends React.Component {
         clip1 && clip1.play();
       }
       target.rotateY(steer);
+
+      // 显示成功结果
+      if ((target.position.x > 90 && target.position.x < 96) && (target.position.y > -2.5 && target.position.y < 2.5) && (target.position.z > 20 && target.position.z < 28)) {
+        !this.state.freeDiscover && this.setState({
+          resultText: '成功',
+          showResult: true
+        });
+      }
     }
 
     // 第三人称视角
@@ -275,11 +313,69 @@ export default class Metaverse extends React.Component {
     animate();
   }
 
+  resetGame = () => {
+    this.player.position.set(this.playPosition.x, this.playPosition.y, this.playPosition.z);
+    this.camera.position.set(1, 1, -1);
+    this.target.position.set(0, 0, 0);
+    this.target.rotation.set(0, 0, 0);
+    this.startGame();
+  }
+
+  startGame = () => {
+    this.setState({
+      showLoading : false,
+      showResult: false,
+      countdown: 60,
+      resultText: '失败',
+      freeDiscover: false
+    },() => {
+      this.interval = setInterval(() => {
+        if (this.state.countdown > 0) {
+          this.setState({
+            countdown: --this.state.countdown
+          });
+        } else {
+          clearInterval(this.interval)
+          this.setState({
+            showResult: true
+          });
+        }
+      }, 1000);
+    });
+  }
+
+  discover = () => {
+    this.setState({
+      freeDiscover: true,
+      showResult: false
+    }, () => {
+      clearInterval(this.interval)
+    });
+  }
+
   render () {
     return (
       <div id="metaverse">
         <canvas className='webgl'></canvas>
         <div id='info'></div>
+        <div className='tool'>
+          <button className='reset_button' onClick={this.resetGame}>重置</button>
+          <div className='countdown'>{this.state.countdown}</div>
+        </div>
+        {this.state.showLoading ? (<div className='loading'>
+          <div className='box'>
+            <p className='progress'>{this.state.loadingProcess} %</p>
+            <p className='description'><span>2545光年</span>之外的<span>开普勒1028星系</span>，有一颗色彩斑斓的宜居星球，但是居民必需穿戴<span>庇护所</span>的特质防辐射服才能正常生存。<span>阿狸</span>作为星际移民来到这里，快帮它在限定时间内<span>操作轮盘移动</span>来找到<span>庇护所</span>获取防辐射服吧。</p>
+            <button className='start_button' style={{'visibility': this.state.loadingProcess === 100 ? 'visible' : 'hidden'}} onClick={this.startGame}>开始游戏</button>
+          </div>
+        </div>) : ''}
+        {this.state.showResult ? (<div className='result'>
+          <div className='box'>
+            <p className='text'>{this.state.resultText}</p>
+            <button className='button' onClick={this.resetGame}>再玩一次</button>
+            <button className='button' onClick={this.discover}>自由探索</button>
+          </div>
+        </div>) : '' }
       </div>
     )
   }

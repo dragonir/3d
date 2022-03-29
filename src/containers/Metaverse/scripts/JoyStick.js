@@ -40,51 +40,51 @@ export default class JoyStick {
     if (this.domElement !== undefined) {
       const joystick = this;
       if ('ontouchstart' in window) {
-        this.domElement.addEventListener('touchstart', function (evt) {
-          joystick.tap(evt);
+        this.domElement.addEventListener('touchstart', function (event) {
+          joystick.tap(event);
         });
       } else {
-        this.domElement.addEventListener('mousedown', function (evt) {
-          joystick.tap(evt);
+        this.domElement.addEventListener('mousedown', function (event) {
+          joystick.tap(event);
         });
       }
     }
   }
 
-  getMousePosition(evt) {
-    let clientX = evt.targetTouches ? evt.targetTouches[0].pageX : evt.clientX;
-    let clientY = evt.targetTouches ? evt.targetTouches[0].pageY : evt.clientY;
+  getMousePosition(event) {
+    let clientX = event.targetTouches ? event.targetTouches[0].pageX : event.clientX;
+    let clientY = event.targetTouches ? event.targetTouches[0].pageY : event.clientY;
     return {
       x: clientX,
       y: clientY
     };
   }
 
-  tap(evt) {
-    evt = evt || window.event;
+  tap(event) {
+    event = event || window.event;
     //获取鼠标开始位置
-    this.offset = this.getMousePosition(evt);
+    this.offset = this.getMousePosition(event);
     const joystick = this;
     if ('ontouchstart' in window) {
-      document.ontouchmove = function (evt) {
-        joystick.move(evt);
+      document.ontouchmove = function (event) {
+        joystick.move(event);
       };
-      document.ontouchend = function (evt) {
-        joystick.up(evt);
+      document.ontouchend = function (event) {
+        joystick.up(event);
       };
     } else {
-      document.onmousemove = function (evt) {
-        joystick.move(evt);
+      document.onmousemove = function (event) {
+        joystick.move(event);
       };
-      document.onmouseup = function (evt) {
-        joystick.up(evt);
+      document.onmouseup = function (event) {
+        joystick.up(event);
       };
     }
   }
 
-  move(evt) {
-    evt = evt || window.event;
-    const mouse = this.getMousePosition(evt);
+  move(event) {
+    event = event || window.event;
+    const mouse = this.getMousePosition(event);
     // 计算新的鼠标位置
     let left = mouse.x - this.offset.x;
     let top = mouse.y - this.offset.y;
