@@ -12,6 +12,12 @@ import heightMapImage from './images/Heightmap.png';
 import snowflakeTexture from './images/snowflake.png';
 import Stats from "three/examples/jsm/libs/stats.module";
 
+// todo：坐标栏样式
+// todo：工具栏样式
+// todo：阿狸增加阴影
+// todo：结果页样式优化
+// todo：地形颜色调整
+
 export default class Metaverse extends React.Component {
   constructor(props) {
     super(props);
@@ -359,13 +365,13 @@ export default class Metaverse extends React.Component {
         <canvas className='webgl'></canvas>
         <div id='info'></div>
         <div className='tool'>
-          <button className='reset_button' onClick={this.resetGame}>重置</button>
+          <button className='reset_button' onClick={this.resetGame}>时光倒流</button>
           <div className='countdown'>{this.state.countdown}</div>
         </div>
         {this.state.showLoading ? (<div className='loading'>
           <div className='box'>
             <p className='progress'>{this.state.loadingProcess} %</p>
-            <p className='description'><span>2545光年</span>之外的<span>开普勒1028星系</span>，有一颗色彩斑斓的宜居星球，但是居民必需穿戴<span>庇护所</span>的特质防辐射服才能正常生存。<span>阿狸</span>作为星际移民来到这里，快帮它在限定时间内<span>操作轮盘移动</span>来找到<span>庇护所</span>获取防辐射服吧。</p>
+            <p className='description'><span>2545光年</span>之外的<span>开普勒1028星系</span>，有一颗色彩斑斓的宜居星球，但是居民必需穿戴<span>庇护所</span>发放的防辐射服才能正常生存。<span>阿狸</span>作为星际移民来到这里，快帮它在限定时间内通过<span>操作轮盘移动</span>来找到<span>庇护所</span>获取防辐射服吧。</p>
             <button className='start_button' style={{'visibility': this.state.loadingProcess === 100 ? 'visible' : 'hidden'}} onClick={this.startGame}>开始游戏</button>
           </div>
         </div>) : ''}
