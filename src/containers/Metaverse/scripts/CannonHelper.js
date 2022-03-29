@@ -1,4 +1,4 @@
-import * as THREE from './libs/three.module.js';
+import * as THREE from '../libs/three.module';
 import CANNON from 'cannon';
 
 export default class CannonHelper {
@@ -8,10 +8,7 @@ export default class CannonHelper {
 
   addLights(renderer) {
     renderer.shadowMap.enabled = true;
-    // 默认THREE.PCFShadowMap
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-    // 光源
     const light = new THREE.DirectionalLight(0xffffff, .25, 1);
     light.position.set(3, 10, 4);
     light.target.position.set(0, 0, 0);
@@ -46,7 +43,7 @@ export default class CannonHelper {
     for (let i = 0; i < posAttr.count; i += 3) {
       vertices.push(new CANNON.Vec3(floats[i], floats[i + 1], floats[i + 2]));
       face.push(index++);
-      if (face.length == 3) {
+      if (face.length === 3) {
         faces.push(face);
         face = [];
       }
@@ -125,7 +122,7 @@ export default class CannonHelper {
           mesh = new THREE.Object3D();
           const submesh = new THREE.Object3D();
           THREE.ImageUtils.crossOrigin = '';
-          var floorMap = THREE.ImageUtils.loadTexture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMaznkwKbnlWTf0zzL9uQrUQ2Q54MfyI7JC5m62icHR5oRjT1v");
+          var floorMap = THREE.ImageUtils.loadTexture('');
           floorMap.wrapS = floorMap.wrapT = THREE.RepeatWrapping;
           floorMap.repeat.set(25, 25);
           var groundMaterial = new THREE.MeshPhongMaterial({
@@ -134,15 +131,11 @@ export default class CannonHelper {
             shininess: 0,
             bumpMap: floorMap
           });
-
-
           const ground = new THREE.Mesh(geometry, groundMaterial);
           ground.scale.set(1, 1, 1);
           submesh.add(ground);
-
           mesh.add(submesh);
           break;
-
         case CANNON.Shape.types.BOX:
           const box_geometry = new THREE.BoxGeometry(shape.halfExtents.x * 2,
             shape.halfExtents.y * 2,
@@ -154,15 +147,12 @@ export default class CannonHelper {
             opacity: 0
           }));
           break;
-
         case CANNON.Shape.types.CONVEXPOLYHEDRON:
           const geo = new THREE.Geometry();
-
           // Add vertices
           shape.vertices.forEach(function (v) {
             geo.vertices.push(new THREE.Vector3(v.x, v.y, v.z));
           });
-
           shape.faces.forEach(function (face) {
             // add triangles
             const a = face[0];
@@ -176,10 +166,8 @@ export default class CannonHelper {
           geo.computeFaceNormals();
           mesh = new THREE.Mesh(geo, material);
           break;
-
         case CANNON.Shape.types.HEIGHTFIELD:
           geometry = new THREE.Geometry();
-
           v0 = new CANNON.Vec3();
           v1 = new CANNON.Vec3();
           v2 = new CANNON.Vec3();
@@ -205,9 +193,6 @@ export default class CannonHelper {
           }
           geometry.computeBoundingSphere();
           geometry.computeFaceNormals();
-
-
-          //https://stackoverflow.com/questions/52614371/apply-color-gradient-to-material-on-mesh-three-js
           var rev = true;
           var cols = [{
             stop: 0,
@@ -225,24 +210,15 @@ export default class CannonHelper {
             stop: 1,
             color: new THREE.Color('#666')
           }];
-
           setGradient(geometry, cols, 'z', rev);
-
           function setGradient(geometry, colors, axis, reverse) {
-
             geometry.computeBoundingBox();
-
             var bbox = geometry.boundingBox;
             var size = new THREE.Vector3().subVectors(bbox.max, bbox.min);
-
             var vertexIndices = ['a', 'b', 'c'];
-            var face, vertex, normalized = new THREE.Vector3(),
-              normalizedAxis = 0;
-
+            var face, vertex, normalized = new THREE.Vector3(), normalizedAxis = 0;
             for (var c = 0; c < colors.length - 1; c++) {
-
               var colorDiff = colors[c + 1].stop - colors[c].stop;
-
               for (var i = 0; i < geometry.faces.length; i++) {
                 face = geometry.faces[i];
                 for (var v = 0; v < 3; v++) {
@@ -259,17 +235,14 @@ export default class CannonHelper {
               }
             }
           }
-
           var mat = new THREE.MeshLambertMaterial({
             vertexColors: THREE.VertexColors,
             wireframe: false
           });
           mesh = new THREE.Mesh(geometry, mat);
           break;
-
         case CANNON.Shape.types.TRIMESH:
           geometry = new THREE.Geometry();
-
           v0 = new CANNON.Vec3();
           v1 = new CANNON.Vec3();
           v2 = new CANNON.Vec3();
@@ -290,35 +263,29 @@ export default class CannonHelper {
             wireframe: false
           }));
           break;
-
         default:
-          throw "Visual type not recognized: " + shape.type;
+          throw new Error('Visual type not recognized: ' + shape.type);
       }
 
       mesh.receiveShadow = receiveShadow;
       mesh.castShadow = castShadow;
-
       mesh.traverse(function (child) {
         if (child.isMesh) {
           child.castShadow = castShadow;
           child.receiveShadow = receiveShadow;
         }
       });
-
       var o = body.shapeOffsets[index];
       var q = body.shapeOrientations[index++];
       mesh.position.set(o.x, o.y, o.z);
       mesh.quaternion.set(q.x, q.y, q.z, q.w);
-
       obj.add(mesh);
     });
-
     return obj;
   }
-
   updateBodies(world) {
     world.bodies.forEach(function (body) {
-      if (body.threemesh != undefined) {
+      if (body.threemesh !== undefined) {
         body.threemesh.position.copy(body.position);
         body.threemesh.quaternion.copy(body.quaternion);
       }

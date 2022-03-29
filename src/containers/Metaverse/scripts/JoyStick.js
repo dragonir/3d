@@ -7,7 +7,7 @@ export default class JoyStick {
       width: 80px;
       height: 80px;
       background: rgba(126, 126, 126, 0.5);
-      border: #444 solid medium;
+      border: 2px solid rgba(0, 0, 0, .25);
       border-radius: 50%;
       left: 50%;
       transform: translateX(-50%);
@@ -60,7 +60,7 @@ export default class JoyStick {
 
   tap(evt) {
     evt = evt || window.event;
-    // get the mouse cursor position at startup:
+    //获取鼠标开始位置
     this.offset = this.getMousePosition(evt);
     const joystick = this;
     if ('ontouchstart' in window) {
@@ -83,20 +83,18 @@ export default class JoyStick {
   move(evt) {
     evt = evt || window.event;
     const mouse = this.getMousePosition(evt);
-    // calculate the new cursor position:
+    // 计算新的鼠标位置
     let left = mouse.x - this.offset.x;
     let top = mouse.y - this.offset.y;
-    //this.offset = mouse;
     const sqMag = left * left + top * top;
     if (sqMag > this.maxRadiusSquared) {
-      //Only use sqrt if essential
       const magnitude = Math.sqrt(sqMag);
       left /= magnitude;
       top /= magnitude;
       left *= this.maxRadius;
       top *= this.maxRadius;
     }
-    // set the element's new position:
+    // 设置元素新的位置
     this.domElement.style.top = `${top + this.domElement.clientHeight/2}px`;
     this.domElement.style.left = `${left + this.domElement.clientWidth/2}px`;
     const forward = -(top - this.origin.top + this.domElement.clientHeight / 2) / this.maxRadius;
@@ -104,7 +102,7 @@ export default class JoyStick {
     if (this.onMove !== undefined) this.onMove.call(this.game, forward, turn);
   }
 
-  up(evt) {
+  up() {
     if ('ontouchstart' in window) {
       document.ontouchmove = null;
       document.touchend = null;
