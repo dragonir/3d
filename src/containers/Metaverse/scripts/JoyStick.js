@@ -1,5 +1,5 @@
 export default class JoyStick {
-  constructor(options) {
+  constructor(props) {
     const circle = document.createElement('div');
     circle.style.cssText = `
       position: absolute;
@@ -27,16 +27,16 @@ export default class JoyStick {
     circle.appendChild(thumb);
     document.body.appendChild(circle);
     this.domElement = thumb;
-    this.maxRadius = options.maxRadius || 40;
+    this.maxRadius = props.maxRadius || 40;
     this.maxRadiusSquared = this.maxRadius * this.maxRadius;
-    this.onMove = options.onMove;
-    this.game = options.game;
+    this.onMove = props.onMove;
+    this.game = props.game;
     this.origin = {
       left: this.domElement.offsetLeft,
       top: this.domElement.offsetTop
     };
-    this.rotationDamping = options.rotationDamping || 0.06;
-    this.moveDamping = options.moveDamping || 0.01;
+    this.rotationDamping = props.rotationDamping || 0.06;
+    this.moveDamping = props.moveDamping || 0.01;
     if (this.domElement !== undefined) {
       const joystick = this;
       if ('ontouchstart' in window) {

@@ -72,10 +72,10 @@ export default class CannonHelper {
         paused: false,
         rendermode: "solid",
         constraints: false,
-        contacts: false, // Contact points
-        cm2contact: false, // center of mass to contact points
-        normals: false, // contact normals
-        axes: false, // "local" frame axes
+        contacts: false,
+        cm2contact: false,
+        normals: false,
+        axes: false,
         particleSize: 0.1,
         shadows: false,
         aabbs: false,
@@ -87,7 +87,6 @@ export default class CannonHelper {
         color: 0xff0000
       });
     }
-    // What geometry should be used?
     let mesh;
     if (body instanceof CANNON.Body) mesh = this.shape2Mesh(body, castShadow, receiveShadow);
     if (mesh) {
@@ -149,12 +148,10 @@ export default class CannonHelper {
           break;
         case CANNON.Shape.types.CONVEXPOLYHEDRON:
           const geo = new THREE.Geometry();
-          // Add vertices
           shape.vertices.forEach(function (v) {
             geo.vertices.push(new THREE.Vector3(v.x, v.y, v.z));
           });
           shape.faces.forEach(function (face) {
-            // add triangles
             const a = face[0];
             for (let j = 1; j < face.length - 1; j++) {
               const b = face[j];
@@ -235,11 +232,10 @@ export default class CannonHelper {
               }
             }
           }
-          var mat = new THREE.MeshLambertMaterial({
+          mesh = new THREE.Mesh(geometry,  new THREE.MeshLambertMaterial({
             vertexColors: THREE.VertexColors,
             wireframe: false
-          });
-          mesh = new THREE.Mesh(geometry, mat);
+          }));
           break;
         case CANNON.Shape.types.TRIMESH:
           geometry = new THREE.Geometry();

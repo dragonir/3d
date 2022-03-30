@@ -10,6 +10,7 @@
   height 100%
   width  100%
   overflow hidden
+  font-family Arial, Helvetica, sans-serif
   .webgl
     position fixed
     top 0
@@ -31,8 +32,46 @@
       color wheat
   .tool
     position fixed
-    right 0
-    top 0
+    right 16px
+    top 16px
+    text-align right
+    .reset_button
+      height 32px
+      width 96px
+      border none
+      outline none
+      background rgba(0, 67, 170, .5)
+      filter drop-shadow(0px 1px 1px rgba(0, 0, 0, .25))
+      backdrop-filter blur(10px)
+      -webkit-appearance none
+      font-size 1rem
+      color #ffffff
+      border-radius 4px
+      transition background .25s ease-in-out
+      margin 16px 0
+      &:hover, &:active
+        background rgba(0, 67, 170, .7)
+    .countdown
+      font-size 3.6rem
+      color #FFFFFF
+      line-height 1
+      text-shadow 0 1px 0 hsl(174,5%,80%),
+                  0 2px 0 hsl(174,5%,75%),
+                  0 3px 0 hsl(174,5%,70%),
+                  0 4px 0 hsl(174,5%,66%),
+                  0 5px 0 hsl(174,5%,64%),
+                  0 6px 0 hsl(174,5%,62%),
+                  0 7px 0 hsl(174,5%,61%),
+                  0 8px 0 hsl(174,5%,60%),
+                  0 0 5px rgba(0,0,0,.05),
+                0 1px 3px rgba(0,0,0,.2),
+                0 3px 5px rgba(0,0,0,.2),
+                0 5px 10px rgba(0,0,0,.2),
+              0 10px 10px rgba(0,0,0,.2),
+              0 20px 20px rgba(0,0,0,.3)
+    .hint
+      font-size .8rem
+      color rgba(0, 0, 0, .15)
   .loading
     position fixed
     height 100%
@@ -45,10 +84,10 @@
     justify-content space-around
     align-items center
     .box
-      width 75%
+      width 78%
       .progress
-        font-size 3.2rem
-        color #F5F5F5
+        font-size 3.6rem
+        color #FFFFFF
         text-shadow 0 1px 0 hsl(174,5%,80%),
                    0 2px 0 hsl(174,5%,75%),
                    0 3px 0 hsl(174,5%,70%),
@@ -64,16 +103,19 @@
                 0 10px 10px rgba(0,0,0,.2),
                 0 20px 20px rgba(0,0,0,.3)
       .description
-        color #F5F5F5
+        color rgba(255, 255, 255, .8)
         font-size 1.4rem
         text-align justify
         text-align-last left
         line-height 1.8
-        margin 24px auto 36px
+        margin 16px auto 36px
+        border 1px dashed rgba(255, 255, 255, .3)
+        padding 16px
+        border-radius 4px
         span
-          color #FFFC00
-          background rgba(0, 0, 0, .25)
-          border-radius 8px
+          color rgba(255, 255, 0, .8)
+          background rgba(0, 0, 0, .2)
+          border-radius 4px
           padding 0 4px
       .start_button
         height 48px
@@ -84,7 +126,7 @@
         -webkit-appearance none
         font-size 1.2rem
         color #000000
-        border-radius 24px
+        border-radius 4px
         font-weight 600
         transition background .25s ease-in-out
         box-shadow 1px 1px 4px rgba(0, 0, 0, .25)
@@ -107,7 +149,7 @@
     width 400px
     .text
       font-size 4rem
-      color #FFFFFF
+      color rgba(255, 255, 255, .8)
       margin-bottom 60px
     .button
       display block
@@ -120,13 +162,28 @@
       -webkit-appearance none
       font-size 1.2rem
       color #000000
-      border-radius 24px
+      border-radius 2px
       font-weight 600
       transition background .25s ease-in-out
       box-shadow 1px 1px 4px rgba(0, 0, 0, .25)
       animation  bounce 1s infinite ease-in-out
       &:hover, &:active
         background #FFFF7F
+
+.copyright
+  position fixed
+  bottom 16px
+  left 16px
+  text-align center
+  opacity .8
+  filter drop-shadow(0px 1px 1px rgba(0, 0, 0, .1))
+  a
+    text-decoration none
+    .author
+      display block
+      color #FFFFFF
+      font-size .6rem
+      line-height 1
 
 @keyframes bounce
   0%
