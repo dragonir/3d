@@ -1,5 +1,7 @@
 # Three.js 实现3D开放世界小游戏《阿狸的多元宇宙》 🦊
 
+![banner](./images/banner.gif)
+
 > 声明：本文涉及图文和模型素材仅用于个人学习、研究和欣赏，请勿二次修改、非法传播、转载、出版、商用、及进行其他获利行为。
 
 ## 背景
@@ -16,6 +18,21 @@
 ## 设计
 
 ![progress](./images/progress.png)
+
+![preview](./images/preview.png)
+
+![star](./images/star.png)
+
+![land](./images/land.png)
+
+![fox](./images/fox.png)
+
+![shelter](./images/shelter.png)
+
+![loading](./images/loading.png)
+
+![result](./images/result.png)
+
 
 ## 实现
 
