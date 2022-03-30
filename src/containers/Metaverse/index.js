@@ -12,9 +12,6 @@ import heightMapImage from './images/Heightmap.png';
 import snowflakeTexture from './images/snowflake.png';
 // import Stats from "three/examples/jsm/libs/stats.module";
 
-// todo：结果页样式优化
-// todo: 基地模型样式优化
-
 export default class Metaverse extends React.Component {
   constructor(props) {
     super(props);

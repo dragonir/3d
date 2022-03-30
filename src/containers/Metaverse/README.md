@@ -1,4 +1,4 @@
-# Three.js 实现3D开放世界小游戏《阿狸的多元宇宙》 🦊
+# Three.js 实现3D开放世界小游戏：阿狸的多元宇宙 🦊
 
 ![banner](./images/banner.gif)
 
@@ -15,88 +15,67 @@
 主线任务：限定时间内找到庇护所
 支线任务：自由探索开放世界
 
+> `🦊` 站得越高看得越远
+
+![mobile](./images/mobile.png)
+
+**在线预览**：
+
+* `👀` 地址1：<https://3d-dragonir.vercel.app/#/ring>
+* `👀` 地址2：<https://dragonir.github.io/3d/#/ring>
+
+已适配:
+
+* `💻` `PC` 端
+* `📱` 移动端
+
 ## 设计
 
 ![progress](./images/progress.png)
-
-![preview](./images/preview.png)
-
-![star](./images/star.png)
-
-![land](./images/land.png)
-
-![fox](./images/fox.png)
-
-![shelter](./images/shelter.png)
-
-![loading](./images/loading.png)
-
-![result](./images/result.png)
-
 
 ## 实现
 
 ### 加载资源
 
 ```js
-import './index.styl';
 import React from 'react';
 import * as THREE from './libs/three.module';
 import { GLTFLoader } from './libs/GLTFLoader';
-import { img2matrix, randnum } from './scripts/Utils';
 import CANNON from 'cannon';
 import CannonHelper from './scripts/CannonHelper';
 import JoyStick from './scripts/JoyStick';
-import foxModel from './models/Fox.glb';
-import Shelter from './models/Shelter.glb';
-import heightMapImage from './images/Heightmap.png';
-import snowflakeTexture from './images/snowflake.png';
 ```
 
 ### 页面结构
 
 ```js
-render () {
-  return (
-    <div id="metaverse">
-      <canvas className='webgl'></canvas>
-      <div id='info'></div>
-      <div className='tool'>
-        <div className='countdown'>{this.state.countdown}</div>
-        <button className='reset_button' onClick={this.resetGame}>时光倒流</button>
-        <p className='hint'>站得越高看得越远</p>
-      </div>
-      {this.state.showLoading ? (<div className='loading'>
-        <div className='box'>
-          <p className='progress'>{this.state.loadingProcess} %</p>
-          <p className='description'>游戏描述</p>
-          <button className='start_button' style={{'visibility': this.state.loadingProcess === 100 ? 'visible' : 'hidden'}} onClick={this.startGame}>开始游戏</button>
-        </div>
-      </div>) : '' }
-      {this.state.showResult ? (<div className='result'>
-        <div className='box'>
-          <p className='text'>{this.state.resultText}</p>
-          <button className='button' onClick={this.resetGame}>再试一次</button>
-          <button className='button' onClick={this.discover}>自由探索</button>
-        </div>
-      </div>) : '' }
+(<div id="metaverse">
+  <canvas className='webgl'></canvas>
+  <div className='tool'>
+    <div className='countdown'>{ this.state.countdown }</div>
+    <button className='reset_button' onClick={this.resetGame}>时光倒流</button>
+    <p className='hint'>站得越高看得越远</p>
+  </div>
+  { this.state.showLoading ? (<div className='loading'>
+    <div className='box'>
+      <p className='progress'>{this.state.loadingProcess} %</p>
+      <p className='description'>游戏描述</p>
+      <button className='start_button' style={{'visibility': this.state.loadingProcess === 100 ? 'visible' : 'hidden'}} onClick={this.startGame}>开始游戏</button>
     </div>
-  )
-}
+  </div>) : '' }
+  { this.state.showResult ? (<div className='result'>
+    <div className='box'>
+      <p className='text'>{ this.state.resultText }</p>
+      <button className='button' onClick={this.resetGame}>再试一次</button>
+      <button className='button' onClick={this.discover}>自由探索</button>
+    </div>
+  </div>) : '' }
+</div>)
 ```
 
 ### 数据初始化
 
 ```js
-constructor(props) {
-  super(props);
-  this.scene = null;
-  this.camera = null;
-  this.player = null;
-  this.target = null;
-  this.playPosition = { x: 0, y: -.01, z: 0 };
-  this.shelterPosition = { x: 93, y: -2, z: 25.5 };
-}
 state = {
   loadingProcess: 0,
   showLoading: true,
@@ -187,6 +166,8 @@ sparks.geometry.vertices.map(spark => {
 });
 ```
 
+![star](./images/star.png)
+
 ### 创建地形
 
 ```js
@@ -228,22 +209,24 @@ Promise.all([
 });
 ```
 
+![HeightMap](./images/HeightMap.png)
+
+![land](./images/land.png)
+
+### 加载进度管理
+
+```js
+const loadingManager = new THREE.LoadingManager();
+loadingManager.onProgress = async (url, loaded, total) => {
+  this.setState({ loadingProcess: Math.floor(loaded / total * 100) });
+};
+```
+
+![loading](./images/loading.png)
+
 ### 创建基地模型
 
 ```js
-// 模型加载进度管理
-const loadingManager = new THREE.LoadingManager();
-loadingManager.onProgress = async(url, loaded, total) => {
-  if (Math.floor(loaded / total * 100) === 100) {
-    this.loadingProcessTimeout && clearTimeout(this.loadingProcessTimeout);
-    this.loadingProcessTimeout = setTimeout(() => {
-      this.setState({ loadingProcess: Math.floor(loaded / total * 100) });
-    }, 800);
-  } else {
-    this.setState({ loadingProcess: Math.floor(loaded / total * 100) });
-  }
-};
-// 基地
 const shelterGeometry = new THREE.BoxBufferGeometry(0.15, 2, 0.15);
 shelterGeometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 1, 0));
 const shelterLocation = new THREE.Mesh(shelterGeometry, new THREE.MeshNormalMaterial({
@@ -272,6 +255,8 @@ shelterLight.castShadow = true;
 shelterLight.target = shelterLocation;
 scene.add(shelterLight);
 ```
+
+![shelter](./images/shelter.png)
 
 ### 添加目标
 
@@ -315,6 +300,8 @@ gltfLoader.load(foxModel, mesh => {
   mixers.push(mixer);
 });
 ```
+
+![fox](./images/fox.png)
 
 ### 控制阿狸运动
 
@@ -396,6 +383,8 @@ window.addEventListener('resize', () => {
 }, false);
 ```
 
+![preview](./images/preview.png)
+
 ### 添加游戏逻辑
 
 ```js
@@ -439,6 +428,12 @@ discover = () => {
   });
 }
 ```
+
+![result](./images/result.png)
+
+## 总结
+
+本文涉及到的主要知识点包括：
 
 > 想了解场景初始化、光照、阴影、基础几何体、网格、材质及其他**Three.js**的相关知识，可阅读我往期文章。**转载请注明原文地址和作者**。如果觉得文章对你有帮助，不要忘了**一键三连哦 👍**。
 
