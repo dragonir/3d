@@ -25,7 +25,7 @@ export default class JoyStick {
       box-shadow: 0px 1px 2px rgba(200, 200, 200, .25);
     `;
     circle.appendChild(thumb);
-    document.body.appendChild(circle);
+    document.getElementById('metaverse').appendChild(circle);
     this.domElement = thumb;
     this.maxRadius = props.maxRadius || 40;
     this.maxRadiusSquared = this.maxRadius * this.maxRadius;

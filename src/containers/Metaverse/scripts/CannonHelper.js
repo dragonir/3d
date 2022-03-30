@@ -262,7 +262,6 @@ export default class CannonHelper {
         default:
           throw new Error('Visual type not recognized: ' + shape.type);
       }
-
       mesh.receiveShadow = receiveShadow;
       mesh.castShadow = castShadow;
       mesh.traverse(function (child) {

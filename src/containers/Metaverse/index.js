@@ -333,8 +333,9 @@ export default class Metaverse extends React.Component {
     },() => {
       this.interval = setInterval(() => {
         if (this.state.countdown > 0) {
+          let countdown = this.state.countdown;
           this.setState({
-            countdown: --this.state.countdown
+            countdown: --countdown
           });
         } else {
           clearInterval(this.interval)
@@ -349,7 +350,8 @@ export default class Metaverse extends React.Component {
   discover = () => {
     this.setState({
       freeDiscover: true,
-      showResult: false
+      showResult: false,
+      countdown: 60
     }, () => {
       clearInterval(this.interval);
     });
