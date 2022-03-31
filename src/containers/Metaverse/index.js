@@ -362,7 +362,7 @@ export default class Metaverse extends React.Component {
         <div className='tool'>
           <div className='countdown'>{this.state.countdown}</div>
           <button className='reset_button' onClick={this.resetGame}>时光倒流</button>
-          <p className='hint'>站得越高看得越远</p>
+          <p className='hint'>阿狸的多元宇宙</p>
         </div>
         {this.state.showLoading ? (<div className='loading'>
           <div className='box'>
