@@ -20,10 +20,9 @@ import humanImage from './images/human.png';
 import olympicImage from './images/olympic.png';
 import comicImage from './images/comic.png';
 import floatingImage from './images/floating.png';
-// import lowployImage from './images/lowploy.png';
 import liveImage from './images/live.png';
 import ringImage from './images/ring.png';
-
+import metaverseImage from './images/metaverse.png';
 
 import './index.css';
 
@@ -47,6 +46,13 @@ const workList = [
     title: '2022冬奥会3D趣味页面',
     description: '🐼 萌萌的冰墩墩和雪容融送给大家！',
     image: olympicImage,
+    three: true
+  },
+  {
+    link: '#/metaverse',
+    title: '阿狸的多元宇宙',
+    description: '🦊 阿狸的星际旷野之息！',
+    image: metaverseImage,
     three: true
   },
   {
@@ -179,14 +185,7 @@ const workList = [
     title: '塞尔达：旷野之息地图',
     description: '🗺 在地图上标记神庙、查询回忆点！',
     image: zeldaMapImage,
-  },
-  // {
-  //   link: '#/cityLowploy',
-  //   title: '低面数城市',
-  //   description: '🏙 3D数字城市 【⚠优化中】',
-  //   image: lowployImage,
-  //   three: true
-  // },
+  }
 ];
 
 export default class Home extends React.Component {

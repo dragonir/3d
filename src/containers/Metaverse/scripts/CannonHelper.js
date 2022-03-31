@@ -191,7 +191,7 @@ export default class CannonHelper {
           geometry.computeBoundingSphere();
           geometry.computeFaceNormals();
           var rev = true;
-          var cols = [{
+          var colors = [{
             stop: 0,
             color: new THREE.Color(0xf12711)
           }, {
@@ -207,7 +207,7 @@ export default class CannonHelper {
             stop: 1,
             color: new THREE.Color(0x053105)
           }];
-          setGradient(geometry, cols, 'z', rev);
+          setGradient(geometry, colors, 'z', rev);
           function setGradient(geometry, colors, axis, reverse) {
             geometry.computeBoundingBox();
             var bbox = geometry.boundingBox;
