@@ -6,36 +6,38 @@
 
 ## 背景
 
-> 2545光年之外的开普勒1028星系，有一颗色彩斑斓的宜居星球，星际移民必须穿戴基地发放的防辐射服才能生存。阿狸驾驶星际飞行器降临此地，快帮它在限定时间内使用轮盘移动找到基地获取防辐射服吧！
+> **2545光年**之外的**开普勒1028星系**，有一颗色彩斑斓的宜居星球，星际移民必须穿戴**基地**发放的防辐射服才能生存。**阿狸**驾驶星际飞行器降临此地，快帮它在限定时间内使用**轮盘**移动**找到基地**获取防辐射服吧！
 
-本文使用 `Three.js + React + CANNON` 技术栈，实现通过滑动屏幕控制模型在3D世界里运动的low poly低多边形风格小游戏。本文主要涉及到的知识点包括：。
+本文使用 `Three.js + React + CANNON` 技术栈，实现通过滑动屏幕控制模型在 `3D` 世界里运动的 `Low Poly` 低多边形风格小游戏。本文主要涉及到的知识点包括：。
 
 ## 效果
 
-主线任务：限定时间内找到庇护所
-支线任务：自由探索开放世界
+* 游戏玩法：页面加载完成后，点击**开始游戏**按钮，然后通过操作屏幕底部轮盘来移动阿狸 `🦊`，在倒计时限定时间内找到基地 `🏠`。
+* 主线任务：限定时间内找到庇护所。
+* 支线任务：自由探索开放世界 `😂`。
 
-> `🦊` 站得越高看得越远
-
-![mobile](./images/mobile.png)
+![mobile](./images/mobile.png)qizhi
 
 **在线预览**：
 
-* `👀` 地址1：<https://3d-dragonir.vercel.app/#/ring>
-* `👀` 地址2：<https://dragonir.github.io/3d/#/ring>
+* `👀` 地址：<https://3d-eosin.vercel.app/#/metaverse>
 
 已适配:
 
 * `💻` `PC` 端
 * `📱` 移动端
 
+> `🚩` 小提示：站得越高看得越远，隐隐约约听说基地位于初始位置的**西面**，开始时应该向左前方前进哦？
+
 ## 设计
 
-游戏流程如下图所示，页面加载完成后点击开始按钮，然后在限定时间内通过控制页面滑轮移动模型，找到目标基地所在的位置，寻找成功或失败都会显示结果页，结果上面有两个按钮**再试一次**和**自由探索**，点击**再试一次**时间会重置，然后重新回到起点开始倒计时。点击**自由探索**则不在计时，玩家可以在3D开放世界里操作模型自由探索。同时，游戏内页面也提供一个**时光倒流**按钮，它的作用是玩家可以在失败前自己手动重置倒计时 `⏳`，重新回到起点开始游戏。
+游戏流程如下图所示，页面加载完成后点击开始按钮，然后在限定时间内通过控制页面滑轮移动模型，找到目标基地所在的位置。寻找成功或失败都会显示结果页，结果上面有两个按钮**再试一次**和**自由探索**，点击**再试一次**时间会重置，然后重新回到起点开始倒计时。点击**自由探索**则不在计时，玩家可以在 `3D` 开放世界里操作模型自由探索。同时，游戏内页面也提供一个**时光倒流**按钮，它的作用是玩家可以在失败前自己手动重置倒计时 `⏳`，重新回到起点开始游戏。
 
 ![progress](./images/progress.png)
 
 ## 实现
+
+![logo](./images/logo.png)
 
 ### 加载资源
 
@@ -195,7 +197,7 @@ scene.add(sparks);
 
 ### 创建地形
 
-通过 `CANNON.Shape.types.HEIGHTFIELD` 高度场创建 `128 x 128 x 60` 可视化渐变色地形。地形的凹凸起伏状态是通过以下高度图 `HeightMap` 实现，它是一张黑白图片，通过像素点的颜色深浅来记录高度信息，可通过文章末尾提供的链接在线生成随机高度图。地形生成完成并将它添加到世界中。
+通过 `CANNON.Shape.types.HEIGHTFIELD` 高度场创建 `128 x 128 x 60` 可视化渐变色地形。地形的凹凸起伏状态是通过以下高度图 `HeightMap` 实现，它是一张黑白图片，通过像素点的颜色深浅来记录高度信息，可通过文章末尾提供的链接在线生成随机高度图。地形生成完成并将它添加到世界中，然后在 `animate` 方法中页面重绘时调用 `check` 方法，用于检测和更新模型在地形上的位置。
 
 ![HeightMap](./images/HeightMap.png)
 
@@ -217,12 +219,14 @@ Promise.all([
   // 设置从轴角度
   terrainBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
   world.add(terrainBody);
+  // 将生成的地形刚体可视化
   cannonHelper.addVisual(terrainBody, 'landscape');
   var raycastHelperGeometry = new THREE.CylinderGeometry(0, 1, 5, 1.5);
   raycastHelperGeometry.translate(0, 0, 0);
   raycastHelperGeometry.rotateX(Math.PI / 2);
   var raycastHelperMesh = new THREE.Mesh(raycastHelperGeometry, new THREE.MeshNormalMaterial());
   scene.add(raycastHelperMesh);
+  // 使用 Raycaster检测并更新模型在地形上的位置
   check = () => {
     var raycaster = new THREE.Raycaster(target.position, new THREE.Vector3(0, -1, 0));
     var intersects = raycaster.intersectObject(terrainBody.threemesh.children[0]);
@@ -231,9 +235,7 @@ Promise.all([
       raycastHelperMesh.lookAt(intersects[0].face.normal);
       raycastHelperMesh.position.copy(intersects[0].point);
     }
-    // 将模型放置在地形上
     target.position.y = intersects && intersects[0] ? intersects[0].point.y + 0.1 : 30;
-    // 标志基地
     var raycaster2 = new THREE.Raycaster(shelterLocation.position, new THREE.Vector3(0, -1, 0));
     var intersects2 = raycaster2.intersectObject(terrainBody.threemesh.children[0]);
     shelterLocation.position.y = intersects2 && intersects2[0] ? intersects2[0].point.y + .5 : 30;
@@ -244,25 +246,53 @@ Promise.all([
 });
 ```
 
-![land](./images/land.png)
-
-#### `💡` CANNON.Shape.types.HEIGHTFIELD
-
-cannon.js物理引擎之Heightfield高度场，学过场论的朋友都知道物理学中把某个物理量在空间的一个区域内的分布称为场，高度场就是与高度相关的场，而cannon.js物理引擎的Heightfield的高度就是关于两个变量的函数，可以表达为HEIGHT(i,j)。当然知不知道场论不耽误我们学习Heightfield，下面就是一个由Heightfield生成的高度场
-
-1. Heightfield的用法
-说用法之前我们不妨看看他的API，文档对于它的说明是 – “高度数据以数组形式给出。这些数据点以给定的距离均匀分布”。构造函数如下。
+根据高度图数据信息创建地形网格。
 
 ```js
-Heightfield ( data , options )
+// ...
+var geometry = new THREE.Geometry();
+var v0 = new CANNON.Vec3(), v1 = new CANNON.Vec3(), v2 = new CANNON.Vec3();
+for (let xi = 0; xi < shape.data.length - 1; xi++) {
+  for (let yi = 0; yi < shape.data[xi].length - 1; yi++) {
+    for (let k = 0; k < 2; k++) {
+      shape.getConvexTrianglePillar(xi, yi, k === 0);
+      v0.copy(shape.pillarConvex.vertices[0]);
+      v1.copy(shape.pillarConvex.vertices[1]);
+      v2.copy(shape.pillarConvex.vertices[2]);
+      v0.vadd(shape.pillarOffset, v0);
+      v1.vadd(shape.pillarOffset, v1);
+      v2.vadd(shape.pillarOffset, v2);
+      geometry.vertices.push(
+        new THREE.Vector3(v0.x, v0.y, v0.z),
+        new THREE.Vector3(v1.x, v1.y, v1.z),
+        new THREE.Vector3(v2.x, v2.y, v2.z)
+      );
+      var i = geometry.vertices.length - 3;
+      geometry.faces.push(new THREE.Face3(i, i + 1, i + 2));
+    }
+  }
+}
 ```
 
-data是一个Y值数组，将用于构建地形。options是一个配置项，有三个可配置参数。minValue是数据数组中数据点的最小值。如果未给出，将自动计算。maxValue最大值。elementSize是X方向上数据点之间的世界间距。他还有一些属性和方法请大家自行观看，我就不多说了。
+![land](./images/land.png)
 
-高度场Heightfield本质和cannon.js一样还是一种数据的表达形式，想要把它应用到three中仍然需要对应的图形来表达（就像CANNON.Box数据需要THREE.BoxBuferGeometry几何体一样），对应的几何体就是ParametricBufferGeometry，下面我们以一个案例来实际操作一下。
+#### `💡` CANNON.Heightfield
 
+本示例中凹凸不平的地形是通过 `CANNON.Heightfield` 实现的，它是 `Cannon.js` 物理引擎的高度场。在物理学中把**某个物理量在空间中一个区域内的分布**称为**场**，高度场就是与高度相关的场。`Heightfield` 的高度就是关于两个变量的函数，可以表达为 `HEIGHT(i,j)`。
+
+```js
+Heightfield(data , options)
+```
+
+* `data` 是一个 `y值` 数组，将用于构建地形。
+* `options` 是一个配置项，有三个可配置参数：
+  * `minValue` 是数据数组中数据点的最小值。如果未给出，将自动计算。
+  * `maxValue` 最大值。
+  * `elementSize` 是 `x轴` 方向上数据点之间的世界间距。
 
 ### 加载进度管理
+
+使用 `LoadingManager` 管理加载进度，当页面模型加载完成之后，加载进度页面显示**开始游戏菜单**。
 
 ```js
 const loadingManager = new THREE.LoadingManager();
@@ -275,9 +305,10 @@ loadingManager.onProgress = async (url, loaded, total) => {
 
 ### 创建基地模型
 
+加载基地模型 `🏠` 前先创建一个 `shelterLocation` 网格用来放置基地模型，该网格对象还用于后续地形检测。然后使用 `GLTFLoader` 加载基地模型，然后把它添加到 `shelterLocation` 网格上。最后添加一个 `PointLight` `💡` 给基地模型添加彩色点光源，添加一个 `DirectionalLight` `💡` 用于生成阴影。
+
 ```js
 const shelterGeometry = new THREE.BoxBufferGeometry(0.15, 2, 0.15);
-shelterGeometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 1, 0));
 const shelterLocation = new THREE.Mesh(shelterGeometry, new THREE.MeshNormalMaterial({
   transparent: true,
   opacity: 0
@@ -285,7 +316,7 @@ const shelterLocation = new THREE.Mesh(shelterGeometry, new THREE.MeshNormalMate
 shelterLocation.position.set(this.shelterPosition.x, this.shelterPosition.y, this.shelterPosition.z);
 shelterLocation.rotateY(Math.PI);
 scene.add(shelterLocation);
-// 基地模型
+// 加载模型
 gltfLoader.load(Shelter, mesh => {
   mesh.scene.traverse(child => {
     child.castShadow = true;
@@ -294,11 +325,11 @@ gltfLoader.load(Shelter, mesh => {
   mesh.scene.position.y = -.5;
   shelterLocation.add(mesh.scene)
 });
-// 基地点光源
-var shelterPointLight = new THREE.PointLight(0x1089ff, 2);
+// 添加光源
+const shelterPointLight = new THREE.PointLight(0x1089ff, 2);
 shelterPointLight.position.set(0, 0, 0);
 shelterLocation.add(shelterPointLight);
-var shelterLight = new THREE.DirectionalLight(0xffffff, 0);
+const shelterLight = new THREE.DirectionalLight(0xffffff, 0);
 shelterLight.position.set(0, 0, 0);
 shelterLight.castShadow = true;
 shelterLight.target = shelterLocation;
@@ -307,7 +338,9 @@ scene.add(shelterLight);
 
 ![shelter](./images/shelter.png)
 
-### 添加目标
+### 创建阿狸模型
+
+狐狸 `🦊` 模型的加载也是类似的，需要先创建一个目标网格，后续用于地形检测，然后把狐狸 `🦊` 模型添加到目标网格上。狐狸 `🦊` 模型完成加载后，需要保存它的 `clip1`、 `clip1` 两种动画效果，后续需要通过判断轮盘的移动状态来判断播放哪种动画。最后添加一个 `DirectionalLight` `💡` 光源来产生阴影。
 
 ```js
 var geometry = new THREE.BoxBufferGeometry(.5, 1, .5);
@@ -317,16 +350,7 @@ const target = new THREE.Mesh(geometry, new THREE.MeshNormalMaterial({
   opacity: 0
 }));
 scene.add(target);
-var directionalLight = new THREE.DirectionalLight(new THREE.Color(0xffffff), .5);
-directionalLight.position.set(0, 1, 0);
-directionalLight.castShadow = true;
-directionalLight.target = target;
-target.add(directionalLight);
-```
 
-### 创建阿狸模型
-
-```js
 var mixers = [], clip1, clip2;
 const gltfLoader = new GLTFLoader(loadingManager);
 gltfLoader.load(foxModel, mesh => {
@@ -340,23 +364,28 @@ gltfLoader.load(foxModel, mesh => {
   player.position.set(this.playPosition.x, this.playPosition.y, this.playPosition.z);
   player.scale.set(.008, .008, .008);
   target.add(player);
-  this.target = target;
-  this.player = player;
   var mixer = new THREE.AnimationMixer(player);
   clip1 = mixer.clipAction(mesh.animations[0]);
   clip2 = mixer.clipAction(mesh.animations[1]);
   clip2.timeScale = 1.6;
   mixers.push(mixer);
 });
+
+const directionalLight = new THREE.DirectionalLight(new THREE.Color(0xffffff), .5);
+directionalLight.position.set(0, 1, 0);
+directionalLight.castShadow = true;
+directionalLight.target = target;
+target.add(directionalLight);
 ```
 
 ![fox](./images/fox.png)
 
 ### 控制阿狸运动
 
-轮盘控制器
+使用轮盘控制器移动阿狸 `🦊` 模型时，实时更新模型的方向，若轮盘产生位移，更新模型位移并播放奔跑动画，否则播放禁止动画。同时根据模型目标的位置，实时更新相机 `📷` 的位置，生成第三人称视角。
 
 ```js
+// 使用 JoyStick 更新动画
 var setup = { forward: 0, turn: 0 };
 new JoyStick({ onMove: (forward, turn) => {
   setup.forward = forward;
@@ -376,15 +405,8 @@ const updateDrive = (forward = setup.forward, turn = setup.turn) => {
     clip1 && clip1.play();
   }
   target.rotateY(steer);
-  // 显示成功结果
-  if ((target.position.x > 90 && target.position.x < 96) && (target.position.y > -2.5 && target.position.y < 2.5) && (target.position.z > 20 && target.position.z < 28)) {
-    !this.state.freeDiscover && this.setState({
-      resultText: '成功',
-      showResult: true
-    });
-  }
 }
-// 第三人称视角
+// 生成第三人称视角
 const followCamera = new THREE.Object3D();
 followCamera.position.copy(camera.position);
 scene.add(followCamera);
@@ -424,28 +446,26 @@ const animate = () => {
 
 ### 页面缩放适配
 
+页面产生缩放时，更新渲染场景和相机。
+
 ```js
 window.addEventListener('resize', () => {
-  var width = window.innerWidth;
-  var height = window.innerHeight;
+  var width = window.innerWidth, height = window.innerHeight;
   renderer.setSize(width, height);
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 }, false);
 ```
 
+到此为止，游戏三维世界已经全部实现完毕了。
+
 ![preview](./images/preview.png)
 
 ### 添加游戏逻辑
 
+根据前面的游戏流程设计，现在添加游戏逻辑，开始游戏时重置数据并开始 `60s` 倒计时；重置游戏时将阿狸 `🦊` 位置、方向及相机位置设置为初始状态；自由探索时开启自由探索状态，并清除倒计时。
+
 ```js
-resetGame = () => {
-  this.player.position.set(this.playPosition.x, this.playPosition.y, this.playPosition.z);
-  this.camera.position.set(1, 1, -1);
-  this.target.position.set(0, 0, 0);
-  this.target.rotation.set(0, 0, 0);
-  this.startGame();
-}
 startGame = () => {
   this.setState({
     showLoading : false,
@@ -456,9 +476,8 @@ startGame = () => {
   },() => {
     this.interval = setInterval(() => {
       if (this.state.countdown > 0) {
-        let countdown = this.state.countdown;
         this.setState({
-          countdown: --countdown
+          countdown: --this.state.countdown
         });
       } else {
         clearInterval(this.interval)
@@ -468,6 +487,13 @@ startGame = () => {
       }
     }, 1000);
   });
+}
+resetGame = () => {
+  this.player.position.set(this.playPosition.x, this.playPosition.y, this.playPosition.z);
+  this.target.rotation.set(0, 0, 0);
+  this.target.position.set(0, 0, 0);
+  this.camera.position.set(1, 1, -1);
+  this.startGame();
 }
 discover = () => {
   this.setState({

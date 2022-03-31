@@ -1,6 +1,31 @@
 import * as THREE from '../libs/three.module';
 import CANNON from 'cannon';
 
+const setGradient = (geometry, colors, axis, reverse) => {
+  geometry.computeBoundingBox();
+  var bbox = geometry.boundingBox;
+  var size = new THREE.Vector3().subVectors(bbox.max, bbox.min);
+  var vertexIndices = ['a', 'b', 'c'];
+  var face, vertex, normalized = new THREE.Vector3(), normalizedAxis = 0;
+  for (var c = 0; c < colors.length - 1; c++) {
+    var colorDiff = colors[c + 1].stop - colors[c].stop;
+    for (var i = 0; i < geometry.faces.length; i++) {
+      face = geometry.faces[i];
+      for (var v = 0; v < 3; v++) {
+        vertex = geometry.vertices[face[vertexIndices[v]]];
+        normalizedAxis = normalized.subVectors(vertex, bbox.min).divide(size)[axis];
+        if (reverse) {
+          normalizedAxis = 1 - normalizedAxis;
+        }
+        if (normalizedAxis >= colors[c].stop && normalizedAxis <= colors[c + 1].stop) {
+          var localNormalizedAxis = (normalizedAxis - colors[c].stop) / colorDiff;
+          face.vertexColors[v] = colors[c].color.clone().lerp(colors[c + 1].color, localNormalizedAxis);
+        }
+      }
+    }
+  }
+}
+
 export default class CannonHelper {
   constructor(scene) {
     this.scene = scene;
@@ -208,30 +233,6 @@ export default class CannonHelper {
             color: new THREE.Color(0x053105)
           }];
           setGradient(geometry, colors, 'z', rev);
-          function setGradient(geometry, colors, axis, reverse) {
-            geometry.computeBoundingBox();
-            var bbox = geometry.boundingBox;
-            var size = new THREE.Vector3().subVectors(bbox.max, bbox.min);
-            var vertexIndices = ['a', 'b', 'c'];
-            var face, vertex, normalized = new THREE.Vector3(), normalizedAxis = 0;
-            for (var c = 0; c < colors.length - 1; c++) {
-              var colorDiff = colors[c + 1].stop - colors[c].stop;
-              for (var i = 0; i < geometry.faces.length; i++) {
-                face = geometry.faces[i];
-                for (var v = 0; v < 3; v++) {
-                  vertex = geometry.vertices[face[vertexIndices[v]]];
-                  normalizedAxis = normalized.subVectors(vertex, bbox.min).divide(size)[axis];
-                  if (reverse) {
-                    normalizedAxis = 1 - normalizedAxis;
-                  }
-                  if (normalizedAxis >= colors[c].stop && normalizedAxis <= colors[c + 1].stop) {
-                    var localNormalizedAxis = (normalizedAxis - colors[c].stop) / colorDiff;
-                    face.vertexColors[v] = colors[c].color.clone().lerp(colors[c + 1].color, localNormalizedAxis);
-                  }
-                }
-              }
-            }
-          }
           mesh = new THREE.Mesh(geometry,  new THREE.MeshLambertMaterial({
             vertexColors: THREE.VertexColors,
             wireframe: false

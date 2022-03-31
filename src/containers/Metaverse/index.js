@@ -19,7 +19,7 @@ export default class Metaverse extends React.Component {
     this.camera = null;
     this.player = null;
     this.target = null;
-    this.playPosition = { x: 0, y: -.01, z: 0 };
+    this.playPosition = { x: 0, y: -.05, z: 0 };
     this.shelterPosition = { x: 93, y: -2, z: 25.5 };
   }
 
@@ -279,7 +279,7 @@ export default class Metaverse extends React.Component {
     followCamera.position.copy(camera.position);
     scene.add(followCamera);
     followCamera.parent = target;
-  
+
     const updateCamera = () => {
       if (followCamera) {
         camera.position.lerp(followCamera.getWorldPosition(new THREE.Vector3()), 0.1);
