@@ -317,6 +317,7 @@ export default class Metaverse extends React.Component {
     this.camera.position.set(1, 1, -1);
     this.target.position.set(0, 0, 0);
     this.target.rotation.set(0, 0, 0);
+    this.interval && clearInterval(this.interval);
     this.startGame();
   }
 

@@ -22,7 +22,8 @@
 
 **在线预览**：
 
-* `👀` 地址：<https://3d-eosin.vercel.app/#/metaverse>
+* `👀` 地址1：<https://3d-eosin.vercel.app/#/metaverse>
+* `👀` 地址2：<https://dragonir.github.io/3d/#/metaverse>
 
 已适配:
 
