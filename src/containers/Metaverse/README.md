@@ -6,15 +6,15 @@
 
 ## 背景
 
-> **2545光年**之外的**开普勒1028星系**，有一颗色彩斑斓的宜居星球，星际移民必须穿戴**基地**发放的防辐射服才能生存。**阿狸**驾驶星际飞行器降临此地，快帮它在限定时间内使用**轮盘**移动**找到基地**获取防辐射服吧！
+> **2545光年**之外的**开普勒1028星系**，有一颗色彩斑斓的宜居星球 `🌑`，星际移民 `👨‍🚀` 必须穿戴**基地**发放的防辐射服才能生存。阿狸 `🦊` 驾驶星际飞行器 `🚀` 降临此地，快帮它在限定时间内使用**轮盘**移动**找到基地**获取防辐射服吧！
 
 ![logo](./images/logo.png)
 
-本文使用 `Three.js + React + CANNON` 技术栈，实现通过滑动屏幕控制模型在 `3D` 世界里运动的 `Low Poly` 低多边形风格小游戏。本文主要涉及到的知识点包括：* `Three.js` 阴影类型、创建粒子系统、`cannon.js` 基本用法、使用 `cannon.js` 高度场 `Heightfield` 创建地形、通过轮盘移动控制模型动画等。
+本文使用 `Three.js + React + CANNON` 技术栈，实现通过滑动屏幕控制模型在 `3D` 世界里运动的 `Low Poly` 低多边形风格小游戏。本文主要涉及到的知识点包括：`Three.js` 阴影类型、创建粒子系统、`cannon.js` 基本用法、使用 `cannon.js` 高度场 `Heightfield` 创建地形、通过轮盘移动控制模型动画等。
 
 ## 效果
 
-* **游戏玩法**：页面加载完成后，点击**开始游戏**按钮，然后通过操作屏幕底部轮盘来移动阿狸 `🦊`，在倒计时限定时间内找到基地 `🏠`。
+* **游戏玩法**：点击开始游戏按钮，通过操作屏幕底部轮盘来移动阿狸，在倒计时限定时间内找到基地。
 * **主线任务**：限定时间内找到庇护所。
 * **支线任务**：自由探索开放世界。
 
@@ -29,11 +29,11 @@
 * `💻` `PC` 端
 * `📱` 移动端
 
-> `🚩` 小提示：站得越高看得越远，隐隐约约听说基地位于初始位置的**西面**，开始时应该向左前方前进哦？
+> `🚩` 小提示：站得越高看得越远，隐隐约约听说基地位于初始位置的**西面**，开始时应该向左前方前进哦。
 
 ## 设计
 
-游戏流程如下图所示，页面加载完成后点击开始按钮，然后在限定时间内通过控制页面滑轮移动模型，找到目标基地所在的位置。寻找成功或失败都会显示结果页，结果上面有两个按钮**再试一次**和**自由探索**，点击**再试一次**时间会重置，然后重新回到起点开始倒计时。点击**自由探索**则不在计时，玩家可以在 `3D` 开放世界里操作模型自由探索。同时，游戏内页面也提供一个**时光倒流**按钮，它的作用是玩家可以在失败前自己手动重置倒计时 `⏳`，重新回到起点开始游戏。
+游戏流程如下图所示：页面加载完成后玩家 `👨‍🚀` 点击开始按钮，然后在限定时间内通过控制页面底部轮盘 `🕹` 移动模型，找到目标基地所在的位置。寻找成功或失败都会显示结果页 `🏆`，结果上面有两个按钮**再试一次**和**自由探索**，点击**再试一次**时间会重置，然后重新回到起点开始倒计时。点击**自由探索**则不在计时，玩家可以在 `3D` 开放世界里操作模型自由探索。同时，游戏内页面也提供一个**时光倒流**按钮，它的作用是玩家 `👨‍🚀` 可以在失败前自己手动重置倒计时 `⏳`，重新回到起点开始游戏。
 
 ![progress](./images/progress.png)
 
@@ -41,7 +41,7 @@
 
 ### 加载资源
 
-加载开发所需的必备资源：`GLTFLoader` 用于加载狐狸 `🦊` 和基地 `🏠` 模型、`CANNON` 是用于创建 `3D` 世界的物理引擎；`CannonHelper` 是对 `CANNON` 一些使用方法的封装；`JoyStick` 用于创建滑动屏幕控制模型的滚轮。
+加载开发所需的必备资源：`GLTFLoader` 用于加载狐狸 `🦊` 和基地 `🏠` 模型、`CANNON` 是用于创建 `3D` 世界的物理引擎；`CannonHelper` 是对 `CANNON` 一些使用方法的封装；`JoyStick` 用于创建通过监听鼠标移动位置或触碰屏幕产生的位移来控制模型移动的轮盘 `🕹`。
 
 ```js
 import * as THREE from 'three';
@@ -97,7 +97,7 @@ state = {
 
 ### 场景初始化
 
-初始化场景、相机、光源。
+初始化场景 `🏔`、相机 `📷`、光源 `💡`。
 
 ```js
 const renderer = new THREE.WebGLRenderer({
@@ -134,7 +134,7 @@ scene.add(light);
 
 ### 创建世界
 
-使用 `Cannon.js` 初始化物理世界。
+使用 `Cannon.js` 初始化物理世界 `🌏`。
 
 ```js
 // 初始化物理世界
@@ -160,7 +160,7 @@ world.addContactMaterial(wheelGroundContactMaterial);
 
 #### `💡` Cannon.js
 
-`Cannon.js` 是用 `JavaScript` 实现的物理引擎库，可以与任何支持浏览器的渲染或游戏引擎，可以用于模拟刚体，实现3D世界中更加真实的物理形式的移动和交互。更多 `Cannon.js` 相关 `API` 文档和示例可以参考文章末尾链接。
+`Cannon.js` 是用 `JavaScript` 实现的物理引擎库，可以与任何支持浏览器的渲染或游戏引擎，可以用于模拟刚体，实现 `3D` 世界 `🌏` 中更加真实的物理形式的移动和交互。更多 `Cannon.js` 相关 `API` 文档和示例可以参考文章末尾链接。
 
 ### 创建星空
 
@@ -197,7 +197,7 @@ scene.add(sparks);
 
 ### 创建地形
 
-通过 `CANNON.Heightfield` 高度场创建 `128 x 128 x 60` 可视化渐变色地形。地形的凹凸起伏状态是通过以下高度图 `HeightMap` 实现，它是一张黑白图片，通过像素点的颜色深浅来记录高度信息，可通过文章末尾提供的链接在线生成随机高度图。地形生成完成并将它添加到世界中，然后在 `animate` 方法中页面重绘时调用 `check` 方法，用于检测和更新模型在地形上的位置。
+通过 `CANNON.Heightfield` 高度场创建 `128 x 128 x 60` 可视化渐变色地形。地形的凹凸起伏状态是通过以下高度图 `HeightMap` 实现，它是一张黑白图片 `🖼`，通过像素点的颜色深浅来记录高度信息，根据高度图数据信息创建地形网格。可通过文章末尾提供的链接在线生成随机高度图。地形生成完成并将它添加到世界 `🌏` 中，然后在 `animate` 方法中页面重绘时调用 `check` 方法，用于检测和更新模型在地形上的位置。
 
 ![HeightMap](./images/HeightMap.png)
 
@@ -244,34 +244,6 @@ Promise.all([
     shelterLight.position.z = shelterLocation.position.z;
   }
 });
-```
-
-根据高度图数据信息创建地形网格。
-
-```js
-// ...
-var geometry = new THREE.Geometry();
-var v0 = new CANNON.Vec3(), v1 = new CANNON.Vec3(), v2 = new CANNON.Vec3();
-for (let xi = 0; xi < shape.data.length - 1; xi++) {
-  for (let yi = 0; yi < shape.data[xi].length - 1; yi++) {
-    for (let k = 0; k < 2; k++) {
-      shape.getConvexTrianglePillar(xi, yi, k === 0);
-      v0.copy(shape.pillarConvex.vertices[0]);
-      v1.copy(shape.pillarConvex.vertices[1]);
-      v2.copy(shape.pillarConvex.vertices[2]);
-      v0.vadd(shape.pillarOffset, v0);
-      v1.vadd(shape.pillarOffset, v1);
-      v2.vadd(shape.pillarOffset, v2);
-      geometry.vertices.push(
-        new THREE.Vector3(v0.x, v0.y, v0.z),
-        new THREE.Vector3(v1.x, v1.y, v1.z),
-        new THREE.Vector3(v2.x, v2.y, v2.z)
-      );
-      var i = geometry.vertices.length - 3;
-      geometry.faces.push(new THREE.Face3(i, i + 1, i + 2));
-    }
-  }
-}
 ```
 
 ![land](./images/land.png)
@@ -340,7 +312,7 @@ scene.add(shelterLight);
 
 ### 创建阿狸模型
 
-狐狸 `🦊` 模型的加载也是类似的，需要先创建一个目标网格，后续用于地形检测，然后把狐狸 `🦊` 模型添加到目标网格上。狐狸 `🦊` 模型完成加载后，需要保存它的 `clip1`、 `clip1` 两种动画效果，后续需要通过判断轮盘的移动状态来判断播放哪种动画。最后添加一个 `DirectionalLight` `💡` 光源来产生阴影。
+狐狸 `🦊` 模型的加载也是类似的，需要先创建一个目标网格，后续用于地形检测，然后把狐狸 `🦊` 模型添加到目标网格上。狐狸 `🦊` 模型完成加载后，需要保存它的 `clip1`、 `clip1` 两种动画效果，后续需要通过判断轮盘 `🕹` 的移动状态来判断播放哪种动画。最后添加一个 `DirectionalLight` `💡` 光源来产生阴影。
 
 ```js
 var geometry = new THREE.BoxBufferGeometry(.5, 1, .5);
@@ -418,7 +390,9 @@ const updateCamera = () => {
 }
 ```
 
-> `🚩` 轮盘控制器 `JoyStick` 类具体实现可参考文章末尾 `Codepen` 链接。
+![preview](./images/preview.png)
+
+> `🚩` 轮盘控制器 `JoyStick` 类具体实现可参考文章末尾 `Codepen` 链接 [5]。
 
 ### 动画更新
 
@@ -447,7 +421,7 @@ const animate = () => {
 
 ### 页面缩放适配
 
-页面产生缩放时，更新渲染场景和相机。
+页面产生缩放时，更新渲染场景 `🏔` 和相机 `📷`。
 
 ```js
 window.addEventListener('resize', () => {
@@ -458,13 +432,13 @@ window.addEventListener('resize', () => {
 }, false);
 ```
 
-到此为止，游戏三维世界已经全部实现完毕了。
+到此，游戏三维世界 `🌏` 已经全部实现完毕了。
 
-![preview](./images/preview.png)
+![complete](./images/complete.gif)
 
 ### 添加游戏逻辑
 
-根据前面的游戏流程设计，现在添加游戏逻辑，开始游戏时重置数据并开始 `60s` 倒计时 `⏳` ；重置游戏时将阿狸 `🦊` 位置、方向及相机位置设置为初始状态；自由探索时开启自由探索状态，并清除倒计时。
+根据前面的游戏流程设计，现在添加游戏逻辑，开始游戏时重置数据并开始 `60s` 倒计时 `⏳` ；重置游戏时将阿狸 `🦊` 位置、方向及相机位置设置为初始状态；自由探索时开启自由探索状态，并清除倒计时。`⏳`
 
 ```js
 startGame = () => {
@@ -509,12 +483,12 @@ discover = () => {
 
 ### 毛玻璃效果
 
-`Loading` 页面、结果页面以及回到过去按钮都采用了**毛玻璃效果**样式，通过以下几行样式代码，即可实现惊艳的毛玻璃。 `✨`
+`Loading` 页面、结果页面以及回到过去按钮都采用了**毛玻璃效果**样式 `💧`，通过以下几行样式代码，即可实现惊艳的毛玻璃。
 
 ```stylus
 background rgba(0, 67, 170, .5)
-filter drop-shadow(0px 1px 1px rgba(0, 0, 0, .25))
 backdrop-filter blur(10px)
+filter drop-shadow(0px 1px 1px rgba(0, 0, 0, .25))
 ```
 
 ![result](./images/result.png)
