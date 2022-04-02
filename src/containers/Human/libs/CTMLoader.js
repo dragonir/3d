@@ -1403,23 +1403,23 @@ THREE.CTMLoader.prototype.createModel = function ( file, callback ) {
 		}
 
 		this.setIndex( new THREE.BufferAttribute( indices, 1 ) );
-		this.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+		this.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
 
 		if ( normals !== undefined ) {
 
-			this.addAttribute( 'normal', new THREE.BufferAttribute( normals, 3 ) );
+			this.setAttribute( 'normal', new THREE.BufferAttribute( normals, 3 ) );
 
 		}
 
 		if ( uvs !== undefined ) {
 
-			this.addAttribute( 'uv', new THREE.BufferAttribute( uvs, 2 ) );
+			this.setAttribute( 'uv', new THREE.BufferAttribute( uvs, 2 ) );
 
 		}
 
 		if ( colors !== undefined ) {
 
-			this.addAttribute( 'color', new THREE.BufferAttribute( colors, 4 ) );
+			this.setAttribute( 'color', new THREE.BufferAttribute( colors, 4 ) );
 
 		}
 
