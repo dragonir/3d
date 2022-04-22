@@ -2,14 +2,15 @@
   margin 0
   padding 0
 
-html
- background #1e1a20
+html, body
+ background #000000 !important
 
 .webgl
   position fixed
   top 0
   left 0
   outline none
+  z-index 2
 
 .section
   display flex
@@ -22,5 +23,6 @@ html
   font-size 7vmin
   padding-left 10%
   padding-right 10%
+  background-size contain
   &:nth-child(odd)
     justify-content flex-end

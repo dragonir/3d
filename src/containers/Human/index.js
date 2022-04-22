@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React from 'react';
 import Stats from "three/examples/jsm/libs/stats.module";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -11,12 +10,9 @@ import eyeModel from './models/EyeRight.ctm';
 import eyeMapTexture from './images/Eye_Blue2_1k.jpg';
 import eyeBumpMapTexture from './images/Eye_Bump2_1k.jpg';
 
-export default class Human extends React.Component {
+const THREE = window.THREE;
 
-  constructor(props) {
-    super(props);
-    this.cube = null;
-  }
+export default class Human extends React.Component {
 
   componentDidMount() {
     this.initThree()
@@ -24,7 +20,7 @@ export default class Human extends React.Component {
 
   initThree = () => {
     const stats = new Stats();
-    document.documentElement.appendChild(stats.dom);
+    // document.documentElement.appendChild(stats.dom);
 
     var frustumSize = 96, meshes = [];
     const renderer = new THREE.WebGLRenderer({
@@ -67,7 +63,7 @@ export default class Human extends React.Component {
       let mesh = new THREE.Mesh(geometry,  new THREE.MeshStandardMaterial ({
         map: new THREE.TextureLoader().load(mapTexture),
         bumpMap: new THREE.TextureLoader().load(bumpMapTexture),
-        bumpScale: 1.5,
+        bumpScale: 1.2,
         roughnessMap: new THREE.TextureLoader().load(normalMapTexture),
         roughness: 2
       }));
@@ -84,16 +80,18 @@ export default class Human extends React.Component {
       let rightEye = new THREE.Mesh(geometry, new THREE.MeshPhysicalMaterial({
         map: new THREE.TextureLoader().load(eyeMapTexture),
         bumpMap: new THREE.TextureLoader().load(eyeBumpMapTexture),
-        bumpScale: .8,
+        bumpScale: 2,
+        roughness: .1,
+        metalness: .1
       }));
       rightEye.rotation.set(0, -Math.PI, 0)
       rightEye.scale.set(66, 66, 66);
-      rightEye.position.set(4, -202, -2);
+      rightEye.position.set(4, -202, -1.2);
       headGroup.add(rightEye);
       meshes.push(rightEye);
 
       let leftEye = rightEye.clone();
-      rightEye.position.set(-42, -202, -2);
+      rightEye.position.set(-42, -202, -1.2);
       headGroup.add(leftEye);
       scene.add(headGroup);
     });
@@ -120,7 +118,6 @@ export default class Human extends React.Component {
     const animate = () => {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
-      this.cube && (this.cube.rotation.z += .05);
       stats && stats.update();
       controls && controls.update();
     }
