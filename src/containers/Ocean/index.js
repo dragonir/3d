@@ -8,8 +8,6 @@ import waterTexture from '@/containers/Ocean/images/waternormals.jpg';
 import { Sky } from 'three/examples/jsm/objects/Sky';
 import islandModel from '@/containers/Ocean/models/island.glb';
 
-console.log(Water)
-
 export default class Earth extends React.Component {
   componentDidMount() {
     this.initThree()
@@ -25,12 +23,8 @@ export default class Earth extends React.Component {
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
     const scene = new THREE.Scene();
-    // const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    // camera.position.set(0, 10, 20);
-    // camera.lookAt(new THREE.Vector3(0, 0, 0));
-
-    const camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 20000 );
-    camera.position.set( 30, 30, 100 );
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 20000 );
+    camera.position.set(0, 30, 120);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.target.set(0, 0, 0);
@@ -100,6 +94,37 @@ export default class Earth extends React.Component {
       mesh.scene.scale.set(30, 30, 30);
       scene.add(mesh.scene);
     });
+
+    // 虹
+    const material = new THREE.ShaderMaterial({
+      side: THREE.DoubleSide,
+      transparent: true,
+      uniforms: {},
+      vertexShader: [
+        'varying vec2 vUV;',
+        'varying vec3 vNormal;',
+        'void main() {',
+        'vUV = uv;',
+        'vNormal = vec3( normal );',
+        'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+        '}'
+      ].join('\n'),
+
+      fragmentShader: [
+        'varying vec2 vUV;',
+        'varying vec3 vNormal;',
+        'void main() {',
+        'vec4 c = vec4( abs( vNormal ) + vec3(vUV, 0.0), 0.3);',
+        'gl_FragColor = c;',
+        '}'
+      ].join('\n')
+    });
+    const geometry = new THREE.TorusGeometry(120, 10, 50, 100);
+    const torus = new THREE.Mesh(geometry, material);
+    console.log(torus)
+    torus.opacity = .1;
+    torus.position.set(0, -10, -250);
+    scene.add(torus);
 
     const animate = () => {
       requestAnimationFrame(animate);
