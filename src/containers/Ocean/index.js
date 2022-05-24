@@ -2,14 +2,21 @@ import React from 'react';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import Stats from "three/examples/jsm/libs/stats.module";
 import { Water } from 'three/examples/jsm/objects/Water';
-import waterTexture from '@/containers/Ocean/images/waternormals.jpg';
 import { Sky } from 'three/examples/jsm/objects/Sky';
+import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
+import Stats from "three/examples/jsm/libs/stats.module";
+import waterTexture from '@/containers/Ocean/images/waternormals.jpg';
 import islandModel from '@/containers/Ocean/models/island.glb';
 import flamingoModel from '@/containers/Ocean/models/flamingo.glb';
+import Animations from '@/assets/utils/animations';
 
 export default class Earth extends React.Component {
+  constructor() {
+    super();
+    this.mixers = [];
+  }
+
   componentDidMount() {
     this.initThree()
   }
@@ -22,11 +29,10 @@ export default class Earth extends React.Component {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    // renderer.outputEncoding = THREE.sRGBEncoding;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 20000);
-    camera.position.set(0, 35, 140);
+    camera.position.set(0, 600, 1600);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.target.set(0, 0, 0);
@@ -61,7 +67,8 @@ export default class Earth extends React.Component {
       sunDirection: new THREE.Vector3(),
       sunColor: 0xffffff,
       waterColor: 0x001e0f,
-      distortionScale: 3.7,
+      // waterColor: 0x0072ff,
+      distortionScale: 4,
       fog: scene.fog !== undefined
     });
     water.rotation.x = - Math.PI / 2;
@@ -84,7 +91,6 @@ export default class Earth extends React.Component {
       elevation: 2,
       azimuth: 180
     };
-
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
     const updateSun = () => {
       const phi = THREE.MathUtils.degToRad( 90 - parameters.elevation );
@@ -111,11 +117,9 @@ export default class Earth extends React.Component {
     });
 
     // 鸟
-    var mixers = [];
     loader.load(flamingoModel, gltf => {
       const mesh = gltf.scene.children[0];
-      const s = 0.35;
-      mesh.scale.set( s, s, s );
+      mesh.scale.set(.35, .35, .35);
       mesh.position.set(-100, 80, -300);
       mesh.rotation.y = - 1;
       mesh.castShadow = true;
@@ -123,18 +127,17 @@ export default class Earth extends React.Component {
       scene.add(mesh);
 
       const bird2 = mesh.clone();
-      console.log(bird2)
       bird2.position.set(150, 80, -500);
       bird2.material.color = new THREE.Color('#ffffff')
       scene.add(bird2);
 
       const mixer = new THREE.AnimationMixer(mesh);
       mixer.clipAction(gltf.animations[0]).setDuration(1.2).play();
-      mixers.push(mixer);
+      this.mixers.push(mixer);
 
       const mixer2 = new THREE.AnimationMixer(bird2);
       mixer2.clipAction(gltf.animations[0]).setDuration(1.8).play();
-      mixers.push(mixer2);
+      this.mixers.push(mixer2);
     });
 
     // 虹
@@ -163,10 +166,11 @@ export default class Earth extends React.Component {
     });
     const geometry = new THREE.TorusGeometry(200, 10, 50, 100);
     const torus = new THREE.Mesh(geometry, material);
-    console.log(torus)
     torus.opacity = .1;
     torus.position.set(0, -50, -400);
     scene.add(torus);
+
+    Animations.animateCamera(camera, controls, { x: 0, y: 40, z: 140 }, { x: 0, y: 0, z: 0 }, 4000, () => {});
 
     const clock = new THREE.Clock();
     const animate = () => {
@@ -174,14 +178,14 @@ export default class Earth extends React.Component {
       water.material.uniforms[ 'time' ].value += 1.0 / 60.0;
       stats && stats.update();
       controls && controls.update();
-
       const delta = clock.getDelta();
-
-				for ( let i = 0; i < mixers.length; i ++ ) {
-
-					mixers[ i ].update( delta );
-
-				}
+      this.mixers && this.mixers.map(item => {
+        item.update(delta);
+        return true;
+      });
+      const timer = Date.now() * 0.0005;
+      TWEEN && TWEEN.update();
+      camera && (camera.position.y += Math.sin(timer) * .05);
       renderer.render(scene, camera);
     }
     animate();
