@@ -12,7 +12,7 @@ import flamingoModel from '@/containers/Ocean/models/flamingo.glb';
 import Animations from '@/assets/utils/animations';
 import vertexShader from '@/containers/Ocean/shaders/rainbow/vertex.glsl'
 import fragmentShader from '@/containers/Ocean/shaders/rainbow/fragment.glsl'
-import Stats from "three/examples/jsm/libs/stats.module";
+// import Stats from "three/examples/jsm/libs/stats.module";
 
 export default class Earth extends React.Component {
   constructor() {
@@ -63,8 +63,8 @@ export default class Earth extends React.Component {
     controls.minDistance = 50;
     controls.maxDistance = 1200;
 
-    const stats = new Stats();
-    document.documentElement.appendChild(stats.dom);
+    // const stats = new Stats();
+    // document.documentElement.appendChild(stats.dom);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, .8);
     scene.add(ambientLight);
@@ -81,7 +81,7 @@ export default class Earth extends React.Component {
       renderer.setSize(window.innerWidth, window.innerHeight);
     }, false);
 
-    // 水
+    // 海
     const waterGeometry = new THREE.PlaneGeometry(10000, 10000);
 		const water = new Water(waterGeometry, {
       textureWidth: 512,
@@ -101,7 +101,7 @@ export default class Earth extends React.Component {
     // 天空
     const sky = new Sky();
     sky.scale.setScalar(10000);
-    scene.add( sky );
+    scene.add(sky);
     const skyUniforms = sky.material.uniforms;
     skyUniforms['turbidity'].value = 20;
     skyUniforms['rayleigh'].value = 2;
@@ -228,7 +228,7 @@ export default class Earth extends React.Component {
     const animate = () => {
       requestAnimationFrame(animate);
       water.material.uniforms[ 'time' ].value += 1.0 / 60.0;
-      stats && stats.update();
+      // stats && stats.update();
       controls && controls.update();
       const delta = clock.getDelta();
       this.mixers && this.mixers.forEach(item => {
