@@ -12,7 +12,7 @@ import flamingoModel from '@/containers/Ocean/models/flamingo.glb';
 import Animations from '@/assets/utils/animations';
 import vertexShader from '@/containers/Ocean/shaders/rainbow/vertex.glsl'
 import fragmentShader from '@/containers/Ocean/shaders/rainbow/fragment.glsl'
-// import Stats from "three/examples/jsm/libs/stats.module";
+import Stats from "three/examples/jsm/libs/stats.module";
 
 export default class Earth extends React.Component {
   constructor() {
@@ -21,41 +21,55 @@ export default class Earth extends React.Component {
   }
 
   state = {
-    loadingProcess: 0
+    loadingProcess: 0,
+    sceneReady: false
   }
 
   componentDidMount() {
-    this.initThree()
+    this.initThree();
+  }
+
+  componentWillUnmount() {
+    this.setState = () => {
+      return;
+    }
   }
 
   initThree = () => {
+    const clock = new THREE.Clock();
+
+    const sizes = {
+      width: window.innerWidth,
+      height: window.innerHeight
+    }
+
     const renderer = new THREE.WebGLRenderer({
       canvas: document.querySelector('canvas.webgl'),
       antialias: true
     });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.setSize(sizes.width, sizes.height);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 20000);
+    const camera = new THREE.PerspectiveCamera(55, sizes.width / sizes.height, 1, 20000);
     camera.position.set(0, 600, 1600);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.target.set(0, 0, 0);
     controls.enableDamping = true;
     controls.enablePan = false;
-    controls.enableZoom = false;
-    controls.minPolarAngle = .5;
-    controls.maxPolarAngle = 1.4;
+    controls.maxPolarAngle = 1.5;
+    controls.minDistance = 50;
+    controls.maxDistance = 1200;
 
-    // const stats = new Stats();
-    // document.documentElement.appendChild(stats.dom);
+    const stats = new Stats();
+    document.documentElement.appendChild(stats.dom);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, .8);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, .8);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
     dirLight.color.setHSL(.1, 1, .95);
     dirLight.position.set(-1, 1.75, 1);
     dirLight.position.multiplyScalar(30);
@@ -108,7 +122,9 @@ export default class Earth extends React.Component {
     manager.onProgress = async(url, loaded, total) => {
       if (Math.floor(loaded / total * 100) === 100) {
         this.setState({ loadingProcess: Math.floor(loaded / total * 100) });
-        Animations.animateCamera(camera, controls, { x: 0, y: 40, z: 140 }, { x: 0, y: 0, z: 0 }, 4000, () => {});
+        Animations.animateCamera(camera, controls, { x: 0, y: 40, z: 140 }, { x: 0, y: 0, z: 0 }, 4000, () => {
+          this.setState({ sceneReady: true });
+        });
       } else {
         this.setState({ loadingProcess: Math.floor(loaded / total * 100) });
       }
@@ -164,20 +180,87 @@ export default class Earth extends React.Component {
     torus.position.set(0, -50, -400);
     scene.add(torus);
 
-    const clock = new THREE.Clock();
+    // 点
+    const raycaster = new THREE.Raycaster()
+    const points = [
+      {
+        position: new THREE.Vector3(10, 46, 0),
+        element: document.querySelector('.point-0')
+      },
+      {
+        position: new THREE.Vector3(-10, 8, 24),
+        element: document.querySelector('.point-1')
+      },
+      {
+        position: new THREE.Vector3(30, 10, 70),
+        element: document.querySelector('.point-2')
+      },
+      {
+        position: new THREE.Vector3(-100, 50, -300),
+        element: document.querySelector('.point-3')
+      },
+      {
+        position: new THREE.Vector3(-120, 50, -100),
+        element: document.querySelector('.point-4')
+      }
+    ];
+
+    document.querySelectorAll('.point').forEach(item => {
+      item.addEventListener('click', event => {
+        let className = event.target.classList[event.target.classList.length - 1];
+        switch(className) {
+          case 'label-0':
+            Animations.animateCamera(camera, controls, { x: -15, y: 80, z: 60 }, { x: 0, y: 0, z: 0 }, 1600, () => {});
+            break;
+          case 'label-1':
+            Animations.animateCamera(camera, controls, { x: -20, y: 10, z: 60 }, { x: 0, y: 0, z: 0 }, 1600, () => {});
+            break;
+          case 'label-2':
+            Animations.animateCamera(camera, controls, { x: 30, y: 10, z: 100 }, { x: 0, y: 0, z: 0 }, 1600, () => {});
+            break;
+          default:
+            Animations.animateCamera(camera, controls, { x: 0, y: 40, z: 140 }, { x: 0, y: 0, z: 0 }, 1600, () => {});
+            break;
+        }
+      }, false);
+    });
+
     const animate = () => {
       requestAnimationFrame(animate);
       water.material.uniforms[ 'time' ].value += 1.0 / 60.0;
-      // stats && stats.update();
+      stats && stats.update();
       controls && controls.update();
       const delta = clock.getDelta();
-      this.mixers && this.mixers.map(item => {
+      this.mixers && this.mixers.forEach(item => {
         item.update(delta);
-        return true;
       });
       const timer = Date.now() * 0.0005;
       TWEEN && TWEEN.update();
       camera && (camera.position.y += Math.sin(timer) * .05);
+      if (this.state.sceneReady) {
+        // 遍历每个点
+        for (const point of points) {
+          // 获取2D屏幕位置
+          const screenPosition = point.position.clone();
+          screenPosition.project(camera);
+          raycaster.setFromCamera(screenPosition, camera);
+          const intersects = raycaster.intersectObjects(scene.children, true);
+          if (intersects.length === 0) {
+            // 未找到相交点，显示
+            point.element.classList.add('visible');
+          } else {
+            // 找到相交点
+            // 获取相交点的距离和点的距离
+            const intersectionDistance = intersects[0].distance;
+            const pointDistance = point.position.distanceTo(camera.position);
+            // 相交点距离比点距离近，隐藏；相交点距离比点距离远，显示
+            intersectionDistance < pointDistance ? point.element.classList.remove('visible') :  point.element.classList.add('visible');
+          }
+          const translateX = screenPosition.x * sizes.width * 0.5;
+          const translateY = - screenPosition.y * sizes.height * 0.5;
+          point.element.style.transform = `translateX(${translateX}px) translateY(${translateY}px)`;
+        }
+      }
       renderer.render(scene, camera);
     }
     animate();
@@ -198,6 +281,26 @@ export default class Earth extends React.Component {
           </svg>
           <span className='author'>@dragonir</span>
         </a>
+        <div className="point point-0">
+          <div className="label label-0">1</div>
+          <div className="text">灯塔：矗立在海岸的岩石之上，白色的塔身以及红色的塔屋，在湛蓝色的天空和深蓝色大海的映衬下，显得如此醒目和美丽。</div>
+        </div>
+        <div className="point point-1">
+          <div className="label label-1">2</div>
+          <div className="text">小船：梦中又见那宁静的大海，我前进了，驶向远方，我知道我是船，只属于远方。这一天，我用奋斗作为白帆，要和明天一起飘扬，呼喊。</div>
+        </div>
+        <div className="point point-2">
+          <div className="label label-2">3</div>
+          <div className="text">沙滩：宇宙展开的一小角。不想说来这里是暗自疗伤，那过于矫情，只想对每一粒沙子，每一朵浪花问声你们好吗</div>
+        </div>
+        <div className="point point-3">
+          <div className="label label-3">4</div>
+          <div className="text">飞鸟：在苍茫的大海上，狂风卷集着乌云。在乌云和大海之间，海燕像黑色的闪电，在高傲地飞翔。</div>
+        </div>
+        <div className="point point-4">
+          <div className="label label-4">5</div>
+          <div className="text">礁石：寂寞又怎么样？礁石都不说话，但是水流过去之后，礁石留下。</div>
+        </div>
       </div>
     )
   }
