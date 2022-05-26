@@ -10,8 +10,8 @@ import waterTexture from '@/containers/Ocean/images/waternormals.jpg';
 import islandModel from '@/containers/Ocean/models/island.glb';
 import flamingoModel from '@/containers/Ocean/models/flamingo.glb';
 import Animations from '@/assets/utils/animations';
-import vertexShader from '@/containers/Ocean/shaders/rainbow/vertex.glsl'
-import fragmentShader from '@/containers/Ocean/shaders/rainbow/fragment.glsl'
+import vertexShader from '@/containers/Ocean/shaders/rainbow/vertex.glsl';
+import fragmentShader from '@/containers/Ocean/shaders/rainbow/fragment.glsl';
 // import Stats from "three/examples/jsm/libs/stats.module";
 
 export default class Earth extends React.Component {
