@@ -23,6 +23,7 @@ import floatingImage from './images/floating.png';
 import liveImage from './images/live.png';
 import ringImage from './images/ring.png';
 import metaverseImage from './images/metaverse.png';
+import oceanImage from './images/ocean.png';
 
 import './index.css';
 
@@ -46,6 +47,13 @@ const workList = [
     title: '2022冬奥会3D趣味页面',
     description: '🐼 萌萌的冰墩墩和雪容融送给大家！',
     image: olympicImage,
+    three: true
+  },
+  {
+    link: '#/ocean',
+    title: '梦中情岛',
+    description: '🌊 缤纷夏日3D梦中情岛！',
+    image: oceanImage,
     three: true
   },
   {

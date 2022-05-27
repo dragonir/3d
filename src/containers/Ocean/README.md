@@ -1,4 +1,4 @@
-# Three.js 打造专属自己的缤纷夏日3D梦中情岛
+# Three.js 打造缤纷夏日3D梦中情岛 🌊
 
 > 声明：本文涉及图文和模型素材仅用于个人学习、研究和欣赏，请勿二次修改、非法传播、转载、出版、商用、及进行其他获利行为。
 
@@ -6,12 +6,13 @@
 
 ## 背景
 
-深居内陆的人们，大概每个人都有过大海之梦吧。夏日傍晚在沙滩漫步奔跑；或是在海上冲浪游泳；或是在海岛游玩探险；亦或静待日出日落……本文使用 `React + Three.js` 技术栈，实现 `3D` 海洋和岛屿，让我们在这个夏天通过这个页面共赴大海之约。
+深居内陆的人们，大概每个人都有过大海之梦吧。夏日傍晚在沙滩漫步奔跑；或是在海上冲浪游泳；或是在海岛游玩探险；亦或静待日出日落……本文使用 `React + Three.js` 技术栈，实现 `3D` 海洋和岛屿，主要包含知识点包括：`Tone Mapping`、`Water` 类、`Sky` 类、`Shader` 着色、`ShaderMaterial` 着色器材质、`Raycaster` 检测遮挡以及 `Three.js` 的其他基础知识，让我们在这个夏天通过此页面共赴大海之约。
 
 ## 效果
 
 ![preview](./images/preview.png)
 
+* `💻` 本页面仅适配 `PC` 端，大屏访问效果更佳。
 * `👁‍🗨` 在线预览地址1：<https://3d-eosin.vercel.app/#/ocean>
 * `👁‍🗨` 在线预览地址2：<https://dragonir.github.io/3d/#/ocean>
 
@@ -19,7 +20,7 @@
 
 ### 👨‍🎨 素材准备
 
-开发之前，需要准备页面所需的素材，本文用到的海岛素材是在 [sketchfab.com](https://sketchfab.com/feed) 找的免费素材。下载好素材之后，在 `Blender` 中打开，按自己的想法调整模型的颜色、材质、大小比例、角度、位置等信息，删减不需要的模块、缩减面数以压缩模型体积，最后删除相机、光照、`UV`、动画等多余信息，只导出模型网格备用。
+开发之前，需要准备页面所需的素材，本文用到的海岛素材是在 [sketchfab.com](https://sketchfab.com/feed) 找的免费模型。下载好素材之后，在 `Blender` 中打开，按自己的想法调整模型的颜色、材质、大小比例、角度、位置等信息，删减不需要的模块、缩减面数以压缩模型体积，最后删除相机、光照、`UV`、动画等多余信息，**只导出模型网格**备用。
 
 ![model_blender](./images/model_blender.png)
 
@@ -44,7 +45,7 @@ import fragmentShader from '@/containers/Ocean/shaders/rainbow/fragment.glsl';
 
 ### 📃 页面结构
 
-页面主要由3部分构成：`canvas.webgl` 用于渲染WEBGL场景；`div.loading` 用于模型加载完成前显示加载进度；`div.point` 用于添加交互点，省略部分是其他几个交互点信息。
+页面主要由3部分构成：`canvas.webgl` 用于渲染 `WEBGL` 场景；`div.loading` 用于模型加载完成前显示加载进度；`div.point` 用于添加交互点，省略部分是其他几个交互点信息。
 
 ```js
 render () {
@@ -68,7 +69,7 @@ render () {
 
 ### 🌏 场景初始化
 
-在这部分，先定义好需要的状态值，`loadingProcess` 用于显示加载进度。
+在这部分，先定义好需要的状态值，`loadingProcess` 用于显示页面加载进度。
 
 ```js
 state = {
@@ -135,7 +136,7 @@ window.addEventListener('resize', () => {
 
 ### 🌊 海
 
-使用Three.js自带的Water类创建海洋，首先创建一个平面网格 `waterGeometry`，让后将它传递给 `Water`，并配置相关属性。
+使用 `Three.js` 自带的 `Water` 类创建海洋，首先创建一个平面网格 `waterGeometry`，让后将它传递给 `Water`，并配置相关属性，最后将海洋添加到场景中。
 
 ![water_normals](./images/water_normals.png)
 
@@ -159,7 +160,7 @@ scene.add(water);
 
 #### `💡` Water 类
 
-参数说明：
+**参数说明**：
 
 * `textureWidth`：画布宽度
 * `textureHeight`：画布高度
@@ -175,7 +176,7 @@ scene.add(water);
 
 ### 🌞 空
 
-接着，使用 `Three.js` 自带的天空类 `Sky` 创建天空，通过修改着色器参数设置天空样式，然后创建太阳。
+接着，使用 `Three.js` 自带的天空类 `Sky` 创建天空，通过修改着色器参数设置天空样式，然后创建太阳并添加到场景中。
 
 ```js
 const sky = new Sky();
@@ -199,7 +200,7 @@ scene.environment = pmremGenerator.fromScene(sky).texture;
 
 #### `💡` Sky 类
 
-天空材质着色器变量说明：
+**天空材质着色器参数说明**：
 
 * `turbidity` 浑浊度
 * `rayleigh` 视觉效果就是傍晚晚霞的红光的深度
@@ -211,14 +212,13 @@ scene.environment = pmremGenerator.fromScene(sky).texture;
 
 ### 🌈 虹
 
-首先，创建彩虹渐变效果的着色器 `Shader`, 然后使用着色器材质 `ShaderMaterial`， 创建圆环 `THREE.TorusGeometry` 并添加到场景中。
+首先，创建具有彩虹渐变效果的着色器 `Shader`, 然后使用着色器材质 `ShaderMaterial`， 创建圆环 `THREE.TorusGeometry` 并添加到场景中。
 
-vertex.glsl
+**顶点着色器 vertex.glsl**：
 
 ```glsl
 varying vec2 vUV;
 varying vec3 vNormal;
-
 void main () {
   vUV = uv;
   vNormal = vec3(normal);
@@ -226,19 +226,18 @@ void main () {
 }
 ```
 
-fragment.glsl
+**片段着色器 fragment.glsl**：
 
 ```glsl
 varying vec2 vUV;
 varying vec3 vNormal;
-
 void main () {
-  vec4 c = vec4(abs(vNormal) + vec3(vUV, 0.0), 0.1);
+  vec4 c = vec4(abs(vNormal) + vec3(vUV, 0.0), 0.1); // 设置透明度为0.1
   gl_FragColor = c;
 }
 ```
 
-彩虹渐变着色器效果：
+**彩虹渐变着色器效果**：
 
 ![shader](./images/shader.png)
 
@@ -261,25 +260,25 @@ scene.add(torus);
 
 #### `💡` Shader 着色器
 
-WebGL 中记述了坐标变换的机制就叫做着色器 `Shader`，着色器又有处理几何图形顶点的 顶点着色器 和处理像素的 片段着色器 两种类型
+`WebGL` 中记述了坐标变换的机制就叫做着色器 `Shader`，着色器又有处理几何图形顶点的 `顶点着色器` 和处理像素的 `片段着色器` 两种类型
 
 ##### 准备顶点着色器和片元着色器
 
 着色器的添加有多种方法，最简单的方法就是把着色器记录在 `HTML` 中。该方法利用`HTML` 的 `script` 标签来实现，如：
 
-顶点着色器：
+**顶点着色器**：
 
 ```html
 <script id="vshader" type="x-shader/x-vertex"></script>
 ```
 
-片段着色器：
+**片段着色器**：
 
 ```html
 <script id="fshader" type="x-shader/x-fragment"></script>
 ```
 
-也可以像本文中一样，直接使用单独创建 `glsl` 格式文件引入。
+> `🎏` 也可以像本文中一样，直接使用单独创建 `glsl` 格式文件引入。
 
 ##### 着色器的三个变量与运行方式
 
@@ -287,37 +286,33 @@ WebGL 中记述了坐标变换的机制就叫做着色器 `Shader`，着色器�
 * `Attributes`：是与每个顶点关联的变量。例如，顶点位置，法线和顶点颜色都是存储在 `attributes` 中的数据。`attributes` 只可以在顶点着色器中访问。
 * `Varyings`：是从顶点着色器传递到片元着色器的变量。对于每一个片元，每一个`varying` 的值将是相邻顶点值的平滑插值。
 
-`顶点着色器` 首先运行，它接收 `attributes`， 计算每个单独顶点的位置，并将其他数据（`varyings`）传递给片元着色器。`片段着色器` 后运行，它设置渲染到屏幕的每个单独的片段的颜色。
+`顶点着色器` 首先运行，它接收 `attributes`， 计算每个单独顶点的位置，并将其他数据`varyings` 传递给片段着色器。`片段着色器` 后运行，它设置渲染到屏幕的每个单独的片段的颜色。
 
 #### `💡` ShaderMaterial 着色器材质
 
-`Three.js` 所谓的材质对象 `Material` 本质上就是着色器代码和需要传递的 `uniform` 数据（光源、颜色、矩阵）。
+`Three.js` 所谓的材质对象 `Material` 本质上就是着色器代码和需要传递的 `uniform` 数据**光源、颜色、矩阵**。`Three.js` 提供可直接渲染着色器语法的材质 `ShaderMaterial` 和 `RawShaderMaterial`。
 
-很多时候想写一些特效，往往需要编写着色器代码 `GLSL`，如果有着色器语言基础，直接使用 `Three.js` 引擎的 `ShaderMaterial` 或 `RawShaderMaterial` `API` 编写就可以。在 `Three.js` 中想着色器传递数据不需要像 `WebGL` 中要使用`WebGL API` 来传递，`Three.js` 会自动处理。
+* `RawShaderMaterial`: 和原生 `WebGL` 中一样，顶点着色器、片元着色器代码基本没有任何区别，不过顶点数据和 `uniform` 数据可以通过 `Three.js` 的 `API` 快速传递，要比使用 `WebGL` 原生的 `API` 与着色器变量绑定要方便得多。
+* `ShaderMaterial`：`ShaderMaterial` 比 `RawShaderMaterial` 更方便些，着色器中的很多变量不用声明，`Three.js` 系统会自动设置，比如顶点坐标变量、投影矩阵、视图矩阵等。
 
-* `RawShaderMaterial`: 和原生 `WebGL` 中一样，顶点着色器、片元着色器代码基本没有任何区别，不过顶点数据和 `uniform` 数据可以通过 `Three.js` 的API快速传递，要比使用 `WebGL` 原生的 `API` 与着色器变量绑定要方便得多。
-* `ShaderMaterial`：`ShaderMaterial` 比 `RawShaderMaterial` 更方便些，着色器中的很多变量不用声明，`Three.js` 系统会自动帮你设置，比如顶点坐标变量、投影矩阵、视图矩阵等。
-
-### 构造函数
+**构造函数**：
 
 ```js
 ShaderMaterial(parameters : Object)
 ```
 
-`parameters`：(可选)用于定义材质外观的对象，具有一个或多个属性。 材质的任何属性都可以从此处传入(包括从 `Material` 继承的任何属性)。
+`parameters`：可选，用于定义材质外观的对象，具有一个或多个属性。
 
-常用属性：
+**常用属性**：
 
 * `attributes[Object]`：接受如下形式的对象，`{ attribute1: { value: []} }` 指定要传递给顶点着色器代码的 `attributes`；键为 `attribute` 修饰变量的名称，值也是对象格式，如 `{ value: [] }`， `value` 是固定名称，因为 `attribute` 相对于所有顶点，所以应该回传一个数组格式。只有 `bufferGeometry` 类型的能使用该属性。
-* `.uniforms[Object]`：如下形式的对象：
-`{ uniform1: { value: 1.0 }, uniform2: { value: 2.0 }}` 指定要传递给`shader` 代码的 `uniforms`；键为 `uniform` 的名称，值是如下形式：
-`{ value: 1.0 }` 这里 `value` 是 `uniform` 的值。名称必须匹配着色器代码中  `uniform` 的 `name`，和 `GLSL` 代码中的定义一样。 注意，`uniforms` 逐帧被刷新，所以更新 `uniform` 值将立即更新 `GLSL` 代码中的相应值。
-* `.fragmentShader[String]`：片元着色器的 `GLSL` 代码。这是 `shader` 程序的实际代码。在上面的例子中， `vertexShader` 和 `fragmentShader` 代码是从 `DOM` 中获取的； 它也可以作为一个字符串直接传递或者通过 `AJAX` 加载。
-* `.vertexShader[String]`：顶点着色器的 `GLSL` 代码。这是 `shader` 程序的实际代码。 在上面的例子中，`vertexShader` 和 `fragmentShader` 代码是从 `DOM` 中获取的； 它也可以作为一个字符串直接传递或者通过 `AJAX` 加载。
+* `.uniforms[Object]`：如下形式的对象：`{ uniform1: { value: 1.0 }, uniform2: { value: 2.0 }}` 指定要传递给`shader` 代码的 `uniforms`；键为 `uniform` 的名称，值是如下形式：`{ value: 1.0 }` 这里 `value` 是 `uniform` 的值。名称必须匹配着色器代码中  `uniform` 的 `name`，和 `GLSL` 代码中的定义一样。 注意，`uniforms` 逐帧被刷新，所以更新 `uniform` 值将立即更新 `GLSL` 代码中的相应值。
+* `.fragmentShader[String]`：片元着色器的 `GLSL` 代码，它也可以作为一个字符串直接传递或者通过 `AJAX` 加载。
+* `.vertexShader[String]`：顶点着色器的 `GLSL` 代码，它也可以作为一个字符串直接传递或者通过 `AJAX` 加载。
 
 ### 🌴 岛
 
-使用 `GLTFLoader` 加载岛屿模型并添加到场景中。
+接着，使用 `GLTFLoader` 加载岛屿模型并添加到场景中。加载之前可以使用 `LoadingManager` 来管理加载进度。
 
 ![model_island](./images/model_island.png)
 
@@ -351,7 +346,7 @@ loader.load(islandModel, mesh => {
 
 ### 🦅 鸟
 
-使用 `GLTFLoader` 加载岛屿模型添加到场景中，获取模型自带的动画帧并进行播放，记得要在 `requestAnimationFrame` 中更新动画。可以使用 `clone` 方法在场景中添加多只飞鸟。
+使用 `GLTFLoader` 加载岛屿模型添加到场景中，获取模型自带的动画帧并进行播放，记得要在 `requestAnimationFrame` 中更新动画。可以使用 `clone` 方法在场景中添加多只飞鸟。鸟模型来源于 `Three.js` 官网。
 
 ![model_bird](./images/model_bird.png)
 
@@ -373,7 +368,7 @@ loader.load(flamingoModel, gltf => {
 
 ### 🖐 交互点
 
-添加交互点，鼠标hover悬浮时显示提示语，点击交互点可以切换镜头角度，视角聚焦到交互点对应的位置 `📍` 上。
+添加交互点，鼠标 `hover` 悬浮时显示提示语，点击交互点可以切换镜头角度，视角聚焦到交互点对应的位置 `📍` 上。
 
 ```js
 const points = [
@@ -461,7 +456,7 @@ animate();
 * `ShaderMaterial` 着色器材质
 * `Raycaster` 检测遮挡
 
-> 想了解其他前端知识或 `WEB 3D` 开发技术相关知识，可阅读我往期文章。**转载请注明原文地址和作者**。如果觉得文章对你有帮助，不要忘了**一键三连哦 👍**。
+> 想了解其他前端知识或其他未在本文中详细描述的 `Web 3D` 开发技术相关知识，可阅读我往期的文章。**转载请注明原文地址和作者**。如果觉得文章对你有帮助，不要忘了**一键三连哦 👍**。
 
 ## 参考
 
@@ -469,14 +464,13 @@ animate();
 
 ## 附录
 
-* [1]. [📷 前端实现很哇塞的浏览器端扫码功能](https://juejin.cn/post/7018722520345870350)
-* [2]. [🌏 前端瓦片地图加载之塞尔达传说旷野之息](https://juejin.cn/post/7007432493569671182)
-* [3]. [😱 仅用CSS几步实现赛博朋克2077风格视觉效果](https://juejin.cn/post/6972759988632551460)
-* `...`
-
-[3D](https://juejin.cn/column/7049923956257587213)
-
+* [朕的3D专栏](https://juejin.cn/column/7049923956257587213)
 * [1]. [🦊 Three.js 实现3D开放世界小游戏：阿狸的多元宇宙](https://juejin.cn/post/7081429595689320478)
 * [2]. [🔥 Three.js 火焰效果实现艾尔登法环动态logo](https://juejin.cn/post/7077726955528781832)
 * [3]. [🐼 Three.js 实现2022冬奥主题3D趣味页面，含冰墩墩](https://juejin.cn/post/7060292943608807460)
+* `...`
+
+* [1]. [📷 前端实现很哇塞的浏览器端扫码功能](https://juejin.cn/post/7018722520345870350)
+* [2]. [🌏 前端瓦片地图加载之塞尔达传说旷野之息](https://juejin.cn/post/7007432493569671182)
+* [3]. [😱 仅用CSS几步实现赛博朋克2077风格视觉效果](https://juejin.cn/post/6972759988632551460)
 * `...`
