@@ -5,13 +5,16 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { Water } from 'three/examples/jsm/objects/Water';
 import { Sky } from 'three/examples/jsm/objects/Sky';
-import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
+import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
+import { Lensflare, LensflareElement } from 'three/examples/jsm/objects/Lensflare.js';
 import waterTexture from '@/containers/Ocean/images/waternormals.jpg';
 import islandModel from '@/containers/Ocean/models/island.glb';
 import flamingoModel from '@/containers/Ocean/models/flamingo.glb';
 import Animations from '@/assets/utils/animations';
 import vertexShader from '@/containers/Ocean/shaders/rainbow/vertex.glsl';
 import fragmentShader from '@/containers/Ocean/shaders/rainbow/fragment.glsl';
+import lensflareTexture0 from '@/containers/Ocean/images/lensflare0.png';
+import lensflareTexture1 from '@/containers/Ocean/images/lensflare1.png';
 // import Stats from "three/examples/jsm/libs/stats.module";
 
 export default class Earth extends React.Component {
@@ -74,6 +77,23 @@ export default class Earth extends React.Component {
     dirLight.position.set(-1, 1.75, 1);
     dirLight.position.multiplyScalar(30);
     scene.add(dirLight);
+
+    // 太阳点光源
+    const pointLight = new THREE.PointLight(0xffffff, 1.2, 2000);
+    pointLight.color.setHSL(.995, .5, .9);
+    pointLight.position.set(0, 45, -2000);
+    const textureLoader = new THREE.TextureLoader();
+    const textureFlare0 = textureLoader.load(lensflareTexture0);
+    const textureFlare1 = textureLoader.load(lensflareTexture1);
+    // 镜头光晕
+    const lensflare = new Lensflare();
+    lensflare.addElement(new LensflareElement( textureFlare0, 600, 0, pointLight.color));
+    lensflare.addElement(new LensflareElement( textureFlare1, 60, .6));
+    lensflare.addElement(new LensflareElement( textureFlare1, 70, .7));
+    lensflare.addElement(new LensflareElement( textureFlare1, 120, .9));
+    lensflare.addElement(new LensflareElement( textureFlare1, 70, 1));
+    pointLight.add(lensflare);
+    scene.add(pointLight);
 
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
