@@ -4,8 +4,8 @@
   left: 0;
   height: 100vh;
   width: 100vw;
-  background: #FFFFFF url('./images/panda.png') no-repeat left center;
-  background-size: auto 50%;
+  background: #FFFFFF url('./images/panda.png') no-repeat left bottom;
+  background-size: auto 20%;
   display: flex;
   justify-content: space-around;
   align-items: center;

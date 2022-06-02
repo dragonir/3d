@@ -50,7 +50,6 @@ export default class Olympic extends React.Component {
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.shadowMap.enabled = true;
-      // renderer.shadowMap.type = THREE.PCFSoftShadowMap; // // 0: THREE.BasicShadowMap, 1: THREE.PCFShadowMap, 2: THREE.PCFSoftShadowMap
 
       container.appendChild(renderer.domElement);
 
@@ -288,7 +287,7 @@ export default class Olympic extends React.Component {
       // 创建五环
       const fiveCycles = [
         { key: 'cycle_0', color: 0x0885c2, position: { x: -250, y: 0, z: 0 } },
-        { key: 'cycle_1', color: 0x000000, position: { x: -10, y: 0, z: 5 } },
+        { key: 'cycle_1', color: 0x000000, position: { x: -10, y: 0, z: 1 } },
         { key: 'cycle_2', color: 0xed334e, position: { x: 230, y: 0, z: 0 } },
         { key: 'cycle_3', color: 0xfbb132, position: { x: -125, y: -100, z: -5 } },
         { key: 'cycle_4', color: 0x1c8b3c, position: { x: 115, y: -100, z: 10 } }

@@ -50,7 +50,7 @@ export default class Earth extends React.Component {
       canvas: document.querySelector('canvas.webgl'),
       antialias: true
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(sizes.width, sizes.height);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
 

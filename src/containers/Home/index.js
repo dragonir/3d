@@ -66,8 +66,15 @@ const workList = [
   {
     link: '#/ring',
     title: '艾尔登法环Logo',
-    description: '🔥 火焰效果老头环logo？',
+    description: '🔥 火焰效果老头环 ？？？',
     image: ringImage,
+    three: true
+  },
+  {
+    link: '#/earth',
+    title: '地球',
+    description: '🌏 美丽的蓝色星球！',
+    image: earthImage,
     three: true
   },
   {
@@ -124,13 +131,6 @@ const workList = [
     title: '虚拟主播',
     description: '💃 虚拟主播初音未来【⚠优化中】',
     image: liveImage,
-    three: true
-  },
-  {
-    link: '#/earth',
-    title: '地球',
-    description: '🌏 尽情探索3D Low Poly数字地球吧！【⚠优化中】',
-    image: earthImage,
     three: true
   },
   {
