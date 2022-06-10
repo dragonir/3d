@@ -24,6 +24,7 @@ import liveImage from './images/live.png';
 import ringImage from './images/ring.png';
 import metaverseImage from './images/metaverse.png';
 import oceanImage from './images/ocean.png';
+import scrollImage from './images/scroll.png';
 
 import './index.css';
 
@@ -57,10 +58,10 @@ const workList = [
     three: true
   },
   {
-    link: '#/metaverse',
-    title: '阿狸的多元宇宙',
-    description: '🦊 阿狸的星际旷野之息！',
-    image: metaverseImage,
+    link: '#/earth',
+    title: '地球',
+    description: '🌏 宇宙中孤独的蔚蓝色星球！',
+    image: earthImage,
     three: true
   },
   {
@@ -71,10 +72,10 @@ const workList = [
     three: true
   },
   {
-    link: '#/earth',
-    title: '地球',
-    description: '🌏 美丽的蓝色星球！',
-    image: earthImage,
+    link: '#/metaverse',
+    title: '阿狸的多元宇宙',
+    description: '🦊 阿狸的星际旷野之息！',
+    image: metaverseImage,
     three: true
   },
   {
@@ -89,6 +90,13 @@ const workList = [
     title: '3D漫画',
     description: '🕷 spider man',
     image: comicImage,
+    three: true
+  },
+  {
+    link: '#/scroll',
+    title: '基于滚动的3D布局',
+    description: '🥑 Gsap 动画应用！',
+    image: scrollImage,
     three: true
   },
   {
