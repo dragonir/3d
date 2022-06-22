@@ -21,6 +21,7 @@ import Heart from './containers/Heart/index';
 import Ring from './containers/Ring/index';
 import Scroll from './containers/Scroll/index';
 import Ocean from './containers/Ocean/index';
+import Farm from './containers/Farm/index';
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
           <Route element={ <Ring /> } path="/ring" />
           <Route element={ <Scroll /> } path="/scroll" />
           <Route element={ <Ocean /> } path="/ocean" />
+          <Route element={ <Farm /> } path="/farm" />
         </Routes>
       </Router>
     </div>
