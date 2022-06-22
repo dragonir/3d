@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React from 'react';
-import Stats from "three/examples/jsm/libs/stats.module";
+// import Stats from "three/examples/jsm/libs/stats.module";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
 import Animations from '../../assets/utils/animations';

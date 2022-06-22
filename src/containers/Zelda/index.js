@@ -1,4 +1,5 @@
 /* eslint-disable */
+import './index.css';
 import React from 'react';
 import * as THREE from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
@@ -7,7 +8,6 @@ import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
 import Stats from "three/examples/jsm/libs/stats.module";
 import linkModel from './models/link.fbx';
 import Animations from '../../assets/utils/animations';
-import './index.css';
 import bgImage from './images/bg.jpg';
 
 export default class Zelda extends React.Component {
@@ -39,24 +39,13 @@ export default class Zelda extends React.Component {
       renderer.shadowMap.needsUpdate = true;
       renderer.outputEncoding = THREE.sRGBEncoding;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
       container.appendChild(renderer.domElement);
 
       scene = new THREE.Scene();
       scene.background = new THREE.TextureLoader().load(bgImage);
       camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.set(0, 2, 60);
+      camera.position.set(0, 0, 64);
       camera.lookAt(new THREE.Vector3(0, 0, 0));
-
-      var axes = new THREE.AxisHelper(30);
-      // scene.add(axes);
-
-      // 网格
-      const grid = new THREE.GridHelper(100, 100, 0xefefef, 0xefefef);
-      grid.position.set(0, -5, 0);
-      grid.material.opacity = 0.2;
-      grid.material.transparent = true;
-      // scene.add(grid);
 
       const cubeGeometry = new THREE.BoxGeometry(0.001, 0.001, 0.001);
       const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
@@ -74,11 +63,6 @@ export default class Zelda extends React.Component {
       light.shadow.camera.left = - 10;
       light.shadow.camera.right = 10;
       scene.add(light);
-
-      const lightHelper = new THREE.DirectionalLightHelper(light, 1, 'red');
-      // scene.add(lightHelper);
-      const lightCameraHelper = new THREE.CameraHelper(light.shadow.camera);
-      // scene.add(lightCameraHelper);
 
       var ambientLight = new THREE.AmbientLight(0xffffff);
       scene.add(ambientLight);
@@ -103,27 +87,25 @@ export default class Zelda extends React.Component {
         mesh.traverse(child => {
           if (child.isMesh) {
             meshes.push(mesh);
-            // child.material.color = new THREE.Color(0xdddddd)
             // 石头底座样式
-            if (child.name === 'mesh_terrain') {
-              child.material.transparent = false
+            if (/石头/.test(child.name)) {
+              child.material.transparent = true
             }
             // 高亮气旋
-            if (child.name === 'mesh_glow') {
-              child.material.map(item => {
-                item.emissive = new THREE.Color(0x0000ff);
-                item.emissiveIntensity = 2;
-              })
+            if (/气旋/.test(child.name)) {
+              child.material.transparent = true;
+              child.emissive = new THREE.Color(0x0000ff);
+              child.emissiveIntensity = 2;
             }
             // link 右手
-            if (child.name === 'mesh_link_armInfected_R') {
+            if (child.name === 'Mesh_5') {
               child.material.color = new THREE.Color(0x007cff);
               child.material.emissive = child.material.color;
             }
           }
         });
-        mesh.position.set(0, -6, 0);
-        mesh.scale.set(.075, .075, .075);
+        mesh.position.set(0, -10, 0);
+        mesh.scale.set(.001, .001, .001);
         link = mesh;
         scene.add(mesh);
       });
@@ -135,7 +117,7 @@ export default class Zelda extends React.Component {
 
       // 性能工具
       stats = new Stats();
-      // document.documentElement.appendChild(stats.dom);
+      document.documentElement.appendChild(stats.dom);
 
       // 增加点击事件，声明raycaster和mouse变量
       var raycaster = new THREE.Raycaster();
@@ -155,8 +137,6 @@ export default class Zelda extends React.Component {
         }
       }
       window.addEventListener('click', onMouseClick, false);
-
-      console.log(scene)
     }
 
     function onWindowResize() {

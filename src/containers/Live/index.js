@@ -287,7 +287,7 @@ export default class Live extends React.Component {
   render () {
     return (
       <div className='live'>
-        <video id='video' className='video' src={require('./videos/video.mp4')} muted autoPlay loop></video>
+        <video id='video' className='video' src={require('./videos/demo.mp4')} muted autoPlay loop></video>
         <canvas id="barrage" className="barrage"></canvas>
         <div id="miku" className='three'></div>
         <div id="heart" className='three'></div>

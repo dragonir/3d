@@ -1,16 +1,16 @@
+import './index.css';
 import React from 'react';
 import * as THREE from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
-import Stats from "three/examples/jsm/libs/stats.module";
 import textModel from './models/text.fbx';
 import segmentTexture from './images/texture.png';
 import normalMapTexture from './images/normalMap.png';
 import metalTexture from './images/metal.png';
 import backgroundTexture from './images/bg.webp';
 import Animations from '../../assets/utils/animations';
-import './index.css';
+// import Stats from "three/examples/jsm/libs/stats.module";
 
 export default class SegmentFault extends React.Component {
 
@@ -23,7 +23,8 @@ export default class SegmentFault extends React.Component {
   }
 
   initThree = () => {
-    var container, controls, stats;
+    var container, controls;
+    // var stats;
     var camera, scene, renderer, light, box = null, meshes = [];
     var _this = this;
     init();
@@ -78,7 +79,7 @@ export default class SegmentFault extends React.Component {
       window.addEventListener('resize', onWindowResize, false);
 
       // 性能工具
-      stats = new Stats();
+      // stats = new Stats();
       // document.documentElement.appendChild(stats.dom);
 
       // 网格
@@ -155,7 +156,7 @@ export default class SegmentFault extends React.Component {
     function animate() {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
-      stats && stats.update();
+      // stats && stats.update();
       controls && controls.update();
       TWEEN && TWEEN.update();
       box && (box.rotation.y += .04);
