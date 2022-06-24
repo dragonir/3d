@@ -1,0 +1,55 @@
+
+/**
+* Author: Vinces
+* Website: https://vinces.io
+* v.0.1
+*/
+@import url("https://fonts.googleapis.com/css?family=BenchNine");
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: BenchNine, sans-serif;
+}
+
+.world{
+  background: #2980b9; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to bottom, #2980b9, #6dd5fa, #ffffff); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom, #2980b9, #6dd5fa, #ffffff); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.input-group {
+	position: absolute;
+	top: 5%;
+	right: 5%;
+	padding: 1rem;
+	color: black;
+  font-size:18px;
+  z-index:999;
+	
+	> * {
+		display: block;
+	}
+	
+	> * + * {
+		margin-top: 0.5rem;
+	}
+}
+
+// Copy footer
+.copy {
+  margin: 15px;
+  font-size: 14px;
+  font-weight:bold;
+  color: black;
+  position: absolute;
+	bottom: 0;
+	left: 0%;
+  z-index:999;
+  a {
+    color: #2980b9;
+    text-decoration: none;
+    font-size: 16px;
+  }
+}

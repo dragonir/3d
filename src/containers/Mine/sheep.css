@@ -1,0 +1,74 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #d3dfdd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+div#smoke {
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+  height: 30vh;
+  background-image: linear-gradient(
+    rgba(211, 223, 221, 0) 0%,
+    rgba(211, 223, 221, 0.8) 65%
+  );
+}
+/* Name Badge */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+#name-card-container {
+  position: fixed;
+  bottom: 0px;
+  height: 38px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+#name-card {
+  display: flex;
+  justify-content: center;
+  font-family: Avenir;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 38px;
+  border-radius: 4px 4px 0 0;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1), 0 0 2px rgba(0, 0, 0, 0.2);
+}
+#name-card > div.dark-background {
+  background: #1d1e22;
+  padding: 0 10px 0 20px;
+  height: 100%;
+  color: #fff;
+}
+#name-card > div.light-background {
+  background: #fff;
+  padding: 0 20px 0 10px;
+  height: 100%;
+}
+#name-card span.emoji {
+  font-size: 18px;
+}
+#name-card a {
+  text-decoration: none;
+}
+#name-card a:hover {
+  text-decoration: underline;
+}
+#name-card a:visited {
+  text-decoration: none;
+}
+#name-card div.dark-background a {
+  color: #fff;
+}
+#name-card div.light-background a {
+  color: #000;
+}

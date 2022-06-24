@@ -23,7 +23,7 @@
 * [2]. [奥运主题冰墩墩雪容融 ・ Olympic mascot ・ オリンピックのマスコット](https://dragonir.github.io/3d/#/olympic)
 * [3]. [海岛 ・ IsLand ・ 小島](https://dragonir.github.io/3d/#/ocean)
 * [4]. [地球 ・ The Earth ・ 地球](https://dragonir.github.io/3d/#/earth)
-* [5]. [数字地球 ・ Digital Earth ・ デジタルグローブ](https://dragonir.github.io/3d/#/digitalEarth)
+* [5]. [数字地球 ・ Digital Earth ・ デジタルグローブ](https://dragonir.github.io/3d/#/earthDigital)
 * [6]. [艾尔登法环 ・ Eldon Ring ・ エルドンリング](https://dragonir.github.io/3d/#/ring)
 * [7]. [阿狸的多元宇宙 ・ Running Fox ・ アリの多元宇宙](https://dragonir.github.io/3d/#/metaverse)
 * [8]. [悬浮文字 ・ Floating Text ・ フローティングテキスト](https://dragonir.github.io/3d/#/floating)
