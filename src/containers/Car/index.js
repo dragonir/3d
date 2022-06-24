@@ -1,135 +1,119 @@
-/* eslint-disable */
+import './index.styl';
 import React from 'react';
-import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
-import Stats from "three/examples/jsm/libs/stats.module";
-import carModel from './models/car.gltf';
-import Animations from '../../assets/utils/animations';
-import './index.css';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import Road from '@/containers/Car/scripts/road';
+import Cybertruck from '@/containers/Car/scripts/cybertruck';
+import licenseTexture from '@/containers/Car/images/license.png';
+import grassTileTexture from '@/containers/Car/images/grass.jpg';
+import roadTileTexture from '@/containers/Car/images/road.jpg';
+import * as dat from 'dat.gui';
+
+const THREE = global.THREE;
 
 export default class Car extends React.Component {
-
-  constructor(props) {
-    super(props);
-  }
-
-  state = {
-    loadingProcess: 0
-  }
 
   componentDidMount() {
     this.initThree()
   }
 
   initThree = () => {
-    var container, controls, stats;
-    var camera, scene, renderer, light, car = null, carMeshes = [];
-    var _this = this;
-    init();
-    animate();
-    function init() {
-      container = document.getElementById('container');
-      renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.shadowMap.enabled = true;
-      container.appendChild(renderer.domElement);
+    const textureLoader = new THREE.TextureLoader();
+    let licensePlate = textureLoader.load(licenseTexture), grassTile = textureLoader.load(grassTileTexture), roadTile = textureLoader.load(roadTileTexture);
+    const renderer = new THREE.WebGLRenderer({
+      canvas: document.querySelector('canvas.webgl'),
+      antialias: true,
+      logarithmicDepthBuffer: false
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
 
-      scene = new THREE.Scene();
-      scene.background = new THREE.Color(0xdddddd);
-      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.set(0, 10, 20);
-      camera.lookAt(new THREE.Vector3(0, 0, 0));
+    const scene = new THREE.Scene();
+    const fogColor = { h: 215, s: 80, l: 80 };
+    scene.fog = new THREE.Fog(`hsl(${fogColor.h},${fogColor.s}%,${fogColor.l}%)`, 0.01, 272);
+    renderer.setClearColor(scene.fog.color.getStyle());
 
-      var axes = new THREE.AxisHelper(30);
-      scene.add(axes);
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(20, 10, 20);
+    camera.lookAt(scene.position);
 
-      const cubeGeometry = new THREE.BoxGeometry(0.001, 0.001, 0.001);
-      const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xdc161a });
-      const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-      cube.position.set(0, 0, 0,);
-      light = new THREE.DirectionalLight(0xffffff, 1);
-      light.intensity = 1.2;
-      light.position.set(-5, 8, 3);
-      scene.add(light);
+    let controls = new OrbitControls(camera,renderer.domElement);
+    controls.enablePan = false;
 
-      const lightHelper = new THREE.DirectionalLightHelper(light, 1, 'red');
-      scene.add(lightHelper);
-      const lightCameraHelper = new THREE.CameraHelper(light.shadow.camera);
-      scene.add(lightCameraHelper);
+    // 路
+    const road = new Road(grassTile, roadTile);
 
-      var ambientLight = new THREE.AmbientLight(0xffffff);
-      scene.add(ambientLight);
+    // 车
+    const cybertruck = new Cybertruck(licensePlate);
+    cybertruck.mesh.name = "Cybertruck";
+    cybertruck.mesh.position.y = cybertruck.height / 2;
 
-      const manager = new THREE.LoadingManager();
-      manager.onStart = (url, loaded, total) => {};
-      manager.onLoad = () => {};
-      manager.onProgress = async(url, loaded, total) => {
-        if (Math.floor(loaded / total * 100) === 100) {
-          _this.loadingProcessTimeout && clearTimeout(_this.loadingProcessTimeout);
-          _this.loadingProcessTimeout = setTimeout(() => {
-            _this.setState({ loadingProcess: Math.floor(loaded / total * 100) });
-            Animations.animateCamera(camera, controls, { x: 0, y: 5, z: 21 }, { x: 0, y: 0, z: 0 }, 2400, () => {});
-          }, 800);
-        } else {
-          _this.setState({ loadingProcess: Math.floor(loaded / total * 100) });
-        }
-      };
+    // 环境光
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+    scene.add(ambientLight);
 
-      var loader = new GLTFLoader(manager);
-      loader.load(carModel, function (mesh) {
-        mesh.scene.traverse(function (child) {
-          if (child.isMesh) {
-            carMeshes.push(child)
-            // child.castShadow = true;
-            // child.receiveShadow = true;
-            // child.material.metalness = .2;
-            // child.material.roughness = .2;
-          }
-        });
-        mesh.scene.position.set(0, 0, 0);
-        mesh.scene.scale.set(5, 5, 5);
-        car = mesh.scene;
-        scene.add(car);
-      });
+    // 点光源
+    const daylight = new THREE.PointLight(0xffffff, ambientLight.intensity * 2);
+    daylight.position.set(0, 64, 0);
+    daylight.castShadow = true;
+    scene.add(daylight);
 
-      controls = new OrbitControls(camera, renderer.domElement);
-      controls.target.set(0, 0, 0);
-      controls.enableDamping = true;
-      window.addEventListener('resize', onWindowResize, false);
+    window.addEventListener('load', () => {
+      scene.add(road.mesh);
+      scene.add(cybertruck.mesh);
+    }, false);
 
-      // 性能工具
-      stats = new Stats();
-      document.documentElement.appendChild(stats.dom);
-    }
-
-    function onWindowResize() {
+    window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-    }
+    }, false);
 
-    function animate() {
-      requestAnimationFrame(animate);
+    controls = {
+      daylight: ambientLight.intensity,
+      speed: cybertruck.speed,
+      resetCam: () => {
+        controls.reset();
+      }
+    };
+
+    const gui = new dat.GUI();
+    document.querySelector('.cybertruck').appendChild(gui.domElement)
+    gui.add(controls, 'daylight', 0.1, 1, 0.01).name('Daylight').onChange(e => {
+      let newVal = controls.daylight;
+      cybertruck.headlight.intensity = (1 - newVal) * 2;
+      cybertruck.rearlight.intensity = (1 - newVal) * 2;
+      ambientLight.intensity = newVal;
+      daylight.intensity = newVal * 2;
+      let h = fogColor.h, s = fogColor.s, l = newVal * 100;
+      fogColor.l = l * 0.8;
+      let daylightColorStr = `hsl(${h},${s}%,${l.toFixed(0)}%)`, fogColorStr = `hsl(${h},${s}%,${(fogColor.l).toFixed(0)}%)`;
+      daylight.color = new THREE.Color(daylightColorStr);
+      renderer.setClearColor(fogColorStr);
+      scene.fog.color.set(fogColorStr);
+    });
+    gui.add(controls, 'speed', 0, 60, 1).name('Speed (MPH)').onChange(e => {
+      cybertruck.speed = controls.speed;
+    });
+    gui.add(controls, 'resetCam').name('Reset Camera');
+    const tick = () => {
+      if (scene.getObjectByName(cybertruck.mesh.name)) {
+        cybertruck.move();
+        if (cybertruck.mesh.position.z > road.tileSize)
+          cybertruck.mesh.position.z -= road.tileSize;
+        let cybertruckZ = cybertruck.mesh.position.z;
+        daylight.position.z = cybertruckZ;
+        scene.position.z = -cybertruckZ;
+      }
       renderer.render(scene, camera);
-      stats && stats.update();
-      controls && controls.update();
-      TWEEN && TWEEN.update();
+      requestAnimationFrame(tick);
     }
+    tick();
   }
 
-  render () {
+  render() {
     return (
-      <div>
-        <div id="container"></div>
-        {this.state.loadingProcess === 100 ? '' : (
-          <div className="car_loading">
-            <div className="box">{this.state.loadingProcess} %</div>
-          </div>
-        )
-      }
+      <div className='cybertruck'>
+        <canvas className='webgl'></canvas>
       </div>
     )
   }
