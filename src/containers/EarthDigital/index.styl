@@ -1,4 +1,83 @@
+:root {
+  --yellow-color: #f9f002;
+  --border-color: #8ae66e;
+}
+
 .earth_digital
   height 100%
   width 100%
   // overflow hidden
+  .hud
+    position fixed
+    z-index 2
+    &.header
+      height 80px
+      width 100%
+      left 0
+      top 0
+      color: var(--yellow-color)
+      border: 30px solid var(--yellow-color)
+      border-right: 5px solid var(--yellow-color)
+      border-left: 5px solid var(--yellow-color)
+      border-bottom: 24px solid var(--yellow-color)
+      // background-color: #000;
+      background #f9f002
+      // background-color: #000;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 35px), 75% calc(100% - 35px), 72.5% 100%, 27.5% 100%, 25% calc(100% - 35px), 0 calc(100% - 35px), 0 0);
+    &.aside
+      height calc(100vh - 80px)
+      width 400px
+      bottom 0
+      display flex
+      flex-direction column
+      justify-content space-between
+      overflow hidden
+      padding 0 16px 16px
+      &.left
+        left 0
+      &.right
+        right 0
+      .box
+        width 100%
+        height 30%
+        padding: 5px
+        box-sizing border-box
+        position: relative
+        font-size: 1.2rem
+        color: var(--yellow-color)
+        border: 30px solid var(--yellow-color)
+        border-right: 5px solid var(--yellow-color)
+        border-left: 5px solid var(--yellow-color)
+        border-bottom: 24px solid var(--yellow-color)
+        background-color: #000
+        clip-path: polygon(0px 25px, 26px 0px, calc(60% - 25px) 0px, 60% 25px, 100% 25px, 100% calc(100% - 10px), calc(100% - 15px) calc(100% - 10px), calc(80% - 10px) calc(100% - 10px), calc(80% - 15px) 100%, 80px calc(100% - 0px), 65px calc(100% - 15px), 0% calc(100% - 15px))
+        &::before
+          content: "P-14"
+          display: block
+          position: absolute
+          bottom: -12px
+          right: 25px
+          padding: 2px 2px 0px 2px
+          font-size: 0.6rem
+          line-height: 0.6rem
+          border-left: 2px solid var(--border-color)
+          background-color: #000
+          color: var(--yellow-color)
+        &.inverse
+          border: none
+          padding: 40px 15px 30px
+          color: #000
+          background-color: var(--yellow-color)
+          border-right: 2px solid var(--border-color)
+          clip-path: polygon(0px 25px, 26px 0px, calc(60% - 25px) 0px, 60% 25px, 100% 25px, 100% calc(100% - 10px), calc(100% - 15px) calc(100% - 10px), calc(80% - 10px) calc(100% - 10px), calc(80% - 15px) 100%, 80px calc(100% - 0px), 65px calc(100% - 15px), 0% calc(100% - 15px));
+          &::before
+            content: "T-71"
+            right: 90px
+            bottom: 9px
+            background-color: #000
+            color: var(--yellow-color)
+        &.dotted, &.dotted::after
+          background: var(--yellow-color)
+          background-image: radial-gradient(#00000021 1px, transparent 0)
+          background-size: 5px 5px
+          background-position: -13px -3px

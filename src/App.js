@@ -23,6 +23,7 @@ import Ocean from './containers/Ocean/index';
 import Farm from './containers/Farm/index';
 import Mine from './containers/Mine/index';
 import Tennis from './containers/Tennis/index';
+import Shader from './containers/Shader/index';
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
           <Route element={ <Farm /> } path="/farm" />
           <Route element={ <Mine /> } path="/mine" />
           <Route element={ <Tennis /> } path="/tennis" />
+          <Route element={ <Shader /> } path="/shader" />
         </Routes>
       </Router>
     </div>

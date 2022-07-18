@@ -16,7 +16,7 @@ export default class Earth extends React.Component {
   initThree = () => {
     let o;
     let scene = new THREE.Scene();
-    scene.background = new THREE.Color(0.0, 0.0, 0.125);
+    scene.background = new THREE.Color(0, 0, 0);
     let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 50);
     camera.position.set(0, 10, 10);
 
@@ -101,7 +101,7 @@ export default class Earth extends React.Component {
 
     tweens.forEach(t => {t.runTween();})
     makeGlobeOfPoints();
-    window.addEventListener( 'resize', onWindowResize );
+    window.addEventListener('resize', onWindowResize);
 
     const gui = new dat.GUI();
     console.log(gui)
@@ -259,7 +259,7 @@ export default class Earth extends React.Component {
       o.rotation.y = Math.PI;
       trails.forEach(t => {o.add(t)});
       o.add(new THREE.Mesh(new THREE.SphereGeometry(4.9995, 72, 36), new THREE.MeshBasicMaterial({color: scene.background})));
-      scene.add(o);
+      // scene.add(o);
     }
 
     function makeTrail(idx){
@@ -330,6 +330,19 @@ export default class Earth extends React.Component {
     return (
       <div className='earth_digital'>
         <canvas className='webgl'></canvas>
+        <header className='hud header'></header>
+        <aside className='hud aside left'>
+          <div className='box'></div>
+          <div className='box inverse'></div>
+          <div className='box inverse dotted'></div>
+        </aside>
+        <aside className='hud aside right'>
+          <div className='box'></div>
+          <div className='box inverse'></div>
+          <div className='box inverse dotted'></div>
+        </aside>
+        <footer className='hud footer'>
+        </footer>
       </div>
     )
   }
