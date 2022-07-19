@@ -27,6 +27,7 @@
     "dat.gui": "^0.7.9",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
+    "echarts": "^5.3.3",
     "eslint": "^8.3.0",
     "eslint-config-react-app": "^7.0.0",
     "eslint-webpack-plugin": "^3.1.1",
