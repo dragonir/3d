@@ -1,3 +1,4 @@
+import '@/containers/Earth/index.styl';
 import React from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -107,7 +108,9 @@ export default class Earth extends React.Component {
 
   render () {
     return (
-      <canvas className='webgl'></canvas>
+      <div className='earth_page'>
+        <canvas className='webgl'></canvas>
+      </div>
     )
   }
 }

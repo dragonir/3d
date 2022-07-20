@@ -1,34 +1,36 @@
 import './App.css';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './containers/Home/index';
-import City from './containers/City/index';
-import Earth from './containers/Earth/index';
-import EarthDigital from './containers/EarthDigital/index';
-import Demo from './containers/Demo/index';
-import Lunar from './containers/Lunar/index';
-import Cell from './containers/Cell/index';
-import Car from './containers/Car/index';
-import Zelda from './containers/Zelda/index';
-import Metaverse from './containers/Metaverse/index';
-import SegmentFault from './containers/SegmentFault/index';
-import Human from './containers/Human/index';
-import Olympic from './containers/Olympic/index';
-import Comic from './containers/Comic/index';
-import Live from './containers/Live/index';
-import Floating from './containers/Floating/index';
-import Heart from './containers/Heart/index';
-import Ring from './containers/Ring/index';
-import Scroll from './containers/Scroll/index';
-import Ocean from './containers/Ocean/index';
-import Farm from './containers/Farm/index';
-import Mine from './containers/Mine/index';
-import Tennis from './containers/Tennis/index';
-import Shader from './containers/Shader/index';
+import { Suspense, lazy } from 'react';
+
+const Home = lazy(() => import('@/containers/Home/index'));
+const City = lazy(() => import('@/containers/City/index'));
+const Earth = lazy(() => import('@/containers/Earth/index'));
+const EarthDigital = lazy(() => import('@/containers/EarthDigital/index'));
+const Demo = lazy(() => import('@/containers/Demo/index'));
+const Lunar = lazy(() => import('@/containers/Lunar/index'));
+const Cell = lazy(() => import('@/containers/Cell/index'));
+const Car = lazy(() => import('@/containers/Car/index'));
+const Zelda = lazy(() => import('@/containers/Zelda/index'));
+const Metaverse = lazy(() => import('@/containers/Metaverse/index'));
+const SegmentFault = lazy(() => import('@/containers/SegmentFault/index'));
+const Human = lazy(() => import('@/containers/Human/index'));
+const Olympic = lazy(() => import('@/containers/Olympic/index'));
+const Comic = lazy(() => import('@/containers/Comic/index'));
+const Live = lazy(() => import('@/containers/Live/index'));
+const Floating = lazy(() => import('@/containers/Floating/index'));
+const Heart = lazy(() => import('@/containers/Heart/index'));
+const Ring = lazy(() => import('@/containers/Ring/index'));
+const Scroll = lazy(() => import('@/containers/Scroll/index'));
+const Ocean = lazy(() => import('@/containers/Ocean/index'));
+const Farm = lazy(() => import('@/containers/Farm/index'));
+const Mine = lazy(() => import('@/containers/Mine/index'));
+const Tennis = lazy(() => import('@/containers/Tennis/index'));
 
 function App() {
   return (
     <div className="App">
       <Router>
+        <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           <Route element={ <Home /> } path="/" />
           <Route element={ <City /> } path="/city" />
@@ -53,8 +55,8 @@ function App() {
           <Route element={ <Farm /> } path="/farm" />
           <Route element={ <Mine /> } path="/mine" />
           <Route element={ <Tennis /> } path="/tennis" />
-          <Route element={ <Shader /> } path="/shader" />
         </Routes>
+        </Suspense>
       </Router>
     </div>
   );
