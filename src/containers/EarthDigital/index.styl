@@ -39,12 +39,13 @@
       justify-content space-between
       .left
         width 27.5%
+        min-width var(--aside-width)
         height 100%
         .date
           text-align left
-          padding 8px 16px
+          padding 10px 16px
           .text
-            font-size 20px
+            font-size 18px
             color #000000
             padding-right 8px
             font-weight 600
@@ -53,16 +54,19 @@
         height 100%
       .right
         width 27.5%
+        min-width var(--aside-width)
         height 100%
         text-align right
         padding-right 16px
         a
           text-decoration none
-          font-size 20px
+          font-size 18px
           color #000000
           font-weight 600
           .author
-            padding-right 8px
+            position relative
+            top -2px
+            left -8px
           .github
             position relative
             top 6px
@@ -81,7 +85,7 @@
         right 0
       .box
         width 100%
-        height 30%
+        height 31%
         padding: 4px
         box-sizing border-box
         position: relative
@@ -93,6 +97,7 @@
         border-bottom: 24px solid var(--yellow-color)
         background-color: #000
         clip-path: polygon(0px 25px, 26px 0px, calc(60% - 25px) 0px, 60% 25px, 100% 25px, 100% calc(100% - 10px), calc(100% - 15px) calc(100% - 10px), calc(80% - 10px) calc(100% - 10px), calc(80% - 15px) 100%, 80px calc(100% - 0px), 65px calc(100% - 15px), 0% calc(100% - 15px))
+        transition all .25s linear
         &::before
           content: "P-14"
           display: block
@@ -154,10 +159,9 @@
               height calc(100% - 50px)
             .button
               height 40px
-
     &.footer
       height 80px
-      width 760px;
+      width 600px;
       bottom 16px
       left 50%
       padding 16px 32px
@@ -175,12 +179,16 @@
         justify-content space-between
         .text
           display inline-block
-          font-size 24px
-          color var( --yellow-color)
           padding 0 16px
-        .radar {
+          .title
+            font-size 20px
+            color var(--yellow-color)
+          .description
+            font-size 14px
+            color #FFFFFF
+        .radar
+          background: radial-gradient(center, rgba(32, 255, 77, 0.3) 0%, rgba(32, 255, 77, 0) 75%), repeating-radial-gradient(rgba(32, 255, 77, 0) 5.8%, rgba(32, 255, 77, 0) 18%, #20ff4d 18.6%, rgba(32, 255, 77, 0) 18.9%), linear-gradient(90deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%), linear-gradient(0deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%);
           background: -webkit-radial-gradient(center, rgba(32, 255, 77, 0.3) 0%, rgba(32, 255, 77, 0) 75%), -webkit-repeating-radial-gradient(rgba(32, 255, 77, 0) 5.8%, rgba(32, 255, 77, 0) 18%, #20ff4d 18.6%, rgba(32, 255, 77, 0) 18.9%), -webkit-linear-gradient(90deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%), -webkit-linear-gradient(0deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%)
-          // background: radial-gradient(center, rgba(32, 255, 77, 0.3) 0%, rgba(32, 255, 77, 0) 75%), repeating-radial-gradient(rgba(32, 255, 77, 0) 5.8%, rgba(32, 255, 77, 0) 18%, #20ff4d 18.6%, rgba(32, 255, 77, 0) 18.9%), linear-gradient(90deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%), linear-gradient(0deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%);
           width: 60px;
           height: 60px;
           max-height: 60px;
@@ -190,7 +198,6 @@
           border: 0.1rem solid #20ff4d;
           overflow: hidden;
           opacity .8
-        }
         .radar:before {
           content: " ";
           display: block;
@@ -216,43 +223,69 @@
           transform-origin: bottom right;
           border-radius: 100% 0 0 0;
         }
+    button, button::after {
+      width: 120px;
+      height: 40px;
+      font-size: 20px;
+      background: linear-gradient(45deg, transparent 5%, #FF013C 5%);
+      border: 0;
+      color: #fff;
+      letter-spacing: 3px;
+      line-height: 40px;
+      box-shadow: 6px 0px 0px #00E6F6;
+      outline: transparent;
+      position: relative;
+    }
+    button::after {
+      --slice-0: inset(50% 50% 50% 50%);
+      --slice-1: inset(80% -6px 0 0);
+      --slice-2: inset(50% -6px 30% 0);
+      --slice-3: inset(10% -6px 85% 0);
+      --slice-4: inset(40% -6px 43% 0);
+      --slice-5: inset(80% -6px 5% 0);
+      content: 'START';
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, transparent 3%, #00E6F6 3%, #00E6F6 5%, #FF013C 5%);
+      text-shadow: -3px -3px 0px #F8F005, 3px 3px 0px #00E6F6;
+      clip-path: var(--slice-0);
+    }
+    button:hover::after {
+      animation: 1s glitch;
+      animation-timing-function: steps(2, end);
+    }
+  .bg {
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    width: 200%;
+    height: 200vh;
+    background: #000000 url('./images/noise.png') repeat 0 0;
+    background-repeat: repeat;
+    animation: bg-animation .2s infinite;
+    visibility: visible;
+  }
 
+@keyframes bg-animation {
+  0% { transform: translate(0,0) }
+  10% { transform: translate(-5%,-5%) }
+  20% { transform: translate(-10%,5%) }
+  30% { transform: translate(5%,-10%) }
+  40% { transform: translate(-5%,15%) }
+  50% { transform: translate(-10%,5%) }
+  60% { transform: translate(15%,0) }
+  70% { transform: translate(0,10%) }
+  80% { transform: translate(-15%,0) }
+  90% { transform: translate(10%,5%) }
+  100% { transform: translate(5%,0) }
+}
 
-button, button::after {
-  width: 120px;
-  height: 40px;
-  font-size: 20px;
-  background: linear-gradient(45deg, transparent 5%, #FF013C 5%);
-  border: 0;
-  color: #fff;
-  letter-spacing: 3px;
-  line-height: 40px;
-  box-shadow: 6px 0px 0px #00E6F6;
-  outline: transparent;
-  position: relative;
-}
-button::after {
-  --slice-0: inset(50% 50% 50% 50%);
-  --slice-1: inset(80% -6px 0 0);
-  --slice-2: inset(50% -6px 30% 0);
-  --slice-3: inset(10% -6px 85% 0);
-  --slice-4: inset(40% -6px 43% 0);
-  --slice-5: inset(80% -6px 5% 0);
-  content: '立即加入';
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, transparent 3%, #00E6F6 3%, #00E6F6 5%, #FF013C 5%);
-  text-shadow: -3px -3px 0px #F8F005, 3px 3px 0px #00E6F6;
-  clip-path: var(--slice-0);
-}
-button:hover::after {
-  animation: 1s glitch;
-  animation-timing-function: steps(2, end);
-}
 @keyframes glitch {
   0% {
     clip-path: var(--slice-1);
