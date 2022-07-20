@@ -1,14 +1,26 @@
 :root {
   --yellow-color: #f9f002;
   --border-color: #8ae66e;
+  --blue-color: #00e6f6;
   --header-height: 80px;
   --aside-width: 400px;
 }
 
 .earth_digital
-  height 100%
+  height 100vh
   width 100%
   overflow hidden
+  -webkit-user-select none
+  -moz-user-select none
+  user-select none
+  *
+    padding 0
+    margin 0
+    box-sizing border-box
+  .webgl
+    position relative
+    z-index 1
+    cursor pointer
   .logo
     position fixed
     top 0
@@ -24,6 +36,48 @@
       background url('./images/logo.png') no-repeat center
       background-size auto 100%
       filter drop-shadow(0 1px 5px rgba(0, 100, 200, .5))
+  .tips_modal
+    position fixed
+    height 160px
+    width 280px
+    background url('./images/square.png') no-repeat center
+    background-size 100% 100%
+    z-index 10
+    left 50%
+    top 50%
+    transform translate(-50%, -50%)
+    .close
+      display inline-block
+      color #ff013c
+      position absolute
+      font-size 16px
+      font-weight 600
+      right -10px
+      top -10px
+      cursor pointer
+      text-shadow 0px 1px 0px var(--blue-color)
+      &:hover
+        opacity .8
+    .tips
+      position absolute
+      height 85%
+      width 85%
+      left 50%
+      top 50%
+      transform translate(-50%, -50%)
+      border-radius 8px
+      background rgba(0, 20, 50, .2)
+      backdrop-filter blur(4px)
+      padding 16px
+      color var(--yellow-color)
+      text-align center
+      font-size 18px
+      line-height 2
+      display flex
+      justify-content space-between
+      align-items center
+      .text
+        width 100%
   .hud
     position fixed
     z-index 2
@@ -224,6 +278,7 @@
           border-radius: 100% 0 0 0;
         }
     button, button::after {
+      cursor pointer
       width: 120px;
       height: 40px;
       font-size: 20px;

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import './index.css';
+import './index.styl';
 import React from 'react';
 import * as THREE from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
@@ -157,7 +157,7 @@ export default class Zelda extends React.Component {
 
   render () {
     return (
-      <div>
+      <div className='zelda_page'>
         <div id="container"></div>
         {this.state.loadingProcess === 100 ? '' : (
           <div className="car_loading">

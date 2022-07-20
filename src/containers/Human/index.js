@@ -1,3 +1,4 @@
+import '@/containers/Human/index.styl';
 import React from 'react';
 import Stats from "three/examples/jsm/libs/stats.module";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -126,7 +127,7 @@ export default class Human extends React.Component {
 
   render () {
     return (
-      <div className='human'>
+      <div className='human_page'>
         <canvas className='webgl'></canvas>
       </div>
     )

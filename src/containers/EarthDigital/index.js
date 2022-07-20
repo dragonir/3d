@@ -41,6 +41,23 @@ const weekMap = {
   '7': '日',
 };
 
+const tips = [
+  '太空里很暖和，像小主人抱我的温度，37.5℃',
+  '不要换台，不要走开，星际直播马上回来',
+  '爱，就是组成我的元件',
+  '人类对孤独的理解是有限的，对爱的诠释是无限的',
+  '我会飞得更高',
+  '我的一小步，见证友谊的一大步',
+  '释放我热烈的爱',
+  '呵，你咋不上天呢',
+  '比机器人更爱机器，比宇航员更爱宇航，这是种严肃的自我认知',
+  '把你送回太空好吗',
+  '用整个灵魂向你比心',
+  '再渺小的心愿，银河系都有它的容身之所',
+  'Yeah，放飞自我',
+  '地球生存，hard模式'
+];
+
 export default class Earth extends React.Component {
 
   constructor () {
@@ -51,7 +68,9 @@ export default class Earth extends React.Component {
 
   state = {
     week: weekMap[new Date().getDay()],
-    time: '00:00:00'
+    time: '00:00:00',
+    showModal: false,
+    modelText: tips[0]
   }
 
   componentDidMount () {
@@ -65,7 +84,7 @@ export default class Earth extends React.Component {
   }
 
   initThree = () => {
-    let o;
+    let earth;
     let scene = new THREE.Scene();
     let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .01, 50);
     camera.position.set(0, 0, 15.5);
@@ -159,7 +178,7 @@ export default class Earth extends React.Component {
     gui.add(uniforms.waveHeight, 'value', 0.1, 1).step(0.001).name('waveHeight');
     gui.add(uniforms.scaling, 'value', 1, 5).step(0.01).name('scaling');
     gui.addColor(params.colors, 'base').name('base color').onChange(val => {
-      if (o) o.material.color.set(val);
+      if (earth) earth.material.color.set(val);
     });
     gui.addColor(params.colors, 'gradInner').name('inner').onChange(val => {
       uniforms.gradInner.value.set(val);
@@ -173,9 +192,28 @@ export default class Earth extends React.Component {
 
     renderer.setAnimationLoop( _ => {
       TWEEN.update();
-      o.rotation.y += 0.001;
+      earth.rotation.y += 0.001;
       renderer.render(scene, camera);
     });
+
+    // 增加点击事件，声明raycaster和mouse变量
+    var raycaster = new THREE.Raycaster();
+    var mouse = new THREE.Vector2();
+    window.addEventListener('click', event => {
+      // 通过鼠标点击的位置计算出raycaster所需要的点的位置，以屏幕中心为原点，值的范围为-1到1.
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+      // 通过鼠标点的位置和当前相机的矩阵计算出raycaster
+      raycaster.setFromCamera(mouse, camera);
+      // 获取raycaster直线和所有模型相交的数组集合
+      var intersects = raycaster.intersectObjects(earth.children);
+      if (intersects.length > 0) {
+        this.setState({
+          showModal: true,
+          modelText: tips[Math.floor(Math.random() * tips.length)]
+        })
+      }
+    }, false);
 
     function makeGlobeOfPoints(){
       let dummyObj = new THREE.Object3D();
@@ -303,13 +341,13 @@ export default class Earth extends React.Component {
           );
         }
       });
-      m.defines = {"USE_UV":""};
-      o = new THREE.Mesh(g, m);
-      o.rotation.y = Math.PI;
-      trails.forEach(t => {o.add(t)});
-      o.add(new THREE.Mesh(new THREE.SphereGeometry(4.9995, 72, 36), new THREE.MeshBasicMaterial({color: new THREE.Color(0x000000)})));
-      o.position.set(0, -.4, 0);
-      scene.add(o);
+      m.defines = {'USE_UV':''};
+      earth = new THREE.Mesh(g, m);
+      earth.rotation.y = Math.PI;
+      trails.forEach(t => {earth.add(t)});
+      earth.add(new THREE.Mesh(new THREE.SphereGeometry(4.9995, 72, 36), new THREE.MeshBasicMaterial({color: new THREE.Color(0x000000)})));
+      earth.position.set(0, -.4, 0);
+      scene.add(earth);
     }
 
     function makeTrail(idx){
@@ -403,13 +441,25 @@ export default class Earth extends React.Component {
       this.setState({
         time: time
       })
-    }, 1000)
+    }, 1000);
+  }
+
+  handleModalClick = () =>  {
+    setTimeout(() => {
+      this.setState({
+        showModal: false
+      })
+    })
   }
 
   render () {
     return (
       <div className='earth_digital'>
         <canvas className='webgl'></canvas>
+        <div className='tips_modal' style={{ 'display': this.state.showModal ? 'block': 'none' }}>
+          <div className='tips'><p className='text'>{ this.state.modelText }</p></div>
+          <i className='close' onClick={this.handleModalClick.bind(this)}>CLOSE</i>
+        </div>
         <header className='hud header'>
           <div className='left'>
             <p className='date'>
