@@ -159,9 +159,7 @@ export const chart_3_option = {
       radius: '20%',
       center: ['25%', '30%'],
       label: {
-        textStyle: {
-          color: '#f9f002'
-        }
+        color: '#f9f002'
       }
     },
     {
@@ -173,9 +171,7 @@ export const chart_3_option = {
         value: '2013'
       },
       label: {
-        textStyle: {
-          color: '#f9f002'
-        }
+        color: '#f9f002'
       }
     },
     {
@@ -187,9 +183,7 @@ export const chart_3_option = {
         value: '2014'
       },
       label: {
-        textStyle: {
-          color: '#f9f002'
-        }
+        color: '#f9f002'
       }
     },
     {
@@ -201,9 +195,7 @@ export const chart_3_option = {
         value: '2015'
       },
       label: {
-        textStyle: {
-          color: '#f9f002'
-        }
+        color: '#f9f002'
       }
     }
   ]

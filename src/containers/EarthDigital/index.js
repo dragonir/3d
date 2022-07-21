@@ -85,8 +85,8 @@ export default class Earth extends React.Component {
 
   initThree = () => {
     let earth;
-    let scene = new THREE.Scene();
-    let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .01, 50);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .01, 50);
     camera.position.set(0, 0, 15.5);
 
     const renderer = new THREE.WebGLRenderer({
@@ -97,7 +97,7 @@ export default class Earth extends React.Component {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    let controls = new OrbitControls(camera, renderer.domElement);
+    const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.enablePan = false;
 
@@ -127,13 +127,29 @@ export default class Earth extends React.Component {
     }
 
     let uniforms = {
-      impacts: {value: impacts},
-      maxSize: {value: 0.04},
-      minSize: {value: 0.03},
-      waveHeight: {value: 0.1},
-      scaling: {value: 2},
-      gradInner: {value: new THREE.Color(params.colors.gradInner)},
-      gradOuter: {value: new THREE.Color(params.colors.gradOuter)}
+      impacts: {
+        value: impacts
+      },
+      // 陆地色块大小
+      maxSize: {
+        value: 0.04
+      },
+      // 海洋色块大小
+      minSize: {
+        value: 0.025
+      },
+      waveHeight: {
+        value: 0.1
+      },
+      scaling: {
+        value: 1
+      },
+      gradInner: {
+        value: new THREE.Color(params.colors.gradInner)
+      },
+      gradOuter: {
+        value: new THREE.Color(params.colors.gradOuter)
+      }
     }
 
     var tweens = [];
@@ -173,21 +189,20 @@ export default class Earth extends React.Component {
     window.addEventListener('resize', onWindowResize);
 
     const gui = new dat.GUI();
-    gui.add(uniforms.maxSize, 'value', 0.01, 0.06).step(0.001).name('land');
-    gui.add(uniforms.minSize, 'value', 0.01, 0.06).step(0.001).name('ocean');
-    gui.add(uniforms.waveHeight, 'value', 0.1, 1).step(0.001).name('waveHeight');
-    gui.add(uniforms.scaling, 'value', 1, 5).step(0.01).name('scaling');
-    gui.addColor(params.colors, 'base').name('base color').onChange(val => {
+    gui.add(uniforms.maxSize, 'value', 0.01, 0.06).step(0.001).name('陆地');
+    gui.add(uniforms.minSize, 'value', 0.01, 0.06).step(0.001).name('海洋');
+    gui.add(uniforms.waveHeight, 'value', 0.1, 1).step(0.001).name('浪高');
+    gui.add(uniforms.scaling, 'value', 1, 5).step(0.01).name('范围');
+    gui.addColor(params.colors, 'base').name('基础色').onChange(val => {
       if (earth) earth.material.color.set(val);
     });
-    gui.addColor(params.colors, 'gradInner').name('inner').onChange(val => {
+    gui.addColor(params.colors, 'gradInner').name('渐变内').onChange(val => {
       uniforms.gradInner.value.set(val);
     });
-    gui.addColor(params.colors, 'gradOuter').name('outer').onChange(val => {
+    gui.addColor(params.colors, 'gradOuter').name('渐变外').onChange(val => {
       uniforms.gradOuter.value.set(val);
     });
-    gui.add(params, 'reset').name('Reset Controls');
-    gui.close();
+    gui.add(params, 'reset').name('重置');
     gui.hide();
 
     renderer.setAnimationLoop( _ => {
@@ -196,22 +211,18 @@ export default class Earth extends React.Component {
       renderer.render(scene, camera);
     });
 
-    // 增加点击事件，声明raycaster和mouse变量
-    var raycaster = new THREE.Raycaster();
-    var mouse = new THREE.Vector2();
-    window.addEventListener('click', event => {
-      // 通过鼠标点击的位置计算出raycaster所需要的点的位置，以屏幕中心为原点，值的范围为-1到1.
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    window.addEventListener('dblclick', event => {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-      // 通过鼠标点的位置和当前相机的矩阵计算出raycaster
       raycaster.setFromCamera(mouse, camera);
-      // 获取raycaster直线和所有模型相交的数组集合
-      var intersects = raycaster.intersectObjects(earth.children);
+      const intersects = raycaster.intersectObjects(earth.children);
       if (intersects.length > 0) {
         this.setState({
           showModal: true,
           modelText: tips[Math.floor(Math.random() * tips.length)]
-        })
+        });
       }
     }, false);
 
@@ -255,8 +266,8 @@ export default class Earth extends React.Component {
           uv.x, uv.y,
           uv.x, uv.y
         ];
-        g.setAttribute("center", new THREE.Float32BufferAttribute(centers, 3));
-        g.setAttribute("baseUv", new THREE.Float32BufferAttribute(uvs, 2));
+        g.setAttribute('center', new THREE.Float32BufferAttribute(centers, 3));
+        g.setAttribute('baseUv', new THREE.Float32BufferAttribute(uvs, 2));
         geoms.push(g);
       }
       let g = mergeBufferGeometries(geoms);
@@ -452,6 +463,13 @@ export default class Earth extends React.Component {
     })
   }
 
+  handleStartButtonClick = () => {
+    this.setState({
+      showModal: true,
+      modelText: tips[Math.floor(Math.random() * tips.length)]
+    });
+  }
+
   render () {
     return (
       <div className='earth_digital'>
@@ -484,7 +502,7 @@ export default class Earth extends React.Component {
             <div className='cover'></div>
             <div className='info'>
               <p className='text'><b>Cyberpunk</b> is a subgenre of science fiction in a dystopian futuristic setting that tends to focus on a "combination of lowlife and high tech", featuring futuristic technological and scientific achievements, such as artificial intelligence and cybernetics, juxtaposed with societal collapse or decay. </p>
-              <button className='button'>START</button>
+              <button className='button' onClick={this.handleStartButtonClick.bind(this)}>START</button>
             </div>
           </div>
           <div className='box'><div className='chart chart_1'></div></div>

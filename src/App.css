@@ -58,3 +58,7 @@
   background-color: rgba(3, 192, 60, .5) !important;
   cursor: pointer !important
 }
+
+.loading_page {
+  color: #03c03c;
+}

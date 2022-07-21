@@ -1,11 +1,14 @@
 :root {
-  --yellow-color: #f9f002;
-  --border-color: #8ae66e;
-  --blue-color: #00e6f6;
-  --header-height: 80px;
-  --aside-width: 400px;
+  --yellow-color #f9f002
+  --border-color #8ae66e
+  --blue-color #00e6f6
+  --header-height 80px
+  --aside-width 400px
+  --glitched-duration 0.9s
 }
 
+.dg.ac
+  z-index 11 !important
 .earth_digital
   height 100vh
   width 100%
@@ -46,6 +49,7 @@
     left 50%
     top 50%
     transform translate(-50%, -50%)
+    transition all .25s ease-out
     .close
       display inline-block
       color #ff013c
@@ -86,18 +90,48 @@
       width 100%
       left 0
       top 0
-      color: var(--yellow-color)
+      color var(--yellow-color)
       background #f9f002
-      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 35px), 75% calc(100% - 35px), 72.5% 100%, 27.5% 100%, 25% calc(100% - 35px), 0 calc(100% - 35px), 0 0);
+      clip-path polygon(0 0, 100% 0, 100% calc(100% - 35px), 75% calc(100% - 35px), 72.5% 100%, 27.5% 100%, 25% calc(100% - 35px), 0 calc(100% - 35px), 0 0)
       display flex
       justify-content space-between
+      animation slideInDown .75s .25s
+      animation-fill-mode both
       .left
         width 27.5%
         min-width var(--aside-width)
         height 100%
         .date
           text-align left
-          padding 10px 16px
+          padding 8px 16px
+          position relative
+          animation-name h1glitched
+          animation-duration calc(var(--glitched-duration) * 1.4)
+          animation-iteration-count infinite
+          animation-timing-function linear
+          &::before
+            content ""
+            display block
+            position absolute
+            bottom 2px
+            left -20px
+            width 100%
+            height 8px
+            background-color #000
+            clip-path polygon(0px 0px, 85px 0px, 90px 5px, 100% 5px, 100% 6px, 85px 6px, 80px 10px, 0px 10px)
+            animation-name h1beforeglitched
+            animation-duration calc(var(--glitched-duration) * 2)
+            animation-iteration-count infinite
+            animation-timing-function linear
+          &::after
+            content "_"
+            color #000000
+            font-size 22px
+            font-weight 600
+            animation-name hxafter
+            animation-duration var(--glitched-duration)
+            animation-iteration-count infinite
+            animation-timing-function linear
           .text
             font-size 18px
             color #000000
@@ -135,53 +169,61 @@
       padding 0 16px 16px
       &.left
         left 0
+        -webkit-animation slideInLeft .25s
+        -webkit-animation-fill-mode both
+        animation slideInLeft .25s
+        animation-fill-mode both
       &.right
         right 0
+        -webkit-animation slideInRight .25s
+        -webkit-animation-fill-mode both
+        animation slideInRight .25s
+        animation-fill-mode both
       .box
         width 100%
         height 31%
-        padding: 4px
+        padding 4px
         box-sizing border-box
-        position: relative
-        font-size: 1.2rem
-        color: var(--yellow-color)
-        border: 30px solid var(--yellow-color)
-        border-right: 5px solid var(--yellow-color)
-        border-left: 5px solid var(--yellow-color)
-        border-bottom: 24px solid var(--yellow-color)
-        background-color: #000
-        clip-path: polygon(0px 25px, 26px 0px, calc(60% - 25px) 0px, 60% 25px, 100% 25px, 100% calc(100% - 10px), calc(100% - 15px) calc(100% - 10px), calc(80% - 10px) calc(100% - 10px), calc(80% - 15px) 100%, 80px calc(100% - 0px), 65px calc(100% - 15px), 0% calc(100% - 15px))
+        position relative
+        font-size 1.2rem
+        color var(--yellow-color)
+        border 30px solid var(--yellow-color)
+        border-right 5px solid var(--yellow-color)
+        border-left 5px solid var(--yellow-color)
+        border-bottom 24px solid var(--yellow-color)
+        background-color #000
+        clip-path polygon(0px 25px, 26px 0px, calc(60% - 25px) 0px, 60% 25px, 100% 25px, 100% calc(100% - 10px), calc(100% - 15px) calc(100% - 10px), calc(80% - 10px) calc(100% - 10px), calc(80% - 15px) 100%, 80px calc(100% - 0px), 65px calc(100% - 15px), 0% calc(100% - 15px))
         transition all .25s linear
         &::before
-          content: "P-14"
-          display: block
-          position: absolute
-          bottom: -12px
-          right: 25px
-          padding: 2px 2px 0px 2px
-          font-size: 0.6rem
-          line-height: 0.6rem
-          border-left: 2px solid var(--border-color)
-          background-color: #000
-          color: var(--yellow-color)
+          content "P-14"
+          display block
+          position absolute
+          bottom -12px
+          right 25px
+          padding 2px 2px 0px 2px
+          font-size 0.6rem
+          line-height 0.6rem
+          border-left 2px solid var(--border-color)
+          background-color #000
+          color var(--yellow-color)
         &.inverse
-          border: none
-          padding: 40px 15px 30px
-          color: #000
-          background-color: var(--yellow-color)
-          border-right: 2px solid var(--border-color)
-          clip-path: polygon(0px 25px, 26px 0px, calc(60% - 25px) 0px, 60% 25px, 100% 25px, 100% calc(100% - 10px), calc(100% - 15px) calc(100% - 10px), calc(80% - 10px) calc(100% - 10px), calc(80% - 15px) 100%, 80px calc(100% - 0px), 65px calc(100% - 15px), 0% calc(100% - 15px));
+          border none
+          padding 40px 15px 30px
+          color #000
+          background-color var(--yellow-color)
+          border-right 2px solid var(--border-color)
+          clip-path polygon(0px 25px, 26px 0px, calc(60% - 25px) 0px, 60% 25px, 100% 25px, 100% calc(100% - 10px), calc(100% - 15px) calc(100% - 10px), calc(80% - 10px) calc(100% - 10px), calc(80% - 15px) 100%, 80px calc(100% - 0px), 65px calc(100% - 15px), 0% calc(100% - 15px))
           &::before
-            content: "T-71"
-            right: 90px
-            bottom: 9px
-            background-color: #000
-            color: var(--yellow-color)
+            content "T-71"
+            right 90px
+            bottom 9px
+            background-color #000
+            color var(--yellow-color)
         &.dotted, &.dotted::after
-          background: var(--yellow-color)
-          background-image: radial-gradient(#00000021 1px, transparent 0)
-          background-size: 5px 5px
-          background-position: -13px -3px
+          background var(--yellow-color)
+          background-image radial-gradient(#00000021 1px, transparent 0)
+          background-size 5px 5px
+          background-position -13px -3px
         .chart
           height 100%
           width 100%
@@ -215,7 +257,7 @@
               height 40px
     &.footer
       height 80px
-      width 600px;
+      width 600px
       bottom 16px
       left 50%
       padding 16px 32px
@@ -241,90 +283,90 @@
             font-size 14px
             color #FFFFFF
         .radar
-          background: radial-gradient(center, rgba(32, 255, 77, 0.3) 0%, rgba(32, 255, 77, 0) 75%), repeating-radial-gradient(rgba(32, 255, 77, 0) 5.8%, rgba(32, 255, 77, 0) 18%, #20ff4d 18.6%, rgba(32, 255, 77, 0) 18.9%), linear-gradient(90deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%), linear-gradient(0deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%);
+          background: radial-gradient(center, rgba(32, 255, 77, 0.3) 0%, rgba(32, 255, 77, 0) 75%), repeating-radial-gradient(rgba(32, 255, 77, 0) 5.8%, rgba(32, 255, 77, 0) 18%, #20ff4d 18.6%, rgba(32, 255, 77, 0) 18.9%), linear-gradient(90deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%), linear-gradient(0deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%)
           background: -webkit-radial-gradient(center, rgba(32, 255, 77, 0.3) 0%, rgba(32, 255, 77, 0) 75%), -webkit-repeating-radial-gradient(rgba(32, 255, 77, 0) 5.8%, rgba(32, 255, 77, 0) 18%, #20ff4d 18.6%, rgba(32, 255, 77, 0) 18.9%), -webkit-linear-gradient(90deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%), -webkit-linear-gradient(0deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%)
-          width: 60px;
-          height: 60px;
-          max-height: 60px;
-          max-width: 60px;
-          position: relative;
-          border-radius: 50%;
-          border: 0.1rem solid #20ff4d;
-          overflow: hidden;
+          width: 60px
+          height: 60px
+          max-height: 60px
+          max-width: 60px
+          position: relative
+          border-radius: 50%
+          border: 0.1rem solid #20ff4d
+          overflow: hidden
           opacity .8
         .radar:before {
-          content: " ";
-          display: block;
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-          animation: blips 5s infinite;
-          animation-timing-function: linear;
-          animation-delay: 1.4s;
+          content: " "
+          display: block
+          position: absolute
+          width: 100%
+          height: 100%
+          border-radius: 50%
+          animation: blips 5s infinite
+          animation-timing-function: linear
+          animation-delay: 1.4s
         }
         .radar:after {
-          content: " ";
-          display: block;
-          background-image: linear-gradient(44deg, rgba(0, 255, 51, 0) 50%, #00ff33 100%);
-          width: 50%;
-          height: 50%;
-          position: absolute;
-          top: 0;
-          left: 0;
-          animation: radar-beam 5s infinite;
-          animation-timing-function: linear;
-          transform-origin: bottom right;
-          border-radius: 100% 0 0 0;
+          content: " "
+          display: block
+          background-image: linear-gradient(44deg, rgba(0, 255, 51, 0) 50%, #00ff33 100%)
+          width: 50%
+          height: 50%
+          position: absolute
+          top: 0
+          left: 0
+          animation: radar-beam 5s infinite
+          animation-timing-function: linear
+          transform-origin: bottom right
+          border-radius: 100% 0 0 0
         }
     button, button::after {
       cursor pointer
-      width: 120px;
-      height: 40px;
-      font-size: 20px;
-      background: linear-gradient(45deg, transparent 5%, #FF013C 5%);
-      border: 0;
-      color: #fff;
-      letter-spacing: 3px;
-      line-height: 40px;
-      box-shadow: 6px 0px 0px #00E6F6;
-      outline: transparent;
-      position: relative;
+      width: 120px
+      height: 40px
+      font-size: 20px
+      background: linear-gradient(45deg, transparent 5%, #FF013C 5%)
+      border: 0
+      color: #fff
+      letter-spacing: 3px
+      line-height: 40px
+      box-shadow: 6px 0px 0px #00E6F6
+      outline: transparent
+      position: relative
     }
     button::after {
-      --slice-0: inset(50% 50% 50% 50%);
-      --slice-1: inset(80% -6px 0 0);
-      --slice-2: inset(50% -6px 30% 0);
-      --slice-3: inset(10% -6px 85% 0);
-      --slice-4: inset(40% -6px 43% 0);
-      --slice-5: inset(80% -6px 5% 0);
-      content: 'START';
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(45deg, transparent 3%, #00E6F6 3%, #00E6F6 5%, #FF013C 5%);
-      text-shadow: -3px -3px 0px #F8F005, 3px 3px 0px #00E6F6;
-      clip-path: var(--slice-0);
+      --slice-0: inset(50% 50% 50% 50%)
+      --slice-1: inset(80% -6px 0 0)
+      --slice-2: inset(50% -6px 30% 0)
+      --slice-3: inset(10% -6px 85% 0)
+      --slice-4: inset(40% -6px 43% 0)
+      --slice-5: inset(80% -6px 5% 0)
+      content: 'START'
+      display: block
+      position: absolute
+      top: 0
+      left: 0
+      right: 0
+      bottom: 0
+      background: linear-gradient(45deg, transparent 3%, #00E6F6 3%, #00E6F6 5%, #FF013C 5%)
+      text-shadow: -3px -3px 0px #F8F005, 3px 3px 0px #00E6F6
+      clip-path: var(--slice-0)
     }
     button:hover::after {
-      animation: 1s glitch;
-      animation-timing-function: steps(2, end);
+      animation: 1s glitch
+      animation-timing-function: steps(2, end)
     }
   .bg {
-    position: fixed;
-    top: -50%;
-    left: -50%;
-    right: -50%;
-    bottom: -50%;
-    width: 200%;
-    height: 200vh;
-    background: #000000 url('./images/noise.png') repeat 0 0;
-    background-repeat: repeat;
-    animation: bg-animation .2s infinite;
-    visibility: visible;
+    position: fixed
+    top: -50%
+    left: -50%
+    right: -50%
+    bottom: -50%
+    width: 200%
+    height: 200vh
+    background: #000000 url('./images/noise.png') repeat 0 0
+    background-repeat: repeat
+    animation: bg-animation .2s infinite
+    visibility: visible
   }
 
 @keyframes bg-animation {
@@ -343,75 +385,250 @@
 
 @keyframes glitch {
   0% {
-    clip-path: var(--slice-1);
-    transform: translate(-20px, -10px);
+    clip-path: var(--slice-1)
+    transform: translate(-20px, -10px)
   }
   10% {
-    clip-path: var(--slice-3);
-    transform: translate(10px, 10px);
+    clip-path: var(--slice-3)
+    transform: translate(10px, 10px)
   }
   20% {
-    clip-path: var(--slice-1);
-    transform: translate(-10px, 10px);
+    clip-path: var(--slice-1)
+    transform: translate(-10px, 10px)
   }
   30% {
-    clip-path: var(--slice-3);
-    transform: translate(0px, 5px);
+    clip-path: var(--slice-3)
+    transform: translate(0px, 5px)
   }
   40% {
-    clip-path: var(--slice-2);
-    transform: translate(-5px, 0px);
+    clip-path: var(--slice-2)
+    transform: translate(-5px, 0px)
   }
   50% {
-    clip-path: var(--slice-3);
-    transform: translate(5px, 0px);
+    clip-path: var(--slice-3)
+    transform: translate(5px, 0px)
   }
   60% {
-    clip-path: var(--slice-4);
-    transform: translate(5px, 10px);
+    clip-path: var(--slice-4)
+    transform: translate(5px, 10px)
   }
   70% {
-    clip-path: var(--slice-2);
-    transform: translate(-10px, 10px);
+    clip-path: var(--slice-2)
+    transform: translate(-10px, 10px)
   }
   80% {
-    clip-path: var(--slice-5);
-    transform: translate(20px, -10px);
+    clip-path: var(--slice-5)
+    transform: translate(20px, -10px)
   }
   90% {
-    clip-path: var(--slice-1);
-    transform: translate(-10px, 0px);
+    clip-path: var(--slice-1)
+    transform: translate(-10px, 0px)
   }
   100% {
-    clip-path: var(--slice-1);
-    transform: translate(0);
+    clip-path: var(--slice-1)
+    transform: translate(0)
   }
 }
 
 @keyframes radar-beam {
   0% {
-    transform: rotate(0deg);
+    transform: rotate(0deg)
   }
   100% {
-    transform: rotate(360deg);
+    transform: rotate(360deg)
   }
 }
 @keyframes blips {
   14% {
-    background: radial-gradient(2vmin circle at 75% 70%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%);
+    background: radial-gradient(2vmin circle at 75% 70%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%)
   }
   14.0002% {
-    background: radial-gradient(2vmin circle at 75% 70%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 63% 72%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%);
+    background: radial-gradient(2vmin circle at 75% 70%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 63% 72%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%)
   }
   25% {
-    background: radial-gradient(2vmin circle at 75% 70%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 63% 72%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 56% 86%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%);
+    background: radial-gradient(2vmin circle at 75% 70%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 63% 72%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 56% 86%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%)
   }
   26% {
-    background: radial-gradient(2vmin circle at 75% 70%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 63% 72%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 56% 86%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%);
-    opacity: 1;
+    background: radial-gradient(2vmin circle at 75% 70%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 63% 72%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 56% 86%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%)
+    opacity: 1
   }
   100% {
-    background: radial-gradient(2vmin circle at 75% 70%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 63% 72%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 56% 86%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%);
-    opacity: 0;
+    background: radial-gradient(2vmin circle at 75% 70%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 63% 72%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 56% 86%, white 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%)
+    opacity: 0
+  }
+}
+
+@-webkit-keyframes slideInDown {
+  from {
+    -webkit-transform: translate3d(0, -100%, 0)
+    transform: translate3d(0, -100%, 0)
+    visibility: visible
+  }
+  to {
+    -webkit-transform: translate3d(0, 0, 0)
+    transform: translate3d(0, 0, 0)
+  }
+}
+@keyframes slideInDown {
+  from {
+    -webkit-transform: translate3d(0, -100%, 0)
+    transform: translate3d(0, -100%, 0)
+    visibility: visible
+  }
+  to {
+    -webkit-transform: translate3d(0, 0, 0)
+    transform: translate3d(0, 0, 0)
+  }
+}
+@-webkit-keyframes slideInLeft {
+  from {
+    -webkit-transform: translate3d(-100%, 0, 0)
+    transform: translate3d(-100%, 0, 0)
+    visibility: visible
+  }
+  to {
+    -webkit-transform: translate3d(0, 0, 0)
+    transform: translate3d(0, 0, 0)
+  }
+}
+@keyframes slideInLeft {
+  from {
+    -webkit-transform: translate3d(-100%, 0, 0)
+    transform: translate3d(-100%, 0, 0)
+    visibility: visible
+  }
+  to {
+    -webkit-transform: translate3d(0, 0, 0)
+    transform: translate3d(0, 0, 0)
+  }
+}
+@-webkit-keyframes slideInRight {
+  from {
+    -webkit-transform: translate3d(100%, 0, 0)
+    transform: translate3d(100%, 0, 0)
+    visibility: visible
+  }
+  to {
+    -webkit-transform: translate3d(0, 0, 0)
+    transform: translate3d(0, 0, 0)
+  }
+}
+@keyframes slideInRight {
+  from {
+    -webkit-transform: translate3d(100%, 0, 0)
+    transform: translate3d(100%, 0, 0)
+    visibility: visible
+  }
+  to {
+    -webkit-transform: translate3d(0, 0, 0)
+    transform: translate3d(0, 0, 0)
+  }
+}
+@-webkit-keyframes slideInUp {
+  from {
+    -webkit-transform: translate3d(0, 100%, 0)
+    transform: translate3d(0, 100%, 0)
+    visibility: visible
+  }
+  to {
+    -webkit-transform: translate3d(0, 0, 0)
+    transform: translate3d(0, 0, 0)
+  }
+}
+@keyframes slideInUp {
+  from {
+    -webkit-transform: translate3d(0, 100%, 0)
+    transform: translate3d(0, 100%, 0)
+    visibility: visible
+  }
+  to {
+    -webkit-transform: translate3d(0, 0, 0)
+    transform: translate3d(0, 0, 0)
+  }
+}
+ @-webkit-keyframes h1glitched {
+  0% {
+    transform: skew(-20deg)
+    left: -4px
+  }
+  10% {
+    transform: skew(-20deg)
+    left: -4px
+  }
+  11% {
+    transform: skew(0deg)
+    left: 2px
+  }
+  50% {
+    transform: skew(0deg)
+  }
+  51% {
+    transform: skew(10deg)
+  }
+  59% {
+    transform: skew(10deg)
+  }
+  60% {
+    transform: skew(0deg)
+  }
+  100% {
+    transform: skew(0deg)
+  }
+}
+@keyframes h1glitched {
+  0% {
+    transform: skew(-20deg)
+    left: -4px
+  }
+  10% {
+    transform: skew(-20deg)
+    left: -4px
+  }
+  11% {
+    transform: skew(0deg)
+    left: 2px
+  }
+  50% {
+    transform: skew(0deg)
+  }
+  51% {
+    transform: skew(10deg)
+  }
+  59% {
+    transform: skew(10deg)
+  }
+  60% {
+    transform: skew(0deg)
+  }
+  100% {
+    transform: skew(0deg)
+  }
+}
+@-webkit-keyframes hxafter {
+  0% {
+    opacity: 0
+  }
+  50% {
+    opacity: 0
+  }
+  51% {
+    opacity: 1
+  }
+  100% {
+    opacity: 1
+  }
+}
+@keyframes hxafter {
+  0% {
+    opacity: 0
+  }
+  50% {
+    opacity: 0
+  }
+  51% {
+    opacity: 1
+  }
+  100% {
+    opacity: 1
   }
 }
