@@ -68,12 +68,7 @@ export default class EarthDigital extends React.Component {
     controls.enablePan = false;
 
     let params = {
-      colors: {
-        // 点图颜色
-        base: "#f9f002",
-        gradInner: "#8ae66e",
-        gradOuter: "#03c03c"
-      },
+      colors: { base: '#f9f002', gradInner: '#8ae66e', gradOuter: '#03c03c' },
       reset: () => {controls.reset()}
     }
 
@@ -86,8 +81,8 @@ export default class EarthDigital extends React.Component {
         impactMaxRadius: 5 * THREE.Math.randFloat(0.5, 0.75),
         impactRatio: 0,
         prevPosition: new THREE.Vector3().random().subScalar(0.5).setLength(5),
-        trailRatio: {value: 0},
-        trailLength: {value: 0}
+        trailRatio: { value: 0 },
+        trailLength: { value: 0 }
       });
       makeTrail(i);
     }
@@ -96,11 +91,9 @@ export default class EarthDigital extends React.Component {
       impacts: {
         value: impacts
       },
-      // 陆地色块大小
       maxSize: {
         value: 0.04
       },
-      // 海洋色块大小
       minSize: {
         value: 0.025
       },
@@ -160,7 +153,7 @@ export default class EarthDigital extends React.Component {
     gui.add(uniforms.waveHeight, 'value', 0.1, 1).step(0.001).name('浪高');
     gui.add(uniforms.scaling, 'value', 1, 5).step(0.01).name('范围');
     gui.addColor(params.colors, 'base').name('基础色').onChange(val => {
-      if (earth) earth.material.color.set(val);
+      earth && earth.material.color.set(val);
     });
     gui.addColor(params.colors, 'gradInner').name('渐变内').onChange(val => {
       uniforms.gradInner.value.set(val);

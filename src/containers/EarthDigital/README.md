@@ -14,6 +14,10 @@
 
 ![scale](./images/scale.gif)
 
+* `💻` 本页面仅适配 `PC` 端，大屏访问效果更佳。
+* `👁‍🗨` 在线预览地址1：<https://3d-eosin.vercel.app/#/earthDigital>
+* `👁‍🗨` 在线预览地址2：<https://dragonir.github.io/3d/#/earthDigital>
+
 ## 实现
 
 ### 资源引入
@@ -99,18 +103,13 @@ renderer.setAnimationLoop( _ => {
 ![step_0](./images/earth.jpg)
 
 ```js
-let params = {
-  colors: {
-    base: "#f9f002",
-    gradInner: "#8ae66e",
-    gradOuter: "#03c03c"
-  },
-  reset: () => {controls.reset()}
-}
-
 let maxImpactAmount = 10;
 let impacts = [];
 let trails = [];
+let params = {
+  colors: { base: '#f9f002', gradInner: '#8ae66e', gradOuter: '#03c03c' },
+  reset: () => {controls.reset()}
+}
 for (let i = 0; i < maxImpactAmount; i++) {
   impacts.push({
     impactPosition: new THREE.Vector3().random().subScalar(0.5).setLength(5),
@@ -122,31 +121,16 @@ for (let i = 0; i < maxImpactAmount; i++) {
   });
   makeTrail(i);
 }
-
 let uniforms = {
-  impacts: {
-    value: impacts
-  },
+  impacts: { value: impacts },
   // 陆地色块大小
-  maxSize: {
-    value: 0.04
-  },
+  maxSize: { value: .04 },
   // 海洋色块大小
-  minSize: {
-    value: 0.025
-  },
-  waveHeight: {
-    value: 0.1
-  },
-  scaling: {
-    value: 1
-  },
-  gradInner: {
-    value: new THREE.Color(params.colors.gradInner)
-  },
-  gradOuter: {
-    value: new THREE.Color(params.colors.gradOuter)
-  }
+  minSize: { value: .025 },
+  waveHeight: { value: .1 },
+  scaling: { value: 1 },
+  gradInner: { value: new THREE.Color(params.colors.gradInner) },
+  gradOuter: { value: new THREE.Color(params.colors.gradOuter) }
 }
 
 var tweens = [];
@@ -158,7 +142,7 @@ for (let i = 0; i < maxImpactAmount; i++) {
       let speed = 3;
       let len = path.geometry.attributes.lineDistance.array[99];
       let dur = len / speed;
-      let tweenTrail = new TWEEN.Tween({value: 0})
+      let tweenTrail = new TWEEN.Tween({ value: 0 })
         .to({value: 1}, dur * 1000)
         .onUpdate( val => {
           impacts[i].trailRatio.value = val.value;
@@ -180,179 +164,95 @@ for (let i = 0; i < maxImpactAmount; i++) {
     }
   });
 }
-
 tweens.forEach(t => {t.runTween();})
-makeGlobeOfPoints();
 
-
-function makeGlobeOfPoints(){
-  let dummyObj = new THREE.Object3D();
-  let p = new THREE.Vector3();
-  let sph = new THREE.Spherical();
-  let geoms = [];
-  let tex = new THREE.TextureLoader().load(imgData);
-  let counter = 75000;
-  let rad = 5;
-  let r = 0;
-  let dlong = Math.PI * (3 - Math.sqrt(5));
-  let dz = 2 / counter;
-  let long = 0;
-  let z = 1 - dz / 2;
-  for (let i = 0; i < counter; i++) {
-    r = Math.sqrt(1 - z * z);
-    p.set( Math.cos(long) * r, z, -Math.sin(long) * r).multiplyScalar(rad);
-    z = z - dz;
-    long = long + dlong;
-    sph.setFromVector3(p);
-    dummyObj.lookAt(p);
-    dummyObj.updateMatrix();
-    let g =  new THREE.PlaneGeometry(1, 1);
-    g.applyMatrix4(dummyObj.matrix);
-    g.translate(p.x, p.y, p.z);
-    let centers = [
-      p.x, p.y, p.z,
-      p.x, p.y, p.z,
-      p.x, p.y, p.z,
-      p.x, p.y, p.z
-    ];
-    let uv = new THREE.Vector2(
-      (sph.theta + Math.PI) / (Math.PI * 2),
-      1. - sph.phi / Math.PI
-    );
-    let uvs = [
-      uv.x, uv.y,
-      uv.x, uv.y,
-      uv.x, uv.y,
-      uv.x, uv.y
-    ];
-    g.setAttribute('center', new THREE.Float32BufferAttribute(centers, 3));
-    g.setAttribute('baseUv', new THREE.Float32BufferAttribute(uvs, 2));
-    geoms.push(g);
-  }
-  let g = mergeBufferGeometries(geoms);
-  let m = new THREE.MeshBasicMaterial({
-    color: new THREE.Color(params.colors.base),
-    onBeforeCompile: shader => {
-      shader.uniforms.impacts = uniforms.impacts;
-      shader.uniforms.maxSize = uniforms.maxSize;
-      shader.uniforms.minSize = uniforms.minSize;
-      shader.uniforms.waveHeight = uniforms.waveHeight;
-      shader.uniforms.scaling = uniforms.scaling;
-      shader.uniforms.gradInner = uniforms.gradInner;
-      shader.uniforms.gradOuter = uniforms.gradOuter;
-      shader.uniforms.tex = {value: tex};
-      shader.vertexShader = `
-        struct impact {
-          vec3 impactPosition;
-          float impactMaxRadius;
-          float impactRatio;
-        };
-        uniform impact impacts[${maxImpactAmount}];
-        uniform sampler2D tex;
-        uniform float maxSize;
-        uniform float minSize;
-        uniform float waveHeight;
-        uniform float scaling;
-
-        attribute vec3 center;
-        attribute vec2 baseUv;
-
-        varying float vFinalStep;
-        varying float vMap;
-
-        ${shader.vertexShader}
-      `.replace(
-        `#include <begin_vertex>`,
-        `#include <begin_vertex>
-        float finalStep = 0.0;
-        for (int i = 0; i < ${maxImpactAmount};i++){
-          float dist = distance(center, impacts[i].impactPosition);
-          float curRadius = impacts[i].impactMaxRadius * impacts[i].impactRatio;
-          float sstep = smoothstep(0., curRadius, dist) - smoothstep(curRadius - ( 0.25 * impacts[i].impactRatio ), curRadius, dist);
-          sstep *= 1. - impacts[i].impactRatio;
-          finalStep += sstep;
-        }
-        finalStep = clamp(finalStep, 0., 1.);
-        vFinalStep = finalStep;
-
-        float map = texture(tex, baseUv).g;
-        vMap = map;
-        float pSize = map < 0.5 ? maxSize : minSize;
-        float scale = scaling;
-
-        transformed = (position - center) * pSize * mix(1., scale * 1.25, finalStep) + center; // scale on wave
-        transformed += normal * finalStep * waveHeight; // lift on wave
-        `
-      );
-      shader.fragmentShader = `
-        uniform vec3 gradInner;
-        uniform vec3 gradOuter;
-        varying float vFinalStep;
-        varying float vMap;
-        ${shader.fragmentShader}
-        `.replace(
-        `vec4 diffuseColor = vec4( diffuse, opacity );`,
-        `
-        // shaping the point, pretty much from The Book of Shaders
-        vec2 hUv = (vUv - 0.5);
-        int N = 8;
-        float a = atan(hUv.x,hUv.y);
-        float r = PI2/float(N);
-        float d = cos(floor(.5+a/r)*r-a)*length(hUv);
-        float f = cos(PI / float(N)) * 0.5;
-        if (d > f) discard;
-
-        vec3 grad = mix(gradInner, gradOuter, clamp( d / f, 0., 1.)); // gradient
-        vec3 diffuseMap = diffuse * ((vMap > 0.5) ? 0.5 : 1.);
-        vec3 col = mix(diffuseMap, grad, vFinalStep); // color on wave
-        //if (!gl_FrontFacing) col *= 0.25; // moderate the color on backside
-        vec4 diffuseColor = vec4( col , opacity );
-        `
-      );
-    }
-  });
-  m.defines = {'USE_UV':''};
-  earth = new THREE.Mesh(g, m);
-  earth.rotation.y = Math.PI;
-  trails.forEach(t => {earth.add(t)});
-  earth.add(new THREE.Mesh(new THREE.SphereGeometry(4.9995, 72, 36), new THREE.MeshBasicMaterial({color: new THREE.Color(0x000000)})));
-  earth.position.set(0, -.4, 0);
-  scene.add(earth);
+let dummyObj = new THREE.Object3D();
+let p = new THREE.Vector3();
+let sph = new THREE.Spherical();
+let geoms = [];
+let rad = 5;
+let r = 0;
+let dlong = Math.PI * (3 - Math.sqrt(5));
+let dz = 2 / counter;
+let long = 0;
+let z = 1 - dz / 2;
+for (let i = 0; i < 75000; i++) {
+  r = Math.sqrt(1 - z * z);
+  p.set( Math.cos(long) * r, z, -Math.sin(long) * r).multiplyScalar(rad);
+  z = z - dz;
+  long = long + dlong;
+  sph.setFromVector3(p);
+  dummyObj.lookAt(p);
+  dummyObj.updateMatrix();
+  let g =  new THREE.PlaneGeometry(1, 1);
+  g.applyMatrix4(dummyObj.matrix);
+  g.translate(p.x, p.y, p.z);
+  let centers = [p.x, p.y, p.z, p.x, p.y, p.z, p.x, p.y, p.z, p.x, p.y, p.z];
+  let uv = new THREE.Vector2((sph.theta + Math.PI) / (Math.PI * 2), 1. - sph.phi / Math.PI);
+  let uvs = [uv.x, uv.y, uv.x, uv.y, uv.x, uv.y, uv.x, uv.y];
+  g.setAttribute('center', new THREE.Float32BufferAttribute(centers, 3));
+  g.setAttribute('baseUv', new THREE.Float32BufferAttribute(uvs, 2));
+  geoms.push(g);
 }
+let g = mergeBufferGeometries(geoms);
+let m = new THREE.MeshBasicMaterial({
+  color: new THREE.Color(params.colors.base),
+  onBeforeCompile: shader => {
+    shader.uniforms.impacts = uniforms.impacts;
+    shader.uniforms.maxSize = uniforms.maxSize;
+    shader.uniforms.minSize = uniforms.minSize;
+    shader.uniforms.waveHeight = uniforms.waveHeight;
+    shader.uniforms.scaling = uniforms.scaling;
+    shader.uniforms.gradInner = uniforms.gradInner;
+    shader.uniforms.gradOuter = uniforms.gradOuter;
+    // 将地球图片作为参数传递给shader
+    shader.uniforms.tex = { value: new THREE.TextureLoader().load(imgData) };
+    shader.vertexShader = vertexShader;
+    shader.fragmentShader = fragmentShader;
+    );
+  }
+});
+const earth = new THREE.Mesh(g, m);
+earth.rotation.y = Math.PI;
+trails.forEach(t => {earth.add(t)});
+earth.add(new THREE.Mesh(new THREE.SphereGeometry(4.9995, 72, 36), new THREE.MeshBasicMaterial({color: new THREE.Color(0x000000)})));
+earth.position.set(0, -.4, 0);
+scene.add(earth);
 ```
 
 ![step_0](./images/step_0.png)
 
 ### 添加调试工具
 
+dat.GUI 可以创建一个表单屏幕，您可以在其中通过加载此库并设置参数来简单地输入滑块和数值，根据参数值得更改合并处理直接更改画面。
+
+* 让操作DOM更容易
+* 设置dat.GUI后，您无需执行手动操作
+* 通过设置dat.GUI，不仅可以与工程师共享屏幕状态的确认,也可以跟产品和UI或者测试共享屏幕状态的确认
+* 可以仅凭设计无法想法的交互式表达图像
+
 ```js
 const gui = new dat.GUI();
 gui.add(uniforms.maxSize, 'value', 0.01, 0.06).step(0.001).name('陆地');
 gui.add(uniforms.minSize, 'value', 0.01, 0.06).step(0.001).name('海洋');
-gui.add(uniforms.waveHeight, 'value', 0.1, 1).step(0.001).name('浪高');
-gui.add(uniforms.scaling, 'value', 1, 5).step(0.01).name('范围');
 gui.addColor(params.colors, 'base').name('基础色').onChange(val => {
-  if (earth) earth.material.color.set(val);
+ earth && earth.material.color.set(val);
 });
-gui.addColor(params.colors, 'gradInner').name('渐变内').onChange(val => {
-  uniforms.gradInner.value.set(val);
-});
-gui.addColor(params.colors, 'gradOuter').name('渐变外').onChange(val => {
-  uniforms.gradOuter.value.set(val);
-});
-gui.add(params, 'reset').name('重置');
-gui.hide();
 ```
 
 ![step_1](./images/step_1.png)
 
+> 如果想要了解更多关于 `dat.GUI` 的属性和方法，可以访问本文末尾提供的官方文档地址
+
 ### 添加飞线和冲击波
+
+通过 `shader` 着色器实现飞线和冲击波效果，并将它们关联到地球上
 
 ```js
 function makeTrail(idx){
   let pts = new Array(100 * 3).fill(0);
   let g = new THREE.BufferGeometry();
-  g.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3));
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
   let m = new THREE.LineDashedMaterial({
     color: params.colors.gradOuter,
     transparent: true,
@@ -411,6 +311,8 @@ function setPath(l, startPoint, endPoint, peakHeight, cycles) {
 
 ### 添加头部卡片
 
+clip-path CSS 属性使用裁剪方式创建元素的可显示区域。区域内的部分显示，区域外的隐藏。
+
 机甲风格
 
 ```stylus
@@ -419,38 +321,17 @@ function setPath(l, startPoint, endPoint, peakHeight, cycles) {
   clip-path polygon(0 0, 100% 0, 100% calc(100% - 35px), 75% calc(100% - 35px), 72.5% 100%, 27.5% 100%, 25% calc(100% - 35px), 0 calc(100% - 35px), 0 0)
 ```
 
+> https://developer.mozilla.org/zh-CN/docs/Web/CSS/clip-path
+
 ![step_3](./images/step_3.png)
 
 ### 添加两侧卡片
 
 ```stylus
 .box
-  width 100%
-  height 31%
-  padding 4px
-  box-sizing border-box
-  position relative
-  font-size 1.2rem
-  color var(--yellow-color)
-  border 30px solid var(--yellow-color)
-  border-right 5px solid var(--yellow-color)
-  border-left 5px solid var(--yellow-color)
-  border-bottom 24px solid var(--yellow-color)
   background-color #000
   clip-path polygon(0px 25px, 26px 0px, calc(60% - 25px) 0px, 60% 25px, 100% 25px, 100% calc(100% - 10px), calc(100% - 15px) calc(100% - 10px), calc(80% - 10px) calc(100% - 10px), calc(80% - 15px) 100%, 80px calc(100% - 0px), 65px calc(100% - 15px), 0% calc(100% - 15px))
   transition all .25s linear
-  &::before
-    content "P-14"
-    display block
-    position absolute
-    bottom -12px
-    right 25px
-    padding 2px 2px 0px 2px
-    font-size 0.6rem
-    line-height 0.6rem
-    border-left 2px solid var(--border-color)
-    background-color #000
-    color var(--yellow-color)
   &.inverse
     border none
     padding 40px 15px 30px
@@ -469,44 +350,12 @@ function setPath(l, startPoint, endPoint, peakHeight, cycles) {
     background-image radial-gradient(#00000021 1px, transparent 0)
     background-size 5px 5px
     background-position -13px -3px
-  .chart
-    height 100%
-    width 100%
-  &.box_0
-    display flex
-    justify-content space-between
-    .cover
-      width 45%
-      height 100%
-      background url('./images/role_0.png') no-repeat center
-      background-size auto 100%
-    .info
-      width 55%
-      height 100%
-      padding-left 16px
-      display flex
-      flex-direction column
-      justify-content space-between
-      align-items center
-      .text
-        font-size 14px
-        text-align justify
-        text-align-last left
-        word-break break-all
-        line-height 1.5
-        overflow hidden auto
-        text-overflow ellipsis
-        white-space pre-wrap
-        height calc(100% - 50px)
-      .button
-        height 40px
 ```
 
 ```js
 initChart = () => {
   const chart_1 = echarts.init(document.getElementsByClassName('chart_1')[0], 'dark');
   chart_1 && chart_1.setOption(chart_1_option);
-  // ...
 }
 ```
 
@@ -514,47 +363,40 @@ initChart = () => {
 
 ### 添加底部仪表盘
 
+radial-gradient() CSS 函数创建了一个图像，该图像是由从原点发出的两种或者多种颜色之间的逐步过渡组成。它的形状可以是圆形（circle）或椭圆形（ellipse）。
+
 ```stylus
 .radar
   background: radial-gradient(center, rgba(32, 255, 77, 0.3) 0%, rgba(32, 255, 77, 0) 75%), repeating-radial-gradient(rgba(32, 255, 77, 0) 5.8%, rgba(32, 255, 77, 0) 18%, #20ff4d 18.6%, rgba(32, 255, 77, 0) 18.9%), linear-gradient(90deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%), linear-gradient(0deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%)
-  background: -webkit-radial-gradient(center, rgba(32, 255, 77, 0.3) 0%, rgba(32, 255, 77, 0) 75%), -webkit-repeating-radial-gradient(rgba(32, 255, 77, 0) 5.8%, rgba(32, 255, 77, 0) 18%, #20ff4d 18.6%, rgba(32, 255, 77, 0) 18.9%), -webkit-linear-gradient(90deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%), -webkit-linear-gradient(0deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%)
-  width: 60px
-  height: 60px
-  max-height: 60px
-  max-width: 60px
-  position: relative
-  border-radius: 50%
-  border: 0.1rem solid #20ff4d
-  overflow: hidden
-  opacity .8
 .radar:before
-  content: " "
-  display: block
-  position: absolute
-  width: 100%
-  height: 100%
+  content ''
+  display block
+  position absolute
+  width 100%
+  height 100%
   border-radius: 50%
-  animation: blips 5s infinite
-  animation-timing-function: linear
-  animation-delay: 1.4s
+  animation blips  1.4s 5s infinite linear
 .radar:after
-  content: ''
-  display: block
-  background-image: linear-gradient(44deg, rgba(0, 255, 51, 0) 50%, #00ff33 100%)
-  width: 50%
-  height: 50%
-  position: absolute
+  content ''
+  display block
+  background-image linear-gradient(44deg, rgba(0, 255, 51, 0) 50%, #00ff33 100%)
+  width 50%
+  height 50%
+  position absolute
   top: 0
   left: 0
-  animation: radar-beam 5s infinite
-  animation-timing-function: linear
+  animation radar-beam 5s infinite linear
   transform-origin: bottom right
-  border-radius: 100% 0 0 0
+  border-radius 100% 0 0 0
 ```
 
 ![step_5](./images/step_5.png)
 
+> https://developer.mozilla.org/zh-CN/docs/Web/CSS/gradient/radial-gradient
+
 ### 添加点击交互
+
+双击地球可以弹出弹窗
 
 ```js
 const raycaster = new THREE.Raycaster();
@@ -577,37 +419,13 @@ window.addEventListener('dblclick', event => {
 
 ### 添加入场动画等其他细节
 
-```js
-updateTime = () => {
-  this.timeInterval = setInterval(() => {
-    let date = new Date();
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-    let seconds = date.getSeconds();
-    let time = `${hours < 10 ? '0' + hours : hours }:${minutes < 10 ? '0' + minutes : minutes }:${seconds < 10 ? '0' + seconds : seconds}`;
-    this.setState({
-      time: time
-    })
-  }, 1000);
-}
-
-handleModalClick = () =>  {
-  setTimeout(() => {
-    this.setState({
-      showModal: false
-    })
-  })
-}
-
-handleStartButtonClick = () => {
-  this.setState({
-    showModal: true,
-    modelText: tips[Math.floor(Math.random() * tips.length)]
-  });
-}
-```
-
 入场动画、头部文字闪烁动画、按钮故障风格动画
+
+```js
+updateTime = () => {}
+handleModalClick = () =>  {}
+handleStartButtonClick = () => {}
+```
 
 ![sample](./images/sample.gif)
 
@@ -615,11 +433,14 @@ handleStartButtonClick = () => {
 
 本文包含的新知识点主要包括：
 
+后续计划：
+
 > 想了解其他前端知识或其他未在本文中详细描述的 `Web 3D` 开发技术相关知识，可阅读我往期的文章。**转载请注明原文地址和作者**。如果觉得文章对你有帮助，不要忘了**一键三连哦 👍**。
 
 ## 参考
 
-* [1]. <https://threejs.org>
+* [1]. [https://threejs.org](https://threejs.org)
+* [2]. [https://github.com/dataarts/dat.gui/blob/master/API.md](https://github.com/dataarts/dat.gui/blob/master/API.md)
 
 ## 附录
 
