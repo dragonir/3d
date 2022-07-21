@@ -14,8 +14,6 @@
 
 ![scale](./images/scale.gif)
 
-![sample](./images/sample.gif)
-
 ## 实现
 
 ### 资源引入
@@ -48,40 +46,22 @@ echarts.use([BarChart, GridComponent, /* ...*/ ]);
 页面主要结构如以下代码所示，`.webgl` 用于渲染3D数字地球；`.header` 是页面顶部，里面包括时间、日期、坐标、`Cyberpunk 2077 Logo`、本人github链接显示等；`.aside` 是左右两侧的图表展示区域；`.footer` 是底部的仪表盘，展示一些雷达动画和文本信息；如果仔细观察，可以看出背景有噪点效果，`.bg` 就是用于生成噪点背景效果的模块。
 
 ```js
-render () {
-  return (
-    <div className='earth_digital'>
-      <canvas className='webgl'></canvas>
-      <header className='hud header'>
-      <header></header>
-      <aside className='hud aside left'></aside>
-      <aside className='hud aside right'></aside>
-      <footer className='hud footer'></footer>
-      <section className="bg"></section>
-    </div>
-  )
-}
-```
-
-### 参数初始化
-
-```js
-state = {
-  week: weekMap[new Date().getDay()],
-  time: '00:00:00',
-  showModal: false,
-  modelText: tips[0]
-}
+<div className='earth_digital'>
+  <canvas className='webgl'></canvas>
+  <header className='hud header'>
+  <header></header>
+  <aside className='hud aside left'></aside>
+  <aside className='hud aside right'></aside>
+  <footer className='hud footer'></footer>
+  <section className="bg"></section>
+</div>
 ```
 
 ### 场景初始化
 
-```js
-let earth;
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .01, 50);
-camera.position.set(0, 0, 15.5);
+定义一些全局变量和参数，初始化场景、相机、镜头轨道控制器、灯光、页面缩放监听等。
 
+```js
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector('canvas.webgl'),
   antialias: true,
@@ -89,17 +69,22 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
+// 创建场景
+const scene = new THREE.Scene();
+// 创建相机
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .01, 50);
+camera.position.set(0, 0, 15.5);
+// 添加镜头轨道控制器
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.enablePan = false;
-
+// 页面缩放监听并重新更新场景和相机
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize( window.innerWidth, window.innerHeight );
 }, false);
-
+// 页面重绘动画
 renderer.setAnimationLoop( _ => {
   TWEEN.update();
   earth.rotation.y += 0.001;
@@ -108,6 +93,10 @@ renderer.setAnimationLoop( _ => {
 ```
 
 ### 生成点状地球
+
+使用地图图片生成点状地球
+
+![step_0](./images/earth.jpg)
 
 ```js
 let params = {
@@ -619,6 +608,8 @@ handleStartButtonClick = () => {
 ```
 
 入场动画、头部文字闪烁动画、按钮故障风格动画
+
+![sample](./images/sample.gif)
 
 ## 总结
 

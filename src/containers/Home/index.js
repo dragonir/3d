@@ -25,6 +25,7 @@ import ringImage from './images/ring.png';
 import metaverseImage from './images/metaverse.png';
 import oceanImage from './images/ocean.png';
 import scrollImage from './images/scroll.png';
+import earchDigitalImage from './images/earthDigital.png';
 
 import './index.css';
 
@@ -51,6 +52,13 @@ const workList = [
     three: true
   },
   {
+    link: '#/earthDigital',
+    title: '赛博朋克2077风格数字地球',
+    description: '🆒 Cyberpunk!!!',
+    image: earchDigitalImage,
+    three: true
+  },
+  {
     link: '#/ocean',
     title: '梦中情岛',
     description: '🌊 缤纷夏日3D梦中情岛！',
@@ -58,17 +66,17 @@ const workList = [
     three: true
   },
   {
-    link: '#/earth',
-    title: '地球',
-    description: '🌏 宇宙中孤独的蔚蓝色星球！',
-    image: earthImage,
-    three: true
-  },
-  {
     link: '#/ring',
     title: '艾尔登法环Logo',
     description: '🔥 火焰效果老头环 ？？？',
     image: ringImage,
+    three: true
+  },
+  {
+    link: '#/earth',
+    title: '地球',
+    description: '🌏 宇宙中孤独的蔚蓝色星球！',
+    image: earthImage,
     three: true
   },
   {
