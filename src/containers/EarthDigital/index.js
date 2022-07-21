@@ -7,7 +7,7 @@ import { mergeBufferGeometries } from 'three/examples/jsm/utils/BufferGeometryUt
 import * as dat from 'dat.gui';
 import imgData from '@/containers/EarthDigital/images/earth.jpg';
 import lineFragmentShader from '@/containers/EarthDigital/shaders/line/fragment.glsl';
-import { chart_1_option, chart_2_option, chart_3_option, chart_4_option, chart_5_option } from '@/containers/EarthDigital/scripts/echartConfig';
+import { chart_1_option, chart_2_option, chart_3_option, chart_4_option, chart_5_option, weekMap, tips } from '@/containers/EarthDigital/scripts/config';
 import * as echarts from 'echarts/core';
 import { BarChart, LineChart, PieChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, GridComponent, DatasetComponent, TransformComponent, PolarComponent, LegendComponent, ToolboxComponent } from 'echarts/components';
@@ -31,41 +31,7 @@ echarts.use([
   PieChart
 ]);
 
-const weekMap = {
-  '1': '月',
-  '2': '火',
-  '3': '水',
-  '4': '木',
-  '5': '金',
-  '6': '土',
-  '7': '日',
-};
-
-const tips = [
-  '太空里很暖和，像小主人抱我的温度，37.5℃',
-  '不要换台，不要走开，星际直播马上回来',
-  '爱，就是组成我的元件',
-  '人类对孤独的理解是有限的，对爱的诠释是无限的',
-  '我会飞得更高',
-  '我的一小步，见证友谊的一大步',
-  '释放我热烈的爱',
-  '呵，你咋不上天呢',
-  '比机器人更爱机器，比宇航员更爱宇航，这是种严肃的自我认知',
-  '把你送回太空好吗',
-  '用整个灵魂向你比心',
-  '再渺小的心愿，银河系都有它的容身之所',
-  'Yeah，放飞自我',
-  '地球生存，hard模式'
-];
-
-export default class Earth extends React.Component {
-
-  constructor () {
-    super();
-    this.week = weekMap[new Date().getDay()]
-    this.time = '00:00:00'
-  }
-
+export default class EarthDigital extends React.Component {
   state = {
     week: weekMap[new Date().getDay()],
     time: '00:00:00',
