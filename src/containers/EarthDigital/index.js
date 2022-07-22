@@ -7,6 +7,9 @@ import { mergeBufferGeometries } from 'three/examples/jsm/utils/BufferGeometryUt
 import * as dat from 'dat.gui';
 import imgData from '@/containers/EarthDigital/images/earth.jpg';
 import lineFragmentShader from '@/containers/EarthDigital/shaders/line/fragment.glsl';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass.js';
 import { chart_1_option, chart_2_option, chart_3_option, chart_4_option, chart_5_option, weekMap, tips } from '@/containers/EarthDigital/scripts/config';
 import * as echarts from 'echarts/core';
 import { BarChart, LineChart, PieChart } from 'echarts/charts';
@@ -36,7 +39,8 @@ export default class EarthDigital extends React.Component {
     week: weekMap[new Date().getDay()],
     time: '00:00:00',
     showModal: false,
-    modelText: tips[0]
+    modelText: tips[0],
+    renderGlithPass: false
   }
 
   componentDidMount () {
@@ -62,6 +66,12 @@ export default class EarthDigital extends React.Component {
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // 后期
+    const composer = new EffectComposer(renderer);
+    composer.addPass( new RenderPass(scene, camera));
+    const glitchPass = new GlitchPass();
+    composer.addPass(glitchPass);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -168,6 +178,7 @@ export default class EarthDigital extends React.Component {
       TWEEN.update();
       earth.rotation.y += 0.001;
       renderer.render(scene, camera);
+      this.state.renderGlithPass && composer.render();
     });
 
     const raycaster = new THREE.Raycaster();
@@ -380,7 +391,8 @@ export default class EarthDigital extends React.Component {
     function onWindowResize() {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
-      renderer.setSize( window.innerWidth, window.innerHeight );
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      composer.setSize(window.innerWidth, window.innerHeight);
     }
   }
 
@@ -424,8 +436,7 @@ export default class EarthDigital extends React.Component {
 
   handleStartButtonClick = () => {
     this.setState({
-      showModal: true,
-      modelText: tips[Math.floor(Math.random() * tips.length)]
+      renderGlithPass: !this.state.renderGlithPass
     });
   }
 

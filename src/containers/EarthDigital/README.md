@@ -1,16 +1,18 @@
 # 使用Three.js实现炫酷的赛博朋克风格3D数字地球大屏 🌏
 
-> 声明：本文涉及图文和模型素材仅用于个人学习、研究和欣赏，请勿二次修改、非法传播、转载、出版、商用、及进行其他获利行为。
-
 ![banner](./images/banner.gif)
+
+> 声明：本文涉及图文和模型素材仅用于个人学习、研究和欣赏，请勿二次修改、非法传播、转载、出版、商用、及进行其他获利行为。
 
 ## 背景
 
-近期涉及到数字大屏的需求，于是利用业余时间，结合 Three.js 和 [CSS实现赛博朋克2077风格视觉效果](https://juejin.cn/post/6972759988632551460) 的实现炫酷3D数字地球。页面使用 `React + Three.js + Echarts` 技术栈，本文涉及到的主要知识点包括：
+![role](./images/role.png)
+
+近期涉及到数字大屏的需求，于是利用业余时间，结合 `Three.js` 和 [CSS实现赛博朋克2077风格视觉效果](https://juejin.cn/post/6972759988632551460) 的实现炫酷 `3D` 数字地球。页面使用 `React + Three.js + Echarts` 技术栈，本文涉及到的主要知识点包括：`THREE.Spherical` 球体坐标系的应用、`Shader` 结合 `TWEEN` 实现飞线和冲击波动画效果、`dat.GUI` 调试工具库的使用、`clip-path` 创建不规则图形、`Echarts` 的基本使用方法、`radial-gradient` 创建雷达图形及动画、`GlitchPass` 添加故障风格后期、`Raycaster` 网格点击事件等。
 
 ## 效果
 
-如下图所示，页面主要由顶部header、两侧aside底部footer
+如下图所示，页面主要头部、两侧卡片、底部仪表盘以及主体 `3D` 地球 `🌐` 构成，地球外围有 `飞线` 动画和 `冲击波` 动画效果，通过鼠标可以旋转和放大地球。点击第一张卡片的 `START` 按钮会给页面添加故障风格后期 `⚡`，**双击**地球会弹出提示语弹窗。
 
 ![scale](./images/scale.gif)
 
@@ -22,7 +24,7 @@
 
 ### `📦` 资源引入
 
-引入开发必备的资源，其中除了基础的React和样式表之外，`dat.gui` 用于动态控制页面参数，通过它提供的GUI界面调整模型参数可以实时更新到页面上，方便调试和特效优化。其他剩余的主要分为两部分：Three.js 相关， `OrbitControls` 用于镜头轨道控制、TWEEN 用于补间动画控制、mergeBufferGeometries 用户合并模型、lineFragmentShader 是飞线的shader；echarts相关，按需引入需要的echarts组件，最后不要忘了使用 echarts.use 使其生效。
+引入开发必备的资源，其中除了基础的 `React` 和样式表之外，`dat.gui` 用于动态控制页面参数，其他剩余的主要分为两部分：`Three.js` 相关， `OrbitControls` 用于镜头轨道控制、`TWEEN` 用于补间动画控制、`mergeBufferGeometries` 用户合并模型、`lineFragmentShader` 是飞线的 `Shader`、`Echarts` 相关按需引入需要的组件，最后不要忘了使用 `echarts.use` 使其生效。
 
 ```js
 import './index.styl';
@@ -47,7 +49,7 @@ echarts.use([BarChart, GridComponent, /* ...*/ ]);
 
 ### `📃` 页面结构
 
-页面主要结构如以下代码所示，`.webgl` 用于渲染3D数字地球；`.header` 是页面顶部，里面包括时间、日期、坐标、`Cyberpunk 2077 Logo`、本人github链接显示等；`.aside` 是左右两侧的图表展示区域；`.footer` 是底部的仪表盘，展示一些雷达动画和文本信息；如果仔细观察，可以看出背景有噪点效果，`.bg` 就是用于生成噪点背景效果的模块。
+页面主要结构如以下代码所示，`.webgl` 用于渲染 `3D` 数字地球；`.header` 是页面顶部，里面包括时间、日期、坐标、`Cyberpunk 2077 Logo`、本人 `Github` 仓库地址等；`.aside` 是左右两侧的图表展示区域；`.footer` 是底部的仪表盘，展示一些雷达动画和文本信息；如果仔细观察，可以看出背景有噪点效果，`.bg` 就是用于生成噪点背景效果的模块。
 
 ```js
 <div className='earth_digital'>
@@ -198,9 +200,7 @@ gui.addColor(params.colors, 'base').name('基础色').onChange(val => {
 
 ### `💫` 添加飞线和冲击波
 
-接着，这部分内容实现地球表层的飞线和冲击波效果，基本思路是：创建10条飞线路径
-
-通过 `shader` 着色器实现飞线和冲击波效果，并将它们关联到地球上
+接着，这部分内容实现地球表层的飞线和冲击波效果，基本思路是：创建10条飞线路径，通过 `shader` 着色器实现飞线和冲击波效果，并将它们关联到地球上。
 
 ```js
 let maxImpactAmount = 10, impacts = [];
@@ -217,7 +217,6 @@ for (let i = 0; i < maxImpactAmount; i++) {
   makeTrail(i);
 }
 trails.forEach(t => {earth.add(t)});
-
 // 创建虚线材质和线网格并设置路径
 function makeTrail(idx){
   let pts = new Array(100 * 3).fill(0);
@@ -275,7 +274,11 @@ function setPath(l, startPoint, endPoint, peakHeight, cycles) {
   impacts[l.userData.idx].trailLength.value = l.geometry.attributes.lineDistance.array[99];
   l.material.dashSize = 3;
 }
+```
 
+使用 `TWEEN` 添加动画过渡效果
+
+```js
 var tweens = [];
 
 for (let i = 0; i < maxImpactAmount; i++) {
@@ -314,9 +317,7 @@ tweens.forEach(t => {t.runTween();})
 
 ### 📟 创建头部
 
-clip-path CSS 属性使用裁剪方式创建元素的可显示区域。区域内的部分显示，区域外的隐藏。
-
-机甲风格
+头部 `机甲风格` 的形状是通过纯 `CSS` 实现的，利用 `clip-path` 属性，使用不同的裁剪方式创建元素的可显示区域。区域内的部分显示，区域外的隐藏。
 
 ```stylus
 .header
@@ -324,11 +325,13 @@ clip-path CSS 属性使用裁剪方式创建元素的可显示区域。区域内
   clip-path polygon(0 0, 100% 0, 100% calc(100% - 35px), 75% calc(100% - 35px), 72.5% 100%, 27.5% 100%, 25% calc(100% - 35px), 0 calc(100% - 35px), 0 0)
 ```
 
-> https://developer.mozilla.org/zh-CN/docs/Web/CSS/clip-path
+> `🔗` 如果想学习 `clip-path` 的更多知识，可以访问MDN官网 [https://developer.mozilla.org/zh-CN/docs/Web/CSS/clip-path](https://developer.mozilla.org/zh-CN/docs/Web/CSS/clip-path)
 
 ![step_3](./images/step_3.png)
 
 ### 📊 添加两侧卡片
+
+两侧的卡片形状，同样由 `clip-path` 生成，有实心、实心点状背景、镂空背景三种基本样式。
 
 ```stylus
 .box
@@ -341,11 +344,8 @@ clip-path CSS 属性使用裁剪方式创建元素的可显示区域。区域内
     color #000
     background-color var(--yellow-color)
     border-right 2px solid var(--border-color)
-    clip-path polygon(0px 25px, 26px 0px, calc(60% - 25px) 0px, 60% 25px, 100% 25px, 100% calc(100% - 10px), calc(100% - 15px) calc(100% - 10px), calc(80% - 10px) calc(100% - 10px), calc(80% - 15px) 100%, 80px calc(100% - 0px), 65px calc(100% - 15px), 0% calc(100% - 15px))
     &::before
       content "T-71"
-      right 90px
-      bottom 9px
       background-color #000
       color var(--yellow-color)
   &.dotted, &.dotted::after
@@ -355,18 +355,18 @@ clip-path CSS 属性使用裁剪方式创建元素的可显示区域。区域内
     background-position -13px -3px
 ```
 
+两侧卡片上的图表，直接使用的是 `Eachrts`，通过修改每个图表的配置来适配 `赛博朋克 2077` 的样式风格。
+
 ```js
-initChart = () => {
-  const chart_1 = echarts.init(document.getElementsByClassName('chart_1')[0], 'dark');
-  chart_1 && chart_1.setOption(chart_1_option);
-}
+const chart_1 = echarts.init(document.getElementsByClassName('chart_1')[0], 'dark');
+chart_1 && chart_1.setOption(chart_1_option);
 ```
 
 ![step_4](./images/step_4.png)
 
 ### `⏱` 添加底部仪表盘
 
-radial-gradient() CSS 函数创建了一个图像，该图像是由从原点发出的两种或者多种颜色之间的逐步过渡组成。它的形状可以是圆形（circle）或椭圆形（ellipse）。
+底部仪表盘主要用于数据展示，并且添加了3个雷达扫描动画，雷达形状是通过 `radial-gradient` 径向渐变来实现的，然后利用 `::before` 和 `::after` 伪元素实现扫描动画效果，具体 `keyframes` 实现可以查看源码。
 
 ```stylus
 .radar
@@ -395,14 +395,28 @@ radial-gradient() CSS 函数创建了一个图像，该图像是由从原点发�
 
 ![step_5](./images/step_5.png)
 
-> https://developer.mozilla.org/zh-CN/docs/Web/CSS/gradient/radial-gradient
+### `🤳` 添加交互
 
-### `🤳` 添加点击交互
+#### 故障风格后期
 
-双击地球可以弹出弹窗
+点击第一个卡片上的按钮 `START`，星际之旅进入 `hard 模式`，页面将会产生如下图所示的故障动画效果。它是通过引入 `Three.js` 内置的后期通道 `GlitchPass` 实现的，添加以下代码后，记得要在页面重绘动画中更新 `composer`。
 
 ```js
-const raycaster = new THREE.Raycaster();dianji
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass.js';
+const composer = new EffectComposer(renderer);
+composer.addPass( new RenderPass(scene, camera));
+const glitchPass = new GlitchPass();
+composer.addPass(glitchPass);
+```
+
+#### 地球点击事件
+
+使用 `Raycaster` 给地球网格添加点击事件，在地球上 `双击鼠标`，会弹出一个提示框，并会随机加载一些提示文案。
+
+```js
+const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 window.addEventListener('dblclick', event => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -422,21 +436,31 @@ window.addEventListener('dblclick', event => {
 
 ### `🎥` 添加入场动画等其他细节
 
-入场动画、头部文字闪烁动画、按钮故障风格动画
-
-```js
-updateTime = () => {}
-handleModalClick = () =>  {}
-handleStartButtonClick = () => {}
-```
-
-![sample](./images/sample.gif)
+最后，还添加了一些样式细节和动画效果，如头部和两侧卡片的入场动画、头部时间坐标文字闪烁动画、第一张卡片按钮故障风格动画、`Cyberpunk 2077 Logo` 的阴影效果等。由于文章篇幅有限，不在这里一一细讲，感兴趣的朋友可以自己查看源码学习。也可以查看阅读我的另一篇文章 [仅用CSS几步实现赛博朋克2077风格视觉效果 > 传送门 🚪](https://juejin.cn/post/6972759988632551460) 查看更多细节内容。
 
 ## 总结
 
 本文包含的新知识点主要包括：
 
-后续计划：
+* `THREE.Spherical` 球体坐标系的应用
+* `Shader` 结合 `TWEEN` 实现飞线和冲击波动画效果
+* `dat.GUI` 调试工具库的使用
+* `clip-path` 创建不规则图形
+* `Echarts` 的基本使用方法
+* `radial-gradient` 创建雷达图形及动画
+* `GlitchPass` 添加故障风格后期
+* `Raycaster` 网格点击事件等
+
+**后续计划**：
+
+本页面虽然已经做了很多效果和优化，但是还有很多改进的空间，后续我计划更新的内容包括：
+
+* 地球坐标和实际地理坐标结合，可以根据经纬度定位到国家、省份等具体位置
+* 缩放适配不同屏幕尺寸
+* 图表以及仪表盘展示一些真实的数据并且可以实时更新
+* 头部和卡片添加一些炫酷的描边动画
+* 添加宇宙星空粒子背景（有时间的话）
+* 性能优化
 
 > 想了解其他前端知识或其他未在本文中详细描述的 `Web 3D` 开发技术相关知识，可阅读我往期的文章。**转载请注明原文地址和作者**。如果觉得文章对你有帮助，不要忘了**一键三连哦 👍**。
 
@@ -445,10 +469,11 @@ handleStartButtonClick = () => {}
 * [1]. [https://threejs.org](https://threejs.org)
 * [2]. [https://github.com/dataarts/dat.gui/blob/master/API.md](https://github.com/dataarts/dat.gui/blob/master/API.md)
 * [3]. [https://www.cnblogs.com/pangys/p/13276936.html](https://www.cnblogs.com/pangys/p/13276936.html)
+* [4]. [https://developer.mozilla.org/zh-CN/docs/Web/CSS/gradient/radial-gradient](https://developer.mozilla.org/zh-CN/docs/Web/CSS/gradient/radial-gradient)
 
 ## 附录
 
-* [朕的3D专栏](https://juejin.cn/column/7049923956257587213)
+* [我的3D专栏可以点击此链接访问 👈](https://juejin.cn/column/7049923956257587213)
 * [1]. [🦊 Three.js 实现3D开放世界小游戏：阿狸的多元宇宙](https://juejin.cn/post/7081429595689320478)
 * [2]. [🔥 Three.js 火焰效果实现艾尔登法环动态logo](https://juejin.cn/post/7077726955528781832)
 * [3]. [🐼 Three.js 实现2022冬奥主题3D趣味页面，含冰墩墩](https://juejin.cn/post/7060292943608807460)
