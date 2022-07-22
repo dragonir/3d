@@ -20,7 +20,7 @@
 
 ## 实现
 
-### 资源引入
+### `📦` 资源引入
 
 引入开发必备的资源，其中除了基础的React和样式表之外，`dat.gui` 用于动态控制页面参数，通过它提供的GUI界面调整模型参数可以实时更新到页面上，方便调试和特效优化。其他剩余的主要分为两部分：Three.js 相关， `OrbitControls` 用于镜头轨道控制、TWEEN 用于补间动画控制、mergeBufferGeometries 用户合并模型、lineFragmentShader 是飞线的shader；echarts相关，按需引入需要的echarts组件，最后不要忘了使用 echarts.use 使其生效。
 
@@ -45,7 +45,7 @@ echarts.use([BarChart, GridComponent, /* ...*/ ]);
 
 > echarts图标使用不是本文重点内容，想要了解更多细节内容，可访问其官网 <https://echarts.apache.org/zh/index.html>
 
-### 页面结构
+### `📃` 页面结构
 
 页面主要结构如以下代码所示，`.webgl` 用于渲染3D数字地球；`.header` 是页面顶部，里面包括时间、日期、坐标、`Cyberpunk 2077 Logo`、本人github链接显示等；`.aside` 是左右两侧的图表展示区域；`.footer` 是底部的仪表盘，展示一些雷达动画和文本信息；如果仔细观察，可以看出背景有噪点效果，`.bg` 就是用于生成噪点背景效果的模块。
 
@@ -61,9 +61,9 @@ echarts.use([BarChart, GridComponent, /* ...*/ ]);
 </div>
 ```
 
-### 场景初始化
+### `🔩` 场景初始化
 
-定义一些全局变量和参数，初始化场景、相机、镜头轨道控制器、灯光、页面缩放监听等。
+定义一些全局变量和参数，初始化场景、相机、镜头轨道控制器、页面缩放监听、添加页面重绘更新动画等进行场景初始化。
 
 ```js
 const renderer = new THREE.WebGLRenderer({
@@ -96,30 +96,25 @@ renderer.setAnimationLoop( _ => {
 });
 ```
 
-### 生成点状地球
+### `🌐` 创建点状地球
 
-使用地图图片生成点状地球
+具体思路是使用 `THREE.Spherical` 创建一个球体坐标系，然后创建 `10000` 个平面网格圆点，将它们的空间坐标转换成球坐标，并使用 `mergeBufferGeometries` 将它们合并为一个网格。然后使用一张如下图所示的地图图片作为材质，在 `shader` 中根据材质图片的颜色分布调整圆点的大小和透明度，根据传入的参数调整圆点的颜色和大小比例。然后创建一个球体，使用生成的着色器材质，并将它添加到场景中。到此，一个点状地球模型就完成了。
 
 ![step_0](./images/earth.jpg)
 
 ```js
-let maxImpactAmount = 10;
-let impacts = [];
-let trails = [];
+// 创建球类坐标
+let sph = new THREE.Spherical();
+let dummyObj = new THREE.Object3D();
+let p = new THREE.Vector3();
+let geoms = [], rad = 5, r = 0;
+let dlong = Math.PI * (3 - Math.sqrt(5));
+let dz = 2 / counter;
+let long = 0;
+let z = 1 - dz / 2;
 let params = {
   colors: { base: '#f9f002', gradInner: '#8ae66e', gradOuter: '#03c03c' },
-  reset: () => {controls.reset()}
-}
-for (let i = 0; i < maxImpactAmount; i++) {
-  impacts.push({
-    impactPosition: new THREE.Vector3().random().subScalar(0.5).setLength(5),
-    impactMaxRadius: 5 * THREE.Math.randFloat(0.5, 0.75),
-    impactRatio: 0,
-    prevPosition: new THREE.Vector3().random().subScalar(0.5).setLength(5),
-    trailRatio: {value: 0},
-    trailLength: {value: 0}
-  });
-  makeTrail(i);
+  reset: () => { controls.reset() }
 }
 let uniforms = {
   impacts: { value: impacts },
@@ -127,56 +122,17 @@ let uniforms = {
   maxSize: { value: .04 },
   // 海洋色块大小
   minSize: { value: .025 },
+  // 冲击波高度
   waveHeight: { value: .1 },
+  // 冲击波范围
   scaling: { value: 1 },
+  // 冲击波径向渐变内侧颜色
   gradInner: { value: new THREE.Color(params.colors.gradInner) },
+  // 冲击波径向渐变外侧颜色
   gradOuter: { value: new THREE.Color(params.colors.gradOuter) }
 }
-
-var tweens = [];
-
-for (let i = 0; i < maxImpactAmount; i++) {
-  tweens.push({
-    runTween: () => {
-      let path = trails[i];
-      let speed = 3;
-      let len = path.geometry.attributes.lineDistance.array[99];
-      let dur = len / speed;
-      let tweenTrail = new TWEEN.Tween({ value: 0 })
-        .to({value: 1}, dur * 1000)
-        .onUpdate( val => {
-          impacts[i].trailRatio.value = val.value;
-        });
-        var tweenImpact = new TWEEN.Tween({ value: 0 })
-        .to({ value: 1 }, THREE.Math.randInt(2500, 5000))
-        .onUpdate(val => {
-          uniforms.impacts.value[i].impactRatio = val.value;
-        })
-        .onComplete(val => {
-          impacts[i].prevPosition.copy(impacts[i].impactPosition);
-          impacts[i].impactPosition.random().subScalar(0.5).setLength(5);
-          setPath(path, impacts[i].prevPosition, impacts[i].impactPosition, 1);
-          uniforms.impacts.value[i].impactMaxRadius = 5 * THREE.Math.randFloat(0.5, 0.75);
-          tweens[i].runTween();
-        });
-      tweenTrail.chain(tweenImpact);
-      tweenTrail.start();
-    }
-  });
-}
-tweens.forEach(t => {t.runTween();})
-
-let dummyObj = new THREE.Object3D();
-let p = new THREE.Vector3();
-let sph = new THREE.Spherical();
-let geoms = [];
-let rad = 5;
-let r = 0;
-let dlong = Math.PI * (3 - Math.sqrt(5));
-let dz = 2 / counter;
-let long = 0;
-let z = 1 - dz / 2;
-for (let i = 0; i < 75000; i++) {
+// 创建10000个平面圆点网格并将其定位到球坐标
+for (let i = 0; i < 10000; i++) {
   r = Math.sqrt(1 - z * z);
   p.set( Math.cos(long) * r, z, -Math.sin(long) * r).multiplyScalar(rad);
   z = z - dz;
@@ -194,6 +150,7 @@ for (let i = 0; i < 75000; i++) {
   g.setAttribute('baseUv', new THREE.Float32BufferAttribute(uvs, 2));
   geoms.push(g);
 }
+// 将多个网格合并为一个网格
 let g = mergeBufferGeometries(geoms);
 let m = new THREE.MeshBasicMaterial({
   color: new THREE.Color(params.colors.base),
@@ -212,24 +169,19 @@ let m = new THREE.MeshBasicMaterial({
     );
   }
 });
+// 创建球体
 const earth = new THREE.Mesh(g, m);
 earth.rotation.y = Math.PI;
-trails.forEach(t => {earth.add(t)});
-earth.add(new THREE.Mesh(new THREE.SphereGeometry(4.9995, 72, 36), new THREE.MeshBasicMaterial({color: new THREE.Color(0x000000)})));
+earth.add(new THREE.Mesh(new THREE.SphereGeometry(4.9995, 72, 36), new THREE.MeshBasicMaterial({ color: new THREE.Color(0x000000) })));
 earth.position.set(0, -.4, 0);
 scene.add(earth);
 ```
 
 ![step_0](./images/step_0.png)
 
-### 添加调试工具
+### `🔧` 添加调试工具
 
-dat.GUI 可以创建一个表单屏幕，您可以在其中通过加载此库并设置参数来简单地输入滑块和数值，根据参数值得更改合并处理直接更改画面。
-
-* 让操作DOM更容易
-* 设置dat.GUI后，您无需执行手动操作
-* 通过设置dat.GUI，不仅可以与工程师共享屏幕状态的确认,也可以跟产品和UI或者测试共享屏幕状态的确认
-* 可以仅凭设计无法想法的交互式表达图像
+为了实时调整球体的样式和后续飞线和冲击波的参数调整，可以使用工具库 `dat.GUI`。它可以创建一个表单添加到页面，通过调整表单上面的参数、滑块和数值等方式绑定页面参数，参数值更改后可以实时更新画面，这样就不用一边到编辑器调整代码一边到浏览器查看效果了。基本用法如下，本例中可以在页面通过点击键盘 `⌨` `H键` 显示或隐藏参数表单，通过表单可以修改 `🌐` 地球背景色、飞线颜色、冲击波幅度大小等效果。
 
 ```js
 const gui = new dat.GUI();
@@ -242,13 +194,31 @@ gui.addColor(params.colors, 'base').name('基础色').onChange(val => {
 
 ![step_1](./images/step_1.png)
 
-> 如果想要了解更多关于 `dat.GUI` 的属性和方法，可以访问本文末尾提供的官方文档地址
+> `📌` 如果想要了解更多关于 `dat.GUI` 的属性和方法，可以访问本文末尾提供的官方文档地址
 
-### 添加飞线和冲击波
+### `💫` 添加飞线和冲击波
+
+接着，这部分内容实现地球表层的飞线和冲击波效果，基本思路是：创建10条飞线路径
 
 通过 `shader` 着色器实现飞线和冲击波效果，并将它们关联到地球上
 
 ```js
+let maxImpactAmount = 10, impacts = [];
+let trails = [];
+for (let i = 0; i < maxImpactAmount; i++) {
+  impacts.push({
+    impactPosition: new THREE.Vector3().random().subScalar(0.5).setLength(5),
+    impactMaxRadius: 5 * THREE.Math.randFloat(0.5, 0.75),
+    impactRatio: 0,
+    prevPosition: new THREE.Vector3().random().subScalar(0.5).setLength(5),
+    trailRatio: {value: 0},
+    trailLength: {value: 0}
+  });
+  makeTrail(i);
+}
+trails.forEach(t => {earth.add(t)});
+
+// 创建虚线材质和线网格并设置路径
 function makeTrail(idx){
   let pts = new Array(100 * 3).fill(0);
   let g = new THREE.BufferGeometry();
@@ -305,11 +275,44 @@ function setPath(l, startPoint, endPoint, peakHeight, cycles) {
   impacts[l.userData.idx].trailLength.value = l.geometry.attributes.lineDistance.array[99];
   l.material.dashSize = 3;
 }
+
+var tweens = [];
+
+for (let i = 0; i < maxImpactAmount; i++) {
+  tweens.push({
+    runTween: () => {
+      let path = trails[i];
+      let speed = 3;
+      let len = path.geometry.attributes.lineDistance.array[99];
+      let dur = len / speed;
+      let tweenTrail = new TWEEN.Tween({ value: 0 })
+        .to({value: 1}, dur * 1000)
+        .onUpdate( val => {
+          impacts[i].trailRatio.value = val.value;
+        });
+        var tweenImpact = new TWEEN.Tween({ value: 0 })
+        .to({ value: 1 }, THREE.Math.randInt(2500, 5000))
+        .onUpdate(val => {
+          uniforms.impacts.value[i].impactRatio = val.value;
+        })
+        .onComplete(val => {
+          impacts[i].prevPosition.copy(impacts[i].impactPosition);
+          impacts[i].impactPosition.random().subScalar(0.5).setLength(5);
+          setPath(path, impacts[i].prevPosition, impacts[i].impactPosition, 1);
+          uniforms.impacts.value[i].impactMaxRadius = 5 * THREE.Math.randFloat(0.5, 0.75);
+          tweens[i].runTween();
+        });
+      tweenTrail.chain(tweenImpact);
+      tweenTrail.start();
+    }
+  });
+}
+tweens.forEach(t => {t.runTween();})
 ```
 
 ![step_2](./images/step_2.png)
 
-### 添加头部卡片
+### 📟 创建头部
 
 clip-path CSS 属性使用裁剪方式创建元素的可显示区域。区域内的部分显示，区域外的隐藏。
 
@@ -325,7 +328,7 @@ clip-path CSS 属性使用裁剪方式创建元素的可显示区域。区域内
 
 ![step_3](./images/step_3.png)
 
-### 添加两侧卡片
+### 📊 添加两侧卡片
 
 ```stylus
 .box
@@ -361,7 +364,7 @@ initChart = () => {
 
 ![step_4](./images/step_4.png)
 
-### 添加底部仪表盘
+### `⏱` 添加底部仪表盘
 
 radial-gradient() CSS 函数创建了一个图像，该图像是由从原点发出的两种或者多种颜色之间的逐步过渡组成。它的形状可以是圆形（circle）或椭圆形（ellipse）。
 
@@ -394,12 +397,12 @@ radial-gradient() CSS 函数创建了一个图像，该图像是由从原点发�
 
 > https://developer.mozilla.org/zh-CN/docs/Web/CSS/gradient/radial-gradient
 
-### 添加点击交互
+### `🤳` 添加点击交互
 
 双击地球可以弹出弹窗
 
 ```js
-const raycaster = new THREE.Raycaster();
+const raycaster = new THREE.Raycaster();dianji
 const mouse = new THREE.Vector2();
 window.addEventListener('dblclick', event => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -417,7 +420,7 @@ window.addEventListener('dblclick', event => {
 
 ![step_6](./images/step_6.png)
 
-### 添加入场动画等其他细节
+### `🎥` 添加入场动画等其他细节
 
 入场动画、头部文字闪烁动画、按钮故障风格动画
 
@@ -441,6 +444,7 @@ handleStartButtonClick = () => {}
 
 * [1]. [https://threejs.org](https://threejs.org)
 * [2]. [https://github.com/dataarts/dat.gui/blob/master/API.md](https://github.com/dataarts/dat.gui/blob/master/API.md)
+* [3]. [https://www.cnblogs.com/pangys/p/13276936.html](https://www.cnblogs.com/pangys/p/13276936.html)
 
 ## 附录
 
