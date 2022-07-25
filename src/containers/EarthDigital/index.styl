@@ -39,6 +39,29 @@
       background url('./images/logo.png') no-repeat center
       background-size auto 100%
       filter drop-shadow(0 1px 5px rgba(0, 100, 200, .5))
+  .link
+    text-decoration none
+    font-size 18px
+    color #000000
+    font-weight 600
+    position fixed
+    top 0
+    right 0
+    display block
+    height var(--header-height)
+    z-index 20
+    .author
+      position relative
+      top -2px
+      left -8px
+      transition color .25s ease-in-out
+    .github
+      position relative
+      top 6px
+      margin-right 16px
+    &:hover
+      .author
+        color #00E6F6
   .tips_modal
     position fixed
     height 160px
@@ -146,18 +169,6 @@
         height 100%
         text-align right
         padding-right 16px
-        a
-          text-decoration none
-          font-size 18px
-          color #000000
-          font-weight 600
-          .author
-            position relative
-            top -2px
-            left -8px
-          .github
-            position relative
-            top 6px
     &.aside
       height calc(100vh - var(--header-height))
       width var(--aside-width)
@@ -366,6 +377,17 @@
     animation: bg-animation .2s infinite
     visibility: visible
   }
+
+@media only screen and (max-width: 960px) {
+  .hud, .logo {
+    display none !important
+  }
+}
+@media only screen and (max-height: 640px) {
+  .hud, .logo {
+    display none !important
+  }
+}
 
 @keyframes bg-animation {
   0% { transform: translate(0,0) }
