@@ -1,9 +1,7 @@
-/* eslint-disable */
 import './index.styl';
 import React from 'react';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-// import Stats from "three/examples/jsm/libs/stats.module";
 import * as CANNON from 'cannon';
 
 export default class Tennis extends React.Component {
@@ -202,7 +200,7 @@ export default class Tennis extends React.Component {
           _classPrivateFieldGet(this, _world).broadphase = new CANNON.NaiveBroadphase();
           _classPrivateFieldGet(this, _world).defaultContactMaterial.restitution = .65;
           _classPrivateFieldSet(this, _camera, new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.5, 10000));
-          _classPrivateFieldGet(this, _camera).position.set(0, 300, -225);
+          _classPrivateFieldGet(this, _camera).position.set(0, 200, -225);
           _classPrivateFieldGet(this, _camera).lookAt(_classStaticPrivateFieldSpecGet(Pen, Pen, _INITIAL_CAMERA_TARGET));
           _classPrivateFieldGet(this, _scene).add(_classPrivateFieldGet(this, _camera));
           _classPrivateMethodGet(this, _makeLights, _makeLights2).call(this);
@@ -214,7 +212,6 @@ export default class Tennis extends React.Component {
           }));
           _classPrivateFieldGet(this, _renderer).setSize(window.innerWidth, window.innerHeight);
           _classPrivateFieldGet(this, _renderer).shadowMap.enabled = true;
-          document.body.appendChild(_classPrivateFieldGet(this, _renderer).domElement);
           const setShouldDropBall = (value, e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -239,10 +236,6 @@ export default class Tennis extends React.Component {
       var _MIN_FORCE_FOR_CAMERA_DISTURBANCE = {
         writable: true,
         value: 5
-      };
-      var _SPACE_BAR_KEY_CODE = {
-        writable: true,
-        value: 32
       };
       var _FPS = {
         writable: true,
@@ -271,12 +264,11 @@ export default class Tennis extends React.Component {
         const z = hasBalls ? Math.floor(Math.random() * 25) * sign : 0;
         const y = 100;
         const textureLoader = new THREE.TextureLoader();
-        const geometry = new THREE.SphereGeometry(radius, 32, 16);
         const mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, 32, 16), new THREE.MeshStandardMaterial({
-          bumpMap: textureLoader.load(`https://assets.codepen.io/829639/TennisBallBump.jpeg`),
+          bumpMap: textureLoader.load(require('@/containers/Tennis/images/tennis/tennis-ball-bumpmap.png')),
           bumpScale: .25,
           color: 0xffffff,
-          map: textureLoader.load(`https://assets.codepen.io/829639/TennisBallColorMap.jpeg`),
+          map: textureLoader.load(require('@/containers/Tennis/images/tennis/tennis-ball-colormap.png')),
           metalness: 0,
           opacity: 1,
           roughness: 1,
@@ -323,10 +315,10 @@ export default class Tennis extends React.Component {
         const geometry = new THREE.BoxGeometry(size, 2, size);
         const material = new THREE.MeshStandardMaterial({
           color: 0xffffff,
-          bumpMap: textureLoader.load('https://assets.codepen.io/829639/tennis-court-bumpmap.png'),
-          map: textureLoader.load('https://assets.codepen.io/829639/tennis-court-texture.jpeg'),
+          bumpMap: textureLoader.load(require('@/containers/Tennis/images/tennis/tennis-court-bumpmap.png')),
+          map: textureLoader.load(require('@/containers/Tennis/images/tennis/tennis-court-texture.png')),
           metalness: .3,
-          roughMap: textureLoader.load('https://assets.codepen.io/829639/tennis-court-roughmap.png'),
+          roughMap: textureLoader.load(require('@/containers/Tennis/images/tennis/tennis-court-roughmap.png')),
           roughness: 1,
           side: THREE.DoubleSide
         });
@@ -347,7 +339,7 @@ export default class Tennis extends React.Component {
           color: 0xffffff,
           metalness: .2,
           opacity: .8,
-          roughMap: textureLoader.load('https://assets.codepen.io/829639/tennis-court-roughmap.png'),
+          roughMap: textureLoader.load(require('@/containers/Tennis/images/tennis/tennis-court-roughmap.png')),
           roughness: 1,
           transparent: 1
         });
@@ -362,16 +354,10 @@ export default class Tennis extends React.Component {
 
   render () {
     return (
-      <div className='tennis'>
-        <h1 id="">Generating and disposing of objects</h1>
-        <div id="count"><h2></h2>Balls</div>
-        <div id="instructions">Click / touch + hold to drop more balls.</div>
+      <div className='tennis_page'>
         <canvas className='webgl'></canvas>
-        {this.state.loadingProcess === 100 ? '' : (
-          <div className='loading'>
-            <span className='progress'>{this.state.loadingProcess} %</span>
-          </div>
-        )}
+        <div id="count"><h2>{}</h2>网球数量</div>
+        <div id="instructions">点击或长按地面生成更多网球 🎾</div>
         <a className='github' href='https://github.com/dragonir/3d' target='_blank' rel='noreferrer'>
           <svg height='36' aria-hidden='true' viewBox='0 0 16 16' version='1.1' width='36' data-view-component='true'>
             <path fill='#FFFFFF' fillRule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>

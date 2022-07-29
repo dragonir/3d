@@ -1,33 +1,11 @@
+import './index.styl';
 import React from 'react';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MediaCard from '../../components/MediaCard/index';
 import Grid from '@mui/material/Grid';
-import cityImage from './images/city.png';
-import panoramicImage from './images/panoramic.png';
-import metaImage from './images/meta.png';
-import earthImage from './images/earth.png';
-import cellImage from './images/cell.png';
-import lunarImage from './images/lunar.png';
-import zeldaImage from './images/zelda.png';
-import zeldaMapImage from './images/zelda_map.png';
-import scanImage from './images/scan.png';
-import carImage from './images/car.png';
 import developingImage from './images/developing.png';
-import segmentFaultImage from './images/segmengfault.png';
-import humanImage from './images/human.png';
-import olympicImage from './images/olympic.png';
-import comicImage from './images/comic.png';
-import floatingImage from './images/floating.png';
-import liveImage from './images/live.png';
-import ringImage from './images/ring.png';
-import metaverseImage from './images/metaverse.png';
-import oceanImage from './images/ocean.png';
-import scrollImage from './images/scroll.png';
-import earchDigitalImage from './images/earthDigital.png';
-
-import './index.css';
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -41,133 +19,140 @@ const workList = [
     link: '#/human',
     title: 'Metahuman',
     description: '👦 元宇宙数字人类【⚠优化中】',
-    image: humanImage,
+    image: require('@/containers/Home/images/human.png'),
     three: true
   },
   {
     link: '#/olympic',
     title: '2022冬奥会3D趣味页面',
     description: '🐼 萌萌的冰墩墩和雪容融送给大家！',
-    image: olympicImage,
+    image: require('@/containers/Home/images/olympic.png'),
     three: true
   },
   {
     link: '#/earthDigital',
     title: '赛博朋克2077风格数字地球',
     description: '🆒 Cyberpunk!!!',
-    image: earchDigitalImage,
+    image: require('@/containers/Home/images/earthDigital.png'),
     three: true
   },
   {
     link: '#/ocean',
     title: '梦中情岛',
     description: '🌊 缤纷夏日3D梦中情岛！',
-    image: oceanImage,
+    image: require('@/containers/Home/images/ocean.png'),
     three: true
   },
   {
     link: '#/ring',
     title: '艾尔登法环Logo',
     description: '🔥 火焰效果老头环 ？？？',
-    image: ringImage,
+    image: require('@/containers/Home/images/ring.png'),
     three: true
   },
   {
     link: '#/earth',
     title: '地球',
     description: '🌏 宇宙中孤独的蔚蓝色星球！',
-    image: earthImage,
+    image: require('@/containers/Home/images/earth.png'),
     three: true
   },
   {
     link: '#/metaverse',
     title: '阿狸的多元宇宙',
     description: '🦊 阿狸的星际旷野之息！',
-    image: metaverseImage,
+    image: require('@/containers/Home/images/metaverse.png'),
     three: true
   },
   {
     link: '#/floating',
     title: '悬浮文字',
     description: '🎋 Fantastic floating text',
-    image: floatingImage,
+    image: require('@/containers/Home/images/floating.png'),
     three: true
   },
   {
     link: '#/comic',
     title: '3D漫画',
     description: '🕷 spider man',
-    image: comicImage,
+    image: require('@/containers/Home/images/comic.png'),
     three: true
   },
   {
     link: '#/scroll',
     title: '基于滚动的3D布局',
     description: '🥑 Gsap 动画应用！',
-    image: scrollImage,
+    image: require('@/containers/Home/images/scroll.png'),
     three: true
   },
   {
     link: '#/city',
     title: '数字城市',
     description: '🏙 3D数字城市 【⚠优化中】',
-    image: cityImage,
+    image: require('@/containers/Home/images/city.png'),
+    three: true
+  },
+  {
+    link: '#/tennis',
+    title: '网球',
+    description: '🎾 物理效果模拟',
+    image: require('@/containers/Home/images/tennis.png'),
     three: true
   },
   {
     link: 'https://dragonir.github.io/3d-meta-logo/',
     title: '脸书Meta元宇宙Logo',
     description: '🪐 Three.js + Blender 实现炫酷的Facebook元宇宙Logo.',
-    image: metaImage,
+    image: require('@/containers/Home/images/meta.png'),
     three: true
   },
   {
     link: '#/lunar',
     title: '虎年春节创意',
     description: '🐅 2022虎虎生威！',
-    image: lunarImage,
+    image: require('@/containers/Home/images/lunar.png'),
     three: true
   },
   {
     link: 'https://dragonir.github.io/3d-panoramic-vision/',
     title: '全景侦探小游戏',
     description: '🕵️‍ 使用Three.js全景功能实现侦探小游戏。',
-    image: panoramicImage,
+    image: require('@/containers/Home/images/panoramic.png'),
     three: true
   },
   {
     link: '#/segmentfault',
     title: 'SegmentFault突破1000粉纪念',
     description: '🏆 1000+ followers ！',
-    image: segmentFaultImage,
+    image: require('@/containers/Home/images/segmengfault.png'),
     three: true
   },
   {
     link: '#/live',
     title: '虚拟主播',
     description: '💃 虚拟主播初音未来【⚠优化中】',
-    image: liveImage,
+    image: require('@/containers/Home/images/live.png'),
     three: true
   },
   {
     link: '#/cell',
     title: '动植物细胞结构',
     description: '👻 可以查看动物细胞和植物细胞的内部组成结构。【⚠优化中】',
-    image: cellImage,
+    image: require('@/containers/Home/images/cell.png'),
     three: true
   },
   {
     link: '#/car',
     title: 'Lamborghini Centenario LP-770',
     description: '📷车辆模型展示【⚠优化中】',
-    image: carImage,
+    image: require('@/containers/Home/images/car.png'),
     three: true
   },
   {
     link: '#/zelda',
     title: '塞尔达：旷野之息3D',
     description: '📷 林克【⚠优化中】',
-    image: zeldaImage,
+    image: require('@/containers/Home/images/zelda.png'),
     three: true
   },
   {
@@ -202,20 +187,20 @@ const workList = [
     link: 'https://dragonir.github.io/h5-scan-qrcode/',
     title: '浏览器扫码',
     description: '📷 使用原生浏览器就可以在h5页面实现扫码功能了，试试看！',
-    image: scanImage,
+    image: require('@/containers/Home/images/scan.png'),
   },
   {
     link: 'https://dragonir.github.io/zelda-map/',
     title: '塞尔达：旷野之息地图',
     description: '🗺 在地图上标记神庙、查询回忆点！',
-    image: zeldaMapImage,
+    image: require('@/containers/Home/images/zelda_map.png'),
   }
 ];
 
 export default class Home extends React.Component {
   render () {
     return (
-      <div className="home" style={{ padding: '24px'}}>
+      <div className="home_page" style={{ padding: '24px'}}>
         <Box>
           <h1 className="page_title">3D Example List</h1>
         </Box>
