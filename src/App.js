@@ -25,6 +25,7 @@ const Ocean = lazy(() => import('@/containers/Ocean/index'));
 const Farm = lazy(() => import('@/containers/Farm/index'));
 const Mine = lazy(() => import('@/containers/Mine/index'));
 const Tennis = lazy(() => import('@/containers/Tennis/index'));
+const Shadow = lazy(() => import('@/containers/Shadow/index'));
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
           <Route element={ <Farm /> } path="/farm" />
           <Route element={ <Mine /> } path="/mine" />
           <Route element={ <Tennis /> } path="/tennis" />
+          <Route element={ <Shadow /> } path="/shadow" />
         </Routes>
         </Suspense>
       </Router>
