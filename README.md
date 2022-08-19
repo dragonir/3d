@@ -117,6 +117,6 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
-> 声明：页面涉及图文和模型素材仅用于个人学习、研究和欣赏，请勿二次修改、非法传播、转载、出版、商用、及进行其他获利行为。
-> Disclaimer: The pictures, texts and model materials on the page are only for personal study, research and appreciation. Please do not re-modify, illegally spread, reprint, publish, commercialize, or conduct other profit-making activities.
-> 免責事項：ページ上の写真、テキスト、モデル資料は、個人的な調査、調査、および鑑賞のみを目的としています。再変更、違法な拡散、転載、公開、商業化、またはその他の営利活動を行わないでください。
+> * 声明：页面涉及图文和模型素材仅用于个人学习、研究和欣赏，请勿二次修改、非法传播、转载、出版、商用、及进行其他获利行为。
+> * Disclaimer: The pictures, texts and model materials on the page are only for personal study, research and appreciation. Please do not re-modify, illegally spread, reprint, publish, commercialize, or conduct other profit-making activities.
+> * 免責事項：ページ上の写真、テキスト、モデル資料は、個人的な調査、調査、および鑑賞のみを目的としています。再変更、違法な拡散、転載、公開、商業化、またはその他の営利活動を行わないでください。

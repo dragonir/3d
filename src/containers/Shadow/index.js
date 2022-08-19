@@ -285,9 +285,9 @@ export default class Earth extends React.Component {
               <div className="cursor"></div>
             </nav>
             <section className="first">
-              <h2>DRAGONIR</h2>
-              <h1>THREE GRACES</h1>
-              <p>Antonio Canova’s statue The Three Graces is a Neoclassical sculpture, in marble, of the mythological three Charites, daughters of Zeus – identified on some engravings of the statue as, from left to right, Euphrosyne, Aglaea and Thalia – who were said to represent youth/beauty (Thalia), mirth (Euphrosyne), and elegance (Aglaea). The Graces presided over banquets and gatherings, to delight the guests of the gods.</p>
+              <h2 className='name'>DRAGONIR</h2>
+              <h1 className='title'>KING OF KINGS</h1>
+              <p className='description'>My name is Ozymandies, king of kings. Look on my works, ye mighty, and despair. Nothing beside remains. Round the decay. Of that colossal wreck, boudless and bare. The lone and level sands stretch far away.</p>
             </section>
             <section className="section second">
               <div className="second-container">

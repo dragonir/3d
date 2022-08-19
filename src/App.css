@@ -60,5 +60,11 @@
 }
 
 .loading_page {
+  height: 100vh;
+  overflow: hidden;
   color: #03c03c;
+  font-size: 32px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
