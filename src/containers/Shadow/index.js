@@ -28,11 +28,12 @@ export default class Earth extends React.Component {
     // webgl加载容器
     const container = document.getElementById('canvas-container');
     const containerDetails = document.getElementById('canvas-container-details');
+    const section = document.getElementsByClassName('section')[0];
 
     // 通用变量
     let oldMaterial;
-    let width = container.clientWidth;
-    let height = container.clientHeight;
+    let width = section.clientWidth;
+    let height = section.clientHeight;
 
     // 创建场景
     const scene = new Scene();
@@ -65,7 +66,7 @@ export default class Earth extends React.Component {
     camera.position.set(19, 1.54, -0.1);
     cameraGroup.add(camera);
 
-    const camera2 = new PerspectiveCamera(35, containerDetails.clientWidth / containerDetails.clientHeight, 1, 100);
+    const camera2 = new PerspectiveCamera(35, section.clientWidth / section.clientHeight, 1, 100);
     camera2.position.set(3.2, 2.8, 3.2);
     camera2.rotation.set(0, 1, 0);
     scene.add(camera2);
@@ -75,14 +76,14 @@ export default class Earth extends React.Component {
 
     // 页面缩放事件监听
     window.addEventListener('resize', () => {
-      camera.aspect = container.clientWidth / container.clientHeight
+      camera.aspect = section.clientWidth / section.clientHeight
       camera.updateProjectionMatrix();
 
-      camera2.aspect = containerDetails.clientWidth / containerDetails.clientHeight;
+      camera2.aspect = section.clientWidth / section.clientHeight;
       camera2.updateProjectionMatrix();
 
-      renderer.setSize(container.clientWidth, container.clientHeight);
-      renderer2.setSize(containerDetails.clientWidth, containerDetails.clientHeight);
+      renderer.setSize(section.clientWidth, section.clientHeight);
+      renderer2.setSize(section.clientWidth, section.clientHeight);
 
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
       renderer2.setPixelRatio(Math.min(window.devicePixelRatio, 1));
@@ -151,7 +152,7 @@ export default class Earth extends React.Component {
         .onComplete(function () {
           TWEEN.remove(this)
           document.querySelector('.header').classList.add('ended')
-          document.querySelector('.first>p').classList.add('ended')
+          document.querySelector('.description').classList.add('ended')
         })
     }
 
@@ -284,10 +285,13 @@ export default class Earth extends React.Component {
               <b className="a"><span>了解更多</span></b>
               <div className="cursor"></div>
             </nav>
-            <section className="first">
-              <h2 className='name'>DRAGONIR</h2>
-              <h1 className='title'>KING OF KINGS</h1>
-              <p className='description'>My name is Ozymandies, king of kings. Look on my works, ye mighty, and despair. Nothing beside remains. Round the decay. Of that colossal wreck, boudless and bare. The lone and level sands stretch far away.</p>
+            <section className="section first">
+              <div className='info'>
+                <h2 className='name'>DRAGONIR</h2>
+                <h1 className='title'>KING OF KINGS</h1>
+                <p className='description'>不要温顺的走进那个良夜，激情不能被消沉的暮色淹没，咆哮吧，咆哮，痛斥那光的退缩，智者在临终的时候，对黑暗妥协，是因为它们的语言已黯然失色，它们不想被夜色迷惑，咆哮吧，咆哮，痛斥那光的退缩。</p>
+              </div>
+              <canvas id='canvas-container' className='webgl'></canvas>
             </section>
             <section className="section second">
               <div className="second-container">
@@ -300,12 +304,11 @@ export default class Earth extends React.Component {
               </div>
               <canvas id='canvas-container-details' className='webgl'></canvas>
             </section>
-            <section className="third">
+            <section className="section third">
               <h1>The Making</h1>
               <p>Canova's assistants roughly blocked out the marble, leaving Canova to perform the final carving and shape the stone to highlight the Graces soft flesh. This was a trademark of the artist, and the piece shows a strong allegiance to the Neo-Classical movement in sculpture, of which Canova is the prime exponent.<br/><br/> The three goddesses are shown nude, huddled together, their heads almost touching in what many have referred to as an erotically charged piece. They stand, leaning slightly inward — perhaps discussing a common issue, or simply enjoying their closeness. Their hair-styles are similar, braided atop their heads.</p>
             </section>
-            <canvas id='canvas-container' className='webgl'></canvas>
-            <h4 className="footer">Created by Anderson Mancini based on Tom Bogner Design. Free model credits</h4>
+            <h4 className="footer">Created by dragonir &copy; 2022</h4>
         </div>
         <a className='github' href='https://github.com/dragonir/3d' target='_blank' rel='noreferrer' title='dragonir'>
           <svg height='36' aria-hidden='true' viewBox='0 0 16 16' version='1.1' width='36' data-view-component='true'>

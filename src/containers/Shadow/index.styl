@@ -4,8 +4,8 @@
   left 0
   width 100vw
   height 100%
-  scroll-behavior: smooth;
-  overscroll-behavior: none;
+  scroll-behavior smooth
+  overscroll-behavior none
   color #FFFFFF
   overflow hidden auto
   .github
@@ -14,7 +14,25 @@
     left 24px
     z-index 11
   .content
-    section
+    .section
+      -moz-user-select none
+      -webkit-user-select none
+      -ms-user-select none
+      user-select none
+      flex-direction column
+      align-content center
+      justify-content center
+      align-items flex-start
+      position relative
+      z-index 1
+      height 100vh
+      width 100vw
+      overflow hidden
+      pointer-events none
+      box-sizing border-box
+      .webgl
+        height 100%
+        width 100%
       &.first
         pointer-events none
         font-size 2em
@@ -35,48 +53,113 @@
         z-index 1
         background linear-gradient(0deg, rgba(5, 5, 5, 1) 20%, rgba(5, 5, 5, 0) 50%)
         overflow hidden
-        .name
-          font-size 1.8em
-          line-height 0
-          font-weight 100
-          letter-spacing: .25em
-          font-style italic
-        .title
-          margin 10px 0
-          font-weight 100
-          letter-spacing 0.4em
-          &::after
-            content: "";
-            position: absolute;
-            margin-top: 105px;
-            left: calc(50% - 25px);
-            width: 50px;
-            height: 2px;
-            background: #ffffff70;
-        .description
-          font-size: .4em;
-          letter-spacing: 0px;
-          font-family: sans-serif;
-          width: 80%;
-          line-height: 28px;
-          font-weight: lighter;
-          margin: 32px auto 16px;
-          color: #c9c9c996;
-          opacity: 0;
-          transition: all 3.2s ease-in-out;
-          &.ended
-            opacity 1
-
+        .info
+          position relative
+          z-index 1
+          .name
+            font-size 1.8em
+            line-height 0
+            font-weight 100
+            letter-spacing .25em
+            font-style italic
+          .title
+            margin 10px 0
+            font-weight 100
+            letter-spacing 0.4em
+            font-size 1.6em
+            &::after
+              content ""
+              position absolute
+              margin-top 105px
+              left calc(50% - 25px)
+              width 50px
+              height 2px
+              background #ffffff70
+          .description
+            font-size .45em
+            letter-spacing 0
+            font-family sans-serif
+            width 80%
+            line-height 28px
+            font-weight lighter
+            margin 32px auto 16px
+            color #c9c9c996
+            opacity 0
+            transition all 3.2s ease-in-out
+            &.ended
+              opacity 1
+        .webgl
+          pointer-events none
+          position absolute
+          top 0
+          left 0
+          outline none
+          z-index 0
+          height 100vh
+          width 100vw
+          margin 0
+          padding 0
+          background #000
+          background radial-gradient(circle at center center, #171717 0, #050505 58%)
+      &.second
+        pointer-events all
+        font-size 2em
+        width 100%
+        display flex
+        height 100vh
+        background #141414
+        z-index 1
+        margin 0
+        padding 0
+        overflow hidden
+        .second-container
+          pointer-events all
+          width 100%;
+          display flex
+          height 100vh
+          margin 0
+          padding 0 10%
+          flex-direction column
+          justify-content center
+          z-index 2
+          background radial-gradient(circle at 90% center, rgba(5, 5, 5, 0) 30%, #141414 70%)
+        .webgl
+          pointer-events none
+          position absolute
+          top 0
+          left 0
+          outline none
+          z-index 0
+          height 100%
+          width 100%
+          margin 0
+          padding 0
+          pointer-events all
+          overflow hidden
+      &.third
+        -moz-user-select none
+        -webkit-user-select none
+        user-select none
+        display flex
+        flex-direction column
+        align-content center
+        justify-content center
+        align-items center
+        position relative
+        width 100vw
+        height 100vh
+        overflow hidden
+        text-align center
 
 .lds-roller {
-  width: 80px;
-  height: 80px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-right: -50%;
-  transform: translate(-50%, -50%);
-  z-index: 5;
+  width 80px
+  height 80px
+  position absolute
+  top 50%
+  left 50%
+  margin-right -50%
+  transform translate(-50%, -50%)
+  z-index 5
 }
 
 .lds-roller div {
@@ -252,60 +335,7 @@ nav.header .a:hover~.cursor {
   -ms-user-select: none;
   user-select: none;
   z-index: 2 !important;
-  /* TODO Solve this in HTML */
 }
-
-#canvas-container {
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  outline: none;
-  z-index: 0;
-  height: 100vh;
-  width: 100vw;
-  margin: 0;
-  padding: 0;
-  background: #000;
-  background: radial-gradient(circle at center center, #171717 0, #050505 58%);
-}
-
-#canvas-container-details {
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  outline: none;
-  z-index: 0;
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  pointer-events: all;
-  overflow: hidden;
-}
-
-
-.section {
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  /* display: flex; */
-  flex-direction: column;
-  align-content: center;
-  justify-content: center;
-  align-items: flex-start;
-  position: relative;
-  padding-left: 5%;
-  padding-right: 5%;
-  z-index: 1;
-  width: 65%;
-  height: 100vh;
-  pointer-events: none;
-}
-
-
 .header {
   position: absolute;
   top: -2em;
@@ -314,13 +344,11 @@ nav.header .a:hover~.cursor {
   font-size: .8em;
   width: 100%;
   text-align: center;
-  font-family: 'Josefin Sans', sans-serif;
   z-index: 2;
   opacity: 0;
-  transition: all 1.9s ease-in-out;
+  transition: all 1.8s ease-in-out;
   padding: 0;
   margin: 0;
-
 }
 
 .header.ended {
@@ -349,33 +377,6 @@ nav.header .a:hover~.cursor {
   width: 20px;
   height: 2px;
   background: #fff;
-}
-
-.second {
-  pointer-events: all;
-  font-size: 2em;
-  width: 100%;
-  display: flex;
-  height: 100vh;
-  background: #141414;
-  z-index: 1;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-.second-container {
-  pointer-events: all;
-  width: 100%;
-  display: flex;
-  height: 100vh;
-  margin: 0;
-  padding: 0 10%;
-  flex-direction: column;
-  justify-content: center;
-  z-index: 2;
-  background: radial-gradient(circle at 90% center, rgba(5, 5, 5, 0) 30%, #141414 70%);
-
 }
 
 .second-container>ul {
@@ -428,21 +429,6 @@ nav.header .a:hover~.cursor {
   color: #898989;
   margin-left: 60px;
   height: 200px;
-}
-
-.third {
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  user-select: none;
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
 }
 
 .third>h1 {
