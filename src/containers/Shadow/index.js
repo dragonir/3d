@@ -26,10 +26,7 @@ export default class Earth extends React.Component {
 
   initThree = () => {
     // webgl加载容器
-    const container = document.getElementById('canvas-container');
-    const containerDetails = document.getElementById('canvas-container-details');
     const section = document.getElementsByClassName('section')[0];
-
     // 通用变量
     let oldMaterial;
     let width = section.clientWidth;
