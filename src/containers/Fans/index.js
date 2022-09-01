@@ -18,17 +18,6 @@ export default class Fans extends React.Component {
       window.innerWidth / 2,
       window.innerHeight / 2
     );
-    this.lerpedMouse2d = {
-      previous: new THREE.Vector2(),
-      current: new THREE.Vector2(),
-      amount: 0.05,
-    };
-    this.lerpedMouse3d = {
-      previous: new THREE.Vector2(0, -10, 0),
-      current: new THREE.Vector2(),
-      amount: 0.065,
-    };
-    this.ticker = 0;
     this.matcaps = {
       logoMatcap: textureLoader.load(require('@/containers/Fans/images/matcap_0.png')),
       textMatcap1: textureLoader.load(require('@/containers/Fans/images/matcap_5.png')),
@@ -68,6 +57,7 @@ export default class Fans extends React.Component {
     // const stats = new Stats();
     // document.documentElement.appendChild(stats.dom);
 
+    // 创建logo
     const logo = new THREE.Group();
 
     const logoMaterial = new THREE.MeshMatcapMaterial({
@@ -80,7 +70,7 @@ export default class Fans extends React.Component {
 
     const cylinder = new THREE.Mesh(new THREE.CylinderGeometry(6, 10, 4, 4, 1), logoMaterial);
     cylinder.position.y = -6
-    logo.add( cylinder );
+    logo.add(cylinder);
 
     const cylinder2 = new THREE.Mesh(new THREE.CylinderGeometry(12, 16, 4, 4, 1), logoMaterial);
     cylinder2.position.y = -12
@@ -95,75 +85,55 @@ export default class Fans extends React.Component {
 
     // 添加纸屑礼花效果
     this.confetti = new Confetti({
-			parent: this.sceneGroup,
-			points: [
-				new THREE.Vector3(-300, 300, 100),
-				new THREE.Vector3(0, 300, 100),
-				new THREE.Vector3(300, 300, 100),
-			],
-			firstPopDuration: 3.5,
-		});
+      parent: this.sceneGroup,
+      points: [
+        new THREE.Vector3(-300, 300, 100),
+        new THREE.Vector3(0, 300, 100),
+        new THREE.Vector3(300, 300, 100),
+      ],
+      firstPopDuration: 3.5,
+    });
 
     // 添加文字
     this.textGroup = new THREE.Group();
 
-		const DEFAULTS = {
-			parent: this.textGroup,
-			initializeDelay: 3,
-		};
+    const DEFAULTS = {
+      parent: this.textGroup,
+      initializeDelay: 3,
+    };
 
-		new Text({
-			...DEFAULTS,
-			text: '1000!',
-			position: new THREE.Vector3(120, 160, -80),
-			textOptions: {
-				size: 110,
-				spacing: 120
-			},
-			material: {
+    new Text({
+      ...DEFAULTS,
+      text: '1000!',
+      position: new THREE.Vector3(120, 160, -80),
+      textOptions: {
+        size: 110,
+        spacing: 120
+      },
+      material: {
         matcap: this.matcaps.textMatcap1
-			},
-			animation: 'zoomAndFlip',
-			onLoad: () => {
-				this.confetti.pop(2);
-			},
-		});
-		new Text({
-			...DEFAULTS,
-			text: 'THANK YOU',
-			position: new THREE.Vector3(-120, -10, -80),
-			textOptions: {
-				size: 60,
-				spacing: 100,
-			},
-			material: {
+      },
+      animation: 'zoomAndFlip',
+      onLoad: () => {
+        this.confetti.pop(2);
+      },
+    });
+    new Text({
+      ...DEFAULTS,
+      text: 'THANK YOU',
+      position: new THREE.Vector3(-120, -10, -80),
+      textOptions: {
+        size: 60,
+        spacing: 100,
+      },
+      material: {
         matcap: this.matcaps.textMatcap2,
         opacity: .75
-			},
-			animation: 'upDownFlip',
-		});
-
-		this.sceneGroup.add(this.textGroup);
-
-		window.addEventListener('pointermove', e => {
-      e.preventDefault();
-			this.mousePosition.x = e.clientX;
-			this.mousePosition.y = e.clientY;
+      },
+      animation: 'upDownFlip',
     });
 
-		window.addEventListener('pointerdown', e => {
-      e.preventDefault();
-			this.confetti && this.confetti.pop();
-    });
-
-		window.addEventListener('resize', () => {
-      this.width = window.innerWidth;
-			this.height = window.innerHeight;
-			this.camera.aspect = this.width / this.height;
-			this.camera.updateProjectionMatrix();
-			renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-			this.renderer.setSize(this.width, this.height);
-    }, { passive: true });
+    this.sceneGroup.add(this.textGroup);
 
     this.scene.add(this.sceneGroup);
 
@@ -176,6 +146,28 @@ export default class Fans extends React.Component {
       renderer.render(scene, camera);
     }
     animate();
+
+    window.addEventListener('pointermove', e => {
+      e.preventDefault();
+      this.mousePosition.x = e.clientX;
+      this.mousePosition.y = e.clientY;
+    });
+
+    window.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      this.confetti && this.confetti.pop();
+    });
+
+    window.addEventListener('resize', () => {
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+      this.camera.aspect = this.width / this.height;
+      this.camera.updateProjectionMatrix();
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      this.renderer.setSize(this.width, this.height);
+    }, {
+      passive: true
+    });
   }
 
   render () {

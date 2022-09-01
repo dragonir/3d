@@ -30,10 +30,10 @@ const workList = [
     three: true
   },
   {
-    link: '#/earthDigital',
-    title: '赛博朋克2077风格数字地球',
-    description: '🆒 Cyberpunk!!!',
-    image: require('@/containers/Home/images/earthDigital.png'),
+    link: '#/fans',
+    title: '掘金1000粉！！！',
+    description: '🏆 谢谢关注',
+    image: require('@/containers/Home/images/fans.png'),
     three: true
   },
   {
@@ -69,6 +69,13 @@ const workList = [
     title: '悬浮文字',
     description: '🎋 Fantastic floating text',
     image: require('@/containers/Home/images/floating.png'),
+    three: true
+  },
+  {
+    link: '#/earthDigital',
+    title: '赛博朋克2077风格数字地球',
+    description: '🆒 Cyberpunk!!!',
+    image: require('@/containers/Home/images/earthDigital.png'),
     three: true
   },
   {
