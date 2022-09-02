@@ -1,4 +1,4 @@
-import { PlaneGeometry, MeshBasicMaterial, Color, DoubleSide, Mesh } from 'three';
+import { PlaneBufferGeometry, MeshBasicMaterial, Color, DoubleSide, Mesh } from 'three';
 import { palettes } from '@/assets/utils/palettes';
 import gsap from 'gsap';
 const _ = require('lodash');
@@ -17,13 +17,10 @@ export default class Confetti {
 		this.parent = options.parent;
 		this.confettiPoints = options.points;
 		this.firstPopDuration = options.firstPopDuration || 2;
-
 		this.confettiSpriteIds = [];
 		this.confettiSprites = {};
 		this.meshes = {};
-
-		this.geometry = new PlaneGeometry(5, 5, 6);
-
+		this.geometry = new PlaneBufferGeometry(5, 5, 6);
 		this.init();
 	}
 

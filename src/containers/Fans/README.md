@@ -1,6 +1,8 @@
 # 掘金1000粉！使用Three.js实现一个创意纪念页面 🏆
 
+![banner](./images/banner.gif)
 
+> 声明：本文涉及图文和模型素材仅用于个人学习、研究和欣赏，请勿二次修改、非法传播、转载、出版、商用、及进行其他获利行为。
 
 https://observablehq.com/@makio135/matcaps?ui=classic
 
