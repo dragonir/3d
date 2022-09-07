@@ -4,12 +4,29 @@
   overflow hidden
   background url('./images/bg.png') no-repeat center
   background-size cover
+  .logo
+    display inline-block
+    height 80px
+    width 80px
+    background url('./images/logo.awebp') no-repeat center
+    background-size 100% 100%
+    position fixed
+    top 24px
+    left 24px
+    filter drop-shadow(0 1px 1px rgba(200, 200, 200, .2))
+    &.click
+      background url('./images/click.png') no-repeat center
+      background-size 100% 100%
+      top unset
+      left unset
+      right 24px
+      bottom 24px
   .github
     position fixed
     left 0
     bottom 0
     z-index 11
-    padding 16px
+    padding 24px
     text-decoration none
     transition opacity .25s ease-in-out
     .author
