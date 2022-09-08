@@ -21,6 +21,9 @@
       left unset
       right 24px
       bottom 24px
+      animation fishAnimate 10s infinite linear
+      &:hover
+        animation-play-state paused
   .github
     position fixed
     left 0
@@ -38,3 +41,15 @@
       font-size 16px
     &:hover
       opacity .6
+
+@keyframes fishAnimate
+  0%
+    transform rotate(0) scale(1)
+  25%
+    transform rotate(-90deg) scale(1.1)
+  50%
+    transform rotate(0) scale(.9)
+  75%
+    transform rotate(90deg) scale(1.1)
+  100%
+    transform rotate(0) scale(1)
