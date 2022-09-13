@@ -65,14 +65,14 @@ export default class Fans extends React.Component {
       side: THREE.DoubleSide,
     })
 
-    const cone = new THREE.Mesh(new THREE.ConeGeometry(4, 4, 4), logoMaterial);
+    const cone = new THREE.Mesh(new THREE.ConeBufferGeometry(4, 4, 4), logoMaterial);
     logo.add(cone);
 
-    const cylinder = new THREE.Mesh(new THREE.CylinderGeometry(6, 10, 4, 4, 1), logoMaterial);
+    const cylinder = new THREE.Mesh(new THREE.CylinderBufferGeometry(6, 10, 4, 4, 1), logoMaterial);
     cylinder.position.y = -6
     logo.add(cylinder);
 
-    const cylinder2 = new THREE.Mesh(new THREE.CylinderGeometry(12, 16, 4, 4, 1), logoMaterial);
+    const cylinder2 = new THREE.Mesh(new THREE.CylinderBufferGeometry(12, 16, 4, 4, 1), logoMaterial);
     cylinder2.position.y = -12
     logo.add(cylinder2);
 

@@ -1,10 +1,7 @@
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { Vector3, MeshMatcapMaterial, SmoothShading, Mesh } from 'three';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import gsap from 'gsap';
-const physics2D = require('./physics2D');
-
-gsap.registerPlugin(physics2D.Physics2DPlugin);
 
 export default class Text {
 	constructor(options = {}) {
@@ -100,19 +97,9 @@ export default class Text {
 			},
 		});
 
-		tl.from(
-			this.meshesPosition,
-			{
-				z: 1000,
-			},
-			"start"
-		).from(
-			this.meshesRotation,
-			{
-				x: Math.PI * 2,
-			},
-			"start"
-		);
+		tl
+		.from(this.meshesPosition, { z: 1000 }, 'start')
+		.from(this.meshesRotation, { x: Math.PI * 2 }, 'start');
 	}
 
 	upDownFlip() {
@@ -120,38 +107,14 @@ export default class Text {
 			repeat: -1,
 			defaults: {
 				duration: 2,
-				ease: "elastic.out(1, .75)",
+				ease: 'elastic.out(1, .75)',
 				stagger: 0.1,
 			},
 		})
-			.to(
-			this.meshesPosition,
-			{
-				y: this.meshesPosition[0].y - 30,
-			},
-			"start"
-		)
-			.to(
-			this.meshesRotation,
-			{
-				x: Math.PI * 2,
-			},
-			"start"
-		)
-			.to(
-			this.meshesPosition,
-			{
-				y: this.meshesPosition[0].y,
-			},
-			"end"
-		)
-			.to(
-			this.meshesRotation,
-			{
-				x: Math.PI * 4,
-			},
-			"end"
-		);
+		.to(this.meshesPosition, { y: this.meshesPosition[0].y - 30 }, 'start')
+		.to(this.meshesRotation, { x: Math.PI * 2 }, 'start')
+		.to(this.meshesPosition, { y: this.meshesPosition[0].y }, 'end')
+		.to(this.meshesRotation, { x: Math.PI * 4 }, 'end');
 	}
 
 	zoomAndFlip() {
@@ -159,39 +122,13 @@ export default class Text {
 			repeat: -1,
 			defaults: {
 				duration: 2,
-				ease: "elastic.out(1.2, 1)",
+				ease: 'elastic.out(1.2, 1)',
 				stagger: 0.1,
 			},
 		})
-			.to(
-			this.meshesPosition,
-			{
-				z: this.meshesPosition[0].z + 100,
-			},
-			"start"
-		)
-			.to(
-			this.meshesRotation,
-			{
-				duration: 2,
-				y: Math.PI * 2,
-			},
-			"start"
-		)
-			.to(
-			this.meshesRotation,
-			{
-				duration: 2,
-				y: Math.PI * 4,
-			},
-			"end"
-		)
-			.to(
-			this.meshesPosition,
-			{
-				z: this.meshesPosition[0].z,
-			},
-			"end"
-		);
+		.to(this.meshesPosition, { z: this.meshesPosition[0].z + 100 }, 'start')
+		.to(this.meshesRotation, { duration: 2, y: Math.PI * 2 }, 'start')
+		.to(this.meshesRotation, { duration: 2, y: Math.PI * 4 }, 'end')
+		.to(this.meshesPosition, { z: this.meshesPosition[0].z }, 'end');
 	}
 }

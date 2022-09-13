@@ -1,6 +1,8 @@
 import { PlaneBufferGeometry, MeshBasicMaterial, Color, DoubleSide, Mesh } from 'three';
 import { palettes } from '@/assets/utils/palettes';
 import gsap from 'gsap';
+const physics2D = require('./physics2D');
+gsap.registerPlugin(physics2D.Physics2DPlugin);
 const _ = require('lodash');
 const DECAY = 6;
 const SPREAD = 30;
@@ -121,7 +123,7 @@ export default class Confetti {
 				gravity,
 				friction,
 			},
-			ease: "power4.easeIn",
+			ease: 'power4.easeIn',
 			onComplete: () => {
 				_.pull(this.confettiSpriteIds, id);
 				this.parent.remove(this.meshes[id]);
