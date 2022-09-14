@@ -159,6 +159,7 @@
   "devDependencies": {
     "stylus": "^0.56.0",
     "stylus-loader": "^6.2.0",
+    "vercel": "^28.2.5",
     "webpack-glsl-loader": "^1.0.1"
   }
 }
