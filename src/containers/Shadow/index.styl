@@ -1,3 +1,8 @@
+@font-face {
+  font-family: abduction;
+  src: url('~@/assets/fonts/abduction.ttf');
+}
+
 .shadow_page
   position fixed
   top 0
@@ -8,11 +13,16 @@
   overscroll-behavior none
   color #FFFFFF
   overflow hidden auto
+  font-family abduction
+  cursor none
   .github
     position fixed
     bottom 24px
     left 24px
     z-index 11
+    transition opacity .25s ease-out
+    &:hover
+      opacity .6
   .content
     .section
       -moz-user-select none
@@ -57,16 +67,17 @@
           position relative
           z-index 1
           .name
-            font-size 1.8em
+            font-size 2em
             line-height 0
             font-weight 100
             letter-spacing .25em
             font-style italic
+            color #03c03c
           .title
             margin 10px 0
             font-weight 100
             letter-spacing 0.4em
-            font-size 1.6em
+            font-size 1.8em
             &::after
               content ""
               position absolute
@@ -136,20 +147,6 @@
           padding 0
           pointer-events all
           overflow hidden
-      &.third
-        -moz-user-select none
-        -webkit-user-select none
-        user-select none
-        display flex
-        flex-direction column
-        align-content center
-        justify-content center
-        align-items center
-        position relative
-        width 100vw
-        height 100vh
-        overflow hidden
-        text-align center
 
 .lds-roller {
   width 80px
@@ -265,7 +262,7 @@
   position: absolute;
   width: 100vw;
   height: 100%;
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: sans-serif;
   display: flex;
   align-content: center;
   justify-content: center;
@@ -299,12 +296,13 @@ span {
   top: 10px;
   left: 10px;
   padding: 10px;
-  background-color: #fff;
+  background: rgba(255, 255, 255, .3);
   border-radius: 50%;
   transform: translate(-50%, -50%);
   mix-blend-mode: difference;
   transition: transform .8s ease, opacity 0.6s ease;
   z-index: 2;
+  border: .5px solid rgba(255, 255, 255, .1);
 }
 
 .a {
@@ -313,7 +311,7 @@ span {
   padding: 1rem;
   margin-right: 4rem;
   letter-spacing: .4em;
-  font-size: .9em;
+  font-size: 1.2em;
   transition: all 0.3s ease, color 0.3s ease;
 }
 
@@ -378,17 +376,14 @@ nav.header .a:hover~.cursor {
   height: 2px;
   background: #fff;
 }
-
 .second-container>ul {
   list-style: none;
   display: inline-flex;
   padding: 0px;
-  margin: 0px 0px 30px 60px;
-  font-family: 'DM Serif Display', serif;
-  color: #ffffff1c;
+  margin: 0px 0px 64px 64px;
+  ccolor: rgba(255,255,255, .11);
   z-index: 2;
 }
-
 .second-container>ul>li.active:after {
   content: "";
   top: 20px;
@@ -399,15 +394,13 @@ nav.header .a:hover~.cursor {
   left: 0px;
   display: block;
 }
-
-
 .second-container>ul>li {
-  padding-right: 20px;
+  padding-right: 32px;
   transition: all 0.8s ease-out;
+  font-size: 1.2em;
 }
-
 .second-container>ul>li:hover {
-  color: whitesmoke;
+  color: #f5f5f5;
   pointer-events: all;
   cursor: pointer;
 }
@@ -418,63 +411,21 @@ nav.header .a:hover~.cursor {
 }
 
 .second-container>ul>li.active {
-  color: whitesmoke;
+    color: #f5f5f5;
 }
 
-.second-container>p {
-  font-size: 14px;
-  font-family: sans-serif;
-  line-height: 24px;
-  width: 30%;
-  color: #898989;
-  margin-left: 60px;
-  height: 200px;
-}
-
-.third>h1 {
-  font-size: 15vw;
-  font-weight: 100;
-  letter-spacing: -6px;
-  color: whitesmoke;
-  margin: 40px 0;
-  padding: 0;
-}
-
-.third>p {
-  column-count: 2;
-  column-gap: 40px;
-  width: 80%;
-  font-size: 13px;
-  font-family: sans-serif;
-  font-weight: 100;
-  line-height: 28px;
-  height: 180px;
-  color: #898989;
-}
-
-.footer {
-  border: none;
-  width: 100%;
-  margin-bottom: 40px;
-  opacity: 1;
-  font-family: sans-serif;
-  font-size: 7px;
-  transition: all 0.8s ease-out 1.1s;
-  bottom: 0;
-  color: antiquewhite;
-  font-weight: 100;
-  opacity: 0.2;
-  text-align: center;
-}
-
-.footer a {
-  text-decoration: none;
-  pointer-events: auto;
-  color: antiquewhite;
+.second-container .text {
+  font-size: 1.4em
+  width: 30%
+  color: rgba(255, 255, 255, .8)
+  margin-left: 60px
+  height: 300px
+  line-height: 2
+  letter-spacing: 8px
+  text-align left
 }
 
 @media only screen and (max-width: 660px) {
-
   .a {
     padding: 10px;
     margin-right: 0rem;
@@ -533,9 +484,5 @@ nav.header .a:hover~.cursor {
     margin-left: 30px;
     line-height: 21px;
     margin-bottom: 40px;
-  }
-
-  .third>p {
-    column-count: 1;
   }
 }

@@ -4,7 +4,6 @@ import { Clock, Scene, LoadingManager, WebGLRenderer, sRGBEncoding, Group, Persp
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import Stats from "three/examples/jsm/libs/stats.module";
 
 export default class Earth extends React.Component {
 
@@ -43,7 +42,7 @@ export default class Earth extends React.Component {
       powerPreference: "high-performance"
     });
     renderer.autoClear = true;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height);
     renderer.outputEncoding = sRGBEncoding;
 
@@ -51,7 +50,7 @@ export default class Earth extends React.Component {
       canvas: document.querySelector('#canvas-container-details'),
       antialias: false
     });
-    renderer2.setPixelRatio(Math.min(window.devicePixelRatio, 1));
+    renderer2.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer2.setSize(width, height);
     renderer2.outputEncoding = sRGBEncoding;
 
@@ -60,7 +59,7 @@ export default class Earth extends React.Component {
     scene.add(cameraGroup);
 
     const camera = new PerspectiveCamera(35, width / height, 1, 100);
-    camera.position.set(19, 1.54, -0.1);
+    camera.position.set(19, 1.54, -.1);
     cameraGroup.add(camera);
 
     const camera2 = new PerspectiveCamera(35, section.clientWidth / section.clientHeight, 1, 100);
@@ -68,11 +67,9 @@ export default class Earth extends React.Component {
     camera2.rotation.set(0, 1, 0);
     scene.add(camera2);
 
-    const stats = new Stats();
-    document.documentElement.appendChild(stats.dom);
-
     // 页面缩放事件监听
     window.addEventListener('resize', () => {
+      let section = document.getElementsByClassName('section')[0];
       camera.aspect = section.clientWidth / section.clientHeight
       camera.updateProjectionMatrix();
 
@@ -82,34 +79,35 @@ export default class Earth extends React.Component {
       renderer.setSize(section.clientWidth, section.clientHeight);
       renderer2.setSize(section.clientWidth, section.clientHeight);
 
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
-      renderer2.setPixelRatio(Math.min(window.devicePixelRatio, 1));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer2.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     });
 
     // 直射光
-    const sunLight = new DirectionalLight(0x435c72, 0.08);
-    sunLight.position.set(-100, 0, -100);
-    scene.add(sunLight);
+    const directionLight = new DirectionalLight(0xffffff, .8);
+    directionLight.position.set(-100, 0, -100);
+    scene.add(directionLight);
     // 点光源
-    const fillLight = new PointLight(0x88b2d9, 2.7, 4, 3);
+    const fillLight = new PointLight(0x88ffee, 2.7, 4, 3);
     fillLight.position.set(30, 3, 1.8);
     scene.add(fillLight);
 
     // 加载管理
     const ftsLoader = document.querySelector('.lds-roller')
-    const looadingCover = document.getElementById('loading-text-intro')
+    const loadingCover = document.getElementById('loading-text-intro')
     const loadingManager = new LoadingManager()
     loadingManager.onLoad = function () {
       document.querySelector('.content').style.visibility = 'visible'
-      // document.querySelector('body').style.overflow = 'hidden auto'
       const yPosition = { y: 0 }
-      new TWEEN.Tween(yPosition).to({y: 100
-        }, 900).easing(TWEEN.Easing.Quadratic.InOut).start()
+      new TWEEN.Tween(yPosition)
+        .to({ y: 100 }, 900)
+        .easing(TWEEN.Easing.Quadratic.InOut)
+        .start()
         .onUpdate(function () {
-          looadingCover.style.setProperty('transform', `translate( 0, ${yPosition.y}%)`)
+          loadingCover.style.setProperty('transform', `translate( 0, ${yPosition.y}%)`)
         })
         .onComplete(function () {
-          looadingCover.parentNode.removeChild(document.getElementById('loading-text-intro'));
+          loadingCover.parentNode.removeChild(document.getElementById('loading-text-intro'));
           TWEEN.remove(this)
         })
       introAnimation()
@@ -130,7 +128,7 @@ export default class Earth extends React.Component {
         if (obj.isMesh) {
           oldMaterial = obj.material;
           obj.material = new MeshPhongMaterial({
-            shininess: 45
+            shininess: 100
           })
         }
       })
@@ -143,7 +141,7 @@ export default class Earth extends React.Component {
     function introAnimation() {
       new TWEEN.Tween(
         camera.position.set(0, 4, 2))
-        .to({ x: 0, y: 2.4, z: 6.8 }, 3500)
+        .to({ x: 0, y: 2.4, z: 5.8 }, 3500)
         .easing(TWEEN.Easing.Quadratic.InOut)
         .start()
         .onComplete(function () {
@@ -154,27 +152,27 @@ export default class Earth extends React.Component {
     }
 
     // 页面点击事件监听
-    document.getElementById('aglaea').addEventListener('click', () => {
-      document.getElementById('aglaea').classList.add('active')
-      document.getElementById('euphre').classList.remove('active')
-      document.getElementById('thalia').classList.remove('active')
-      document.getElementById('content').innerHTML = 'She was venerated as the goddess of beauty, splendor, glory, magnificence, and adornment. She is the youngest of the Charites according to Hesiod. Aglaea is one of three daughters of Zeus and either the Oceanid Eurynome, or of Eunomia, the goddess of good order and lawful conduct.'
+    document.getElementById('one').addEventListener('click', () => {
+      document.getElementById('one').classList.add('active')
+      document.getElementById('three').classList.remove('active')
+      document.getElementById('two').classList.remove('active')
+      document.getElementById('content').innerHTML = '昨夜西风凋碧树。独上高楼，望尽天涯路。'
       animateCamera({ x: 3.2, y: 2.8, z: 3.2 }, { y: 1 });
     });
 
-    document.getElementById('thalia').addEventListener('click', () => {
-      document.getElementById('thalia').classList.add('active')
-      document.getElementById('aglaea').classList.remove('active')
-      document.getElementById('euphre').classList.remove('active')
-      document.getElementById('content').innerHTML = 'Thalia, in Greek religion, one of the nine Muses, patron of comedy; also, according to the Greek poet Hesiod, a Grace (one of a group of goddesses of fertility). She is the mother of the Corybantes, celebrants of the Great Mother of the Gods, Cybele, the father being Apollo, a god related to music and dance. In her hands she carried the comic mask and the shepherd’s staff.'
+    document.getElementById('two').addEventListener('click', () => {
+      document.getElementById('two').classList.add('active')
+      document.getElementById('one').classList.remove('active')
+      document.getElementById('three').classList.remove('active')
+      document.getElementById('content').innerHTML = '衣带渐宽终不悔，为伊消得人憔悴。'
       animateCamera({ x: -1.4, y: 2.8, z: 4.4 }, { y: -0.1 });
     });
 
-    document.getElementById('euphre').addEventListener('click', () => {
-      document.getElementById('euphre').classList.add('active')
-      document.getElementById('aglaea').classList.remove('active')
-      document.getElementById('thalia').classList.remove('active')
-      document.getElementById('content').innerHTML = 'Euphrosyne is a Goddess of Good Cheer, Joy and Mirth. Her name is the female version of a Greek word euphrosynos, which means "merriment". The Greek poet Pindar states that these goddesses were created to fill the world with pleasant moments and good will. Usually the Charites attended the goddess of beauty Aphrodite.'
+    document.getElementById('three').addEventListener('click', () => {
+      document.getElementById('three').classList.add('active')
+      document.getElementById('one').classList.remove('active')
+      document.getElementById('two').classList.remove('active')
+      document.getElementById('content').innerHTML = '众里寻他千百度，蓦然回首，那人却在灯火阑珊处。'
       animateCamera({ x: -4.8, y: 2.9, z: 3.2 }, { y: -0.75 });
     });
 
@@ -202,7 +200,7 @@ export default class Earth extends React.Component {
     let previousTime = 0
 
     // 页面重绘动画
-    const rendeLoop = () => {
+    const tick = () => {
       TWEEN.update()
       if (this.secondContainer) {
         renderer2.render(scene, camera2)
@@ -218,10 +216,9 @@ export default class Earth extends React.Component {
       fillLight.position.x += (parallaxX * 8 - fillLight.position.x) * 2 * deltaTime
       cameraGroup.position.z -= (parallaxY / 3 + cameraGroup.position.z) * 2 * deltaTime
       cameraGroup.position.x += (parallaxX / 3 - cameraGroup.position.x) * 2 * deltaTime
-      stats && stats.update();
-      requestAnimationFrame(rendeLoop);
+      requestAnimationFrame(tick);
     }
-    rendeLoop();
+    tick();
 
     // 鼠标移动时获取相机位置
     document.addEventListener('mousemove', (event) => {
@@ -272,42 +269,37 @@ export default class Earth extends React.Component {
     return (
       <div className='shadow_page'>
         <div className="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-          <div id="loading-text-intro"><p>Loading</p></div>
-          <div className="content" style={{'visibility': 'hidden'}}>
+        <div id="loading-text-intro"><p>Loading</p></div>
+        <div className="content" style={{'visibility': 'hidden'}}>
             <nav className="header">
-              <b className="active a"><span>首页</span></b>
-              <b className="a"><span>关于</span></b>
-              <b className="a"><span>作品</span></b>
-              <b className="a"><span>我的</span></b>
-              <b className="a"><span>了解更多</span></b>
+            <a href="https://github.com/dragonir/threejs-odessey" class="active a"><span>首页</span></a>
+            <a href="https://github.com/dragonir/threejs-odessey" class="a"><span>关于</span></a>
+            <a href="https://github.com/dragonir/threejs-odessey" class="a"><span>作品</span></a>
+            <a href="https://github.com/dragonir/threejs-odessey" class="a"><span>我的</span></a>
+            <a href="https://github.com/dragonir/threejs-odessey" class="a"><span>更多</span></a>
               <div className="cursor"></div>
             </nav>
             <section className="section first">
               <div className='info'>
                 <h2 className='name'>DRAGONIR</h2>
-                <h1 className='title'>KING OF KINGS</h1>
-                <p className='description'>不要温顺的走进那个良夜，激情不能被消沉的暮色淹没，咆哮吧，咆哮，痛斥那光的退缩，智者在临终的时候，对黑暗妥协，是因为它们的语言已黯然失色，它们不想被夜色迷惑，咆哮吧，咆哮，痛斥那光的退缩。</p>
+                <h1 className='title'>THREE.JS ODESSEY</h1>
+                <p className='description'>&nbsp;</p>
               </div>
               <canvas id='canvas-container' className='webgl'></canvas>
             </section>
             <section className="section second">
               <div className="second-container">
                 <ul>
-                  <li id="aglaea" className="active">Aglaea</li>
-                  <li id="thalia"><b>Thalia</b></li>
-                  <li id="euphre">Euphre</li>
+                  <li id="one" className="active">入门</li>
+                  <li id="two">基础</li>
+                  <li id="three">进阶</li>
                 </ul>
-                <p id="content">She was venerated as the goddess of beauty, splendor, glory, magnificence, and adornment. She is the youngest of the Charites according to Hesiod. Aglaea is one of three daughters of Zeus and either the Oceanid Eurynome, or of Eunomia, the goddess of good order and lawful conduct.</p>
+                <p className='text' id="content">昨夜西风凋碧树。独上高楼，望尽天涯路。</p>
               </div>
               <canvas id='canvas-container-details' className='webgl'></canvas>
             </section>
-            <section className="section third">
-              <h1>The Making</h1>
-              <p>Canova's assistants roughly blocked out the marble, leaving Canova to perform the final carving and shape the stone to highlight the Graces soft flesh. This was a trademark of the artist, and the piece shows a strong allegiance to the Neo-Classical movement in sculpture, of which Canova is the prime exponent.<br/><br/> The three goddesses are shown nude, huddled together, their heads almost touching in what many have referred to as an erotically charged piece. They stand, leaning slightly inward — perhaps discussing a common issue, or simply enjoying their closeness. Their hair-styles are similar, braided atop their heads.</p>
-            </section>
-            <h4 className="footer">Created by dragonir &copy; 2022</h4>
         </div>
-        <a className='github' href='https://github.com/dragonir/3d' target='_blank' rel='noreferrer' title='dragonir'>
+        <a className='github' href='https://github.com/dragonir/threejs-odessey' target='_blank' rel='noreferrer' title='dragonir'>
           <svg height='36' aria-hidden='true' viewBox='0 0 16 16' version='1.1' width='36' data-view-component='true'>
             <path fill='#FFFFFF' fillRule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
           </svg>

@@ -23,6 +23,13 @@ const workList = [
     three: true
   },
   {
+    link: '#/shadow',
+    title: '光与影之诗',
+    description: '🗿 光影效果构成创意页面',
+    image: require('@/containers/Home/images/shadow.png'),
+    three: true
+  },
+  {
     link: '#/olympic',
     title: '2022冬奥会3D趣味页面',
     description: '🐼 萌萌的冰墩墩和雪容融送给大家！',
