@@ -192,12 +192,9 @@ export default class Earth extends React.Component {
     }
 
     // 鼠标样式配置
-    const cursor = {
-      x: 0,
-      y: 0
-    }
-    const clock = new Clock()
-    let previousTime = 0
+    const cursor = { x: 0, y: 0 };
+    const clock = new Clock();
+    let previousTime = 0;
 
     // 页面重绘动画
     const tick = () => {
@@ -234,7 +231,6 @@ export default class Earth extends React.Component {
       const y = e.clientY
       customCursor.style.cssText = `left: ${x}px; top: ${y}px;`
     }
-
   }
 
   handleMenu = () => {

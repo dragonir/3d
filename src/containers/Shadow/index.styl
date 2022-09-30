@@ -431,58 +431,65 @@ nav.header .a:hover~.cursor {
     margin-right: 0rem;
     letter-spacing: 0.3em;
   }
-
   .footer {
     margin-bottom: 20px;
   }
-
   .header>span {
     padding: 0 1em;
   }
-
   .header {
     font-size: .6em;
   }
-
   .main-section .product-display h3 {
     width: 260px;
     font-size: 42px;
     margin-left: 30px;
     line-height: 45px;
   }
-
   .first>h1 {
     margin: 10px 0;
     font-weight: 100;
     letter-spacing: 0.2em;
     font-size: 13vw;
   }
-
   .first>p {
     width: 85%;
     line-height: 22px;
   }
-
   .second-container {
     padding: 0;
     justify-content: flex-end;
   }
-
   .second-container>ul {
     margin: 0px 0px 30px 30px;
     width: 80%;
   }
-
   .second-container>ul>li {
     padding-right: 20px;
     transition: all 0.8s ease-out;
     font-size: 20px;
   }
-
   .second-container>p {
     width: 85%;
     margin-left: 30px;
     line-height: 21px;
     margin-bottom: 40px;
   }
+}
+
+@media only screen and (max-width: 900px) {
+  .header .a { font-size: 1em !important; }
+  .first .info .name { font-size: 1.2em !important; }
+  .first .info .title { font-size: 1em !important; }
+  .second ul { margin: 10px 0px 20px 64px; }
+  .second ul li { font-size: .55em !important; }
+  .second .text { font-size: .75em !important; }
+}
+@media only screen and (max-height: 640px) {
+  .header .a { font-size: 1em !important; }
+  .first .info .name { font-size: 1.2em !important; }
+  .first .info .title { font-size: 1em !important; }
+  .second ul { margin: 10px 0px 20px 64px; }
+  .second ul li { font-size: .55em !important; }
+  .second .text { font-size: .75em !important; }
 }
