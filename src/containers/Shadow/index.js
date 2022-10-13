@@ -268,11 +268,11 @@ export default class Earth extends React.Component {
         <div id="loading-text-intro"><p>Loading</p></div>
         <div className="content" style={{'visibility': 'hidden'}}>
             <nav className="header">
-            <a href="https://github.com/dragonir/threejs-odessey" class="active a"><span>首页</span></a>
-            <a href="https://github.com/dragonir/threejs-odessey" class="a"><span>关于</span></a>
-            <a href="https://github.com/dragonir/threejs-odessey" class="a"><span>作品</span></a>
-            <a href="https://github.com/dragonir/threejs-odessey" class="a"><span>我的</span></a>
-            <a href="https://github.com/dragonir/threejs-odessey" class="a"><span>更多</span></a>
+            <a href="https://github.com/dragonir/threejs-odessey" className="active a"><span>首页</span></a>
+            <a href="https://github.com/dragonir/threejs-odessey" className="a"><span>关于</span></a>
+            <a href="https://github.com/dragonir/threejs-odessey" className="a"><span>作品</span></a>
+            <a href="https://github.com/dragonir/threejs-odessey" className="a"><span>我的</span></a>
+            <a href="https://github.com/dragonir/threejs-odessey" className="a"><span>更多</span></a>
               <div className="cursor"></div>
             </nav>
             <section className="section first">

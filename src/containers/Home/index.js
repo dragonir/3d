@@ -30,6 +30,13 @@ const workList = [
     three: true
   },
   {
+    link: '#/gravity',
+    title: '地心引力',
+    description: '👨‍🚀 迷失太空',
+    image: require('@/containers/Home/images/gravity.gif'),
+    three: true
+  },
+  {
     link: '#/olympic',
     title: '2022冬奥会3D趣味页面',
     description: '🐼 萌萌的冰墩墩和雪容融送给大家！',

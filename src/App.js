@@ -27,6 +27,7 @@ const Mine = lazy(() => import('@/containers/Mine/index'));
 const Tennis = lazy(() => import('@/containers/Tennis/index'));
 const Shadow = lazy(() => import('@/containers/Shadow/index'));
 const Fans = lazy(() => import('@/containers/Fans/index'));
+const Gravity = lazy(() => import('@/containers/Gravity/index'));
 
 function App() {
   return (
@@ -59,6 +60,7 @@ function App() {
           <Route element={ <Tennis /> } path="/tennis" />
           <Route element={ <Shadow /> } path="/shadow" />
           <Route element={ <Fans /> } path="/fans" />
+          <Route element={ <Gravity />} path="/gravity" />
         </Routes>
         </Suspense>
       </Router>
