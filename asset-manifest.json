@@ -1,9 +1,9 @@
 {
   "files": {
     "main.css": "./static/css/main.34a9cd8a.css",
-    "main.js": "./static/js/main.6105b24a.js",
+    "main.js": "./static/js/main.44dffe1f.js",
     "static/css/190.bbbff895.chunk.css": "./static/css/190.bbbff895.chunk.css",
-    "static/js/190.f91f6407.chunk.js": "./static/js/190.f91f6407.chunk.js",
+    "static/js/190.ce6ac996.chunk.js": "./static/js/190.ce6ac996.chunk.js",
     "static/css/97.1b69fbd1.chunk.css": "./static/css/97.1b69fbd1.chunk.css",
     "static/js/97.d5394183.chunk.js": "./static/js/97.d5394183.chunk.js",
     "static/css/904.14e7027c.chunk.css": "./static/css/904.14e7027c.chunk.css",
@@ -46,11 +46,13 @@
     "static/css/452.4c62a3b1.chunk.css": "./static/css/452.4c62a3b1.chunk.css",
     "static/js/452.f456aa3f.chunk.js": "./static/js/452.f456aa3f.chunk.js",
     "static/css/229.7765c0bd.chunk.css": "./static/css/229.7765c0bd.chunk.css",
-    "static/js/229.09e60ce2.chunk.js": "./static/js/229.09e60ce2.chunk.js",
+    "static/js/229.d78069c4.chunk.js": "./static/js/229.d78069c4.chunk.js",
     "static/css/318.b235abcf.chunk.css": "./static/css/318.b235abcf.chunk.css",
     "static/js/318.68372572.chunk.js": "./static/js/318.68372572.chunk.js",
+    "static/css/505.94bdab37.chunk.css": "./static/css/505.94bdab37.chunk.css",
+    "static/js/505.60489456.chunk.js": "./static/js/505.60489456.chunk.js",
     "static/js/27.5e6c119d.chunk.js": "./static/js/27.5e6c119d.chunk.js",
-    "static/js/562.d6a8013f.chunk.js": "./static/js/562.d6a8013f.chunk.js",
+    "static/js/562.aa7c3e75.chunk.js": "./static/js/562.aa7c3e75.chunk.js",
     "static/js/518.ddbba741.chunk.js": "./static/js/518.ddbba741.chunk.js",
     "static/js/40.b11e5682.chunk.js": "./static/js/40.b11e5682.chunk.js",
     "static/js/686.e0eae80f.chunk.js": "./static/js/686.e0eae80f.chunk.js",
@@ -97,6 +99,7 @@
     "static/media/bg.png": "./static/media/bg.1f6b2d67123e263645a4.png",
     "static/media/waternormals.jpg": "./static/media/waternormals.537ec85b965d414829ab.jpg",
     "static/media/tennis-court-roughmap.png": "./static/media/tennis-court-roughmap.74d3d1040efec19c2c56.png",
+    "static/media/astronaut.glb": "./static/media/astronaut.314d86a43264fb71e7f2.glb",
     "static/media/model.glb": "./static/media/model.e5a2f9dfbf11b02908af.glb",
     "static/media/tennis-court-bumpmap.png": "./static/media/tennis-court-bumpmap.c53e8820eb0cd3c39c45.png",
     "static/media/layer_1.png": "./static/media/layer_1.916822d8067a3de7a780.png",
@@ -106,6 +109,7 @@
     "static/media/Eye_Blue2_1k.jpg": "./static/media/Eye_Blue2_1k.4414b548c7e8eb320f4f.jpg",
     "static/media/Fox.glb": "./static/media/Fox.c62e8daba521d5a6b50c.glb",
     "static/media/boom.png": "./static/media/boom.11f2b010534c3206bdba.png",
+    "static/media/gravity.gif": "./static/media/gravity.507c548f690e1c0a3d1c.gif",
     "static/media/tree.png": "./static/media/tree.5b95f66c07d500d76b55.png",
     "static/media/layer_2.png": "./static/media/layer_2.4c9fd91e83fa0e518591.png",
     "static/media/Eye_Bump2_1k.jpg": "./static/media/Eye_Bump2_1k.63261e58684e227e20de.jpg",
@@ -166,6 +170,7 @@
     "static/media/earth.jpg": "./static/media/earth.e2b2915e51f12423bd07.jpg",
     "static/media/metaverse.png": "./static/media/metaverse.fa4a2bc9209b2e0e89d1.png",
     "static/media/click.png": "./static/media/click.c0ea3c86766bad857ed7.png",
+    "static/media/exc.ttf": "./static/media/exc.6a9deb62787a4ffebe26.ttf",
     "static/media/cell.png": "./static/media/cell.a3aacd3aabefd3e52a89.png",
     "static/media/fabricPinkLight.png": "./static/media/fabricPinkLight.6375aef1ac8828df566f.png",
     "static/media/paper.png": "./static/media/paper.ab61f43b1385c2191935.png",
@@ -191,6 +196,6 @@
   },
   "entrypoints": [
     "static/css/main.34a9cd8a.css",
-    "static/js/main.6105b24a.js"
+    "static/js/main.44dffe1f.js"
   ]
 }
