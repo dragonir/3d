@@ -28,6 +28,8 @@ const Tennis = lazy(() => import('@/containers/Tennis/index'));
 const Shadow = lazy(() => import('@/containers/Shadow/index'));
 const Fans = lazy(() => import('@/containers/Fans/index'));
 const Gravity = lazy(() => import('@/containers/Gravity/index'));
+const RickAndMorty = lazy(() => import('@/containers/RickAndMorty/index'));
+const Flag = lazy(() => import('@/containers/Flag/index'));
 
 function App() {
   return (
@@ -61,6 +63,8 @@ function App() {
           <Route element={ <Shadow /> } path="/shadow" />
           <Route element={ <Fans /> } path="/fans" />
           <Route element={ <Gravity />} path="/gravity" />
+          <Route element={ <RickAndMorty />} path="/rickAndMorty" />
+          <Route element={ <Flag />} path="/flag" />
         </Routes>
         </Suspense>
       </Router>
