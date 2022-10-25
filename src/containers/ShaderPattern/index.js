@@ -1,13 +1,15 @@
+/* eslint-disable */
 import './index.styl';
 import React from 'react';
-import { WebGLRenderer, Scene, PerspectiveCamera, PlaneBufferGeometry, BufferAttribute, TextureLoader, ShaderMaterial, DoubleSide, Vector2, Color, Mesh, Clock } from 'three';
+import { WebGLRenderer, Scene, PerspectiveCamera, PlaneBufferGeometry, ShaderMaterial, DoubleSide, Mesh, IcosahedronBufferGeometry, Vector2 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import * as dat from 'dat.gui';
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import vertexShader from './shader/vertex.glsl';
 import fragmentShader from './shader/fragment.glsl';
-import flagTexture from './images/flag.png';
 
-export default class Flag extends React.Component {
+export default class ShaderPattern extends React.Component {
 
   componentDidMount() {
     this.initThree();
@@ -24,13 +26,15 @@ export default class Flag extends React.Component {
     const renderer = new WebGLRenderer({ canvas: canvas });
     renderer.setSize(sizes.width, sizes.height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ReinhardToneMapping;
+    renderer.autoClear = false;
 
     // 初始化场景
     const scene = new Scene();
 
     // 初始化相机
     const camera = new PerspectiveCamera(75, sizes.width / sizes.height, .1, 100);
-    camera.position.set(.15, 0, .65);
+    camera.position.set(0.25, - 0.25, 1)
     scene.add(camera);
 
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -48,44 +52,44 @@ export default class Flag extends React.Component {
       camera.updateProjectionMatrix();
     });
 
-    // 几何体
-    const geometry = new PlaneBufferGeometry(1, 1, 32, 32);
-    const count = geometry.attributes.position.count;
-    const randoms = new Float32Array(count);
-    for (let i = 0; i < count; i++) {
-      randoms[i] = Math.random();
-    }
-    geometry.setAttribute('aRandom', new BufferAttribute(randoms, 1));
-    const textureLoader = new TextureLoader();
-
     // 着色器材质 ShaderMaterial
     const material = new ShaderMaterial({
       side: DoubleSide,
       vertexShader: vertexShader,
-      fragmentShader: fragmentShader,
-      uniforms: {
-        uFrequency: { value: new Vector2(10, 5) },
-        uTime: { value: 0 },
-        uColor: { value: new Color('orange') },
-        uTexture: { value: textureLoader.load(flagTexture) }
-      }
+      fragmentShader: fragmentShader
     });
 
+    // 几何体
+    // const geometry = new PlaneBufferGeometry(1, 1, 32, 32);
     // 创建网格
-    const mesh = new Mesh(geometry, material);
-    mesh.scale.y = 2 / 3;
-    scene.add(mesh);
+    // const mesh = new Mesh(geometry, material);
+    // scene.add(mesh);
 
-    const gui = new dat.GUI();
-    gui.add(material.uniforms.uFrequency.value, 'x').min(0).max(20).step(.01).name('frequencyX');
-    gui.add(material.uniforms.uFrequency.value, 'y').min(0).max(20).step(.01).name('frequencyY');
+    const Icosahedron = new Mesh(new IcosahedronBufferGeometry(1, 64), material);
+    Icosahedron.scale.set(.5, .5, .5);
+    scene.add(Icosahedron);
+
+
+    // 辉光效果
+    const renderScene = new RenderPass(scene, camera);
+    const bloomPass = new UnrealBloomPass(new Vector2(window.innerWidth, window.innerHeight), 1.5, .4, .85);
+    bloomPass.threshold = 0;
+    bloomPass.strength = 2.2;
+    bloomPass.radius = .2;
+    const bloomComposer = new EffectComposer(renderer);
+    bloomComposer.renderToScreen = true;
+    bloomComposer.addPass(renderScene);
+    bloomComposer.addPass(bloomPass);
+
+    // 光照
+    const light = new THREE.AmbientLight(0xffffff, 1.2);
+    scene.add(light);
 
     // 动画
-    const clock = new Clock();
     const tick = () => {
-      const elapsedTime = clock.getElapsedTime();
-      // 更新材质
-      material.uniforms.uTime.value = elapsedTime;
+      Icosahedron && (Icosahedron.rotation.y += .01);
+      Icosahedron && (Icosahedron.rotation.x += .005);
+      bloomComposer && bloomComposer.render();
       // 更新控制器
       controls.update();
       // 更新渲染器
