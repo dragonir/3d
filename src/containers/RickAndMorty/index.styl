@@ -6,6 +6,8 @@
   height 100vh
   width 100vw
   overflow hidden
+  background #000 url('./images/bg.jpg') no-repeat center
+  background-size cover
   .webgl
     position fixed
     top 0
@@ -16,7 +18,7 @@
     left 0
     bottom 0
     z-index 1
-    color rgba(255, 255, 255, .6)
+    color rgba(255, 255, 255, .8)
     display flex
     align-items center
     padding 16px
@@ -27,3 +29,13 @@
       opacity .5
     .author
       padding-left 8px
+  .logo
+    display inline-block
+    width 40%
+    height 0
+    padding-top 12%
+    background url('./images/text.png') no-repeat center
+    background-size 100% 100%
+    position fixed
+    bottom 16px
+    right 5%
