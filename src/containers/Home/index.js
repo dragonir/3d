@@ -30,6 +30,13 @@ const workList = [
     three: true
   },
   {
+    link: '#/rickAndMorty',
+    title: 'Rick And Morty',
+    description: '🛸 瑞克和莫蒂着色器',
+    image: require('@/containers/Home/images/rick_and_morty.gif'),
+    three: true
+  },
+  {
     link: '#/gravity',
     title: '地心引力',
     description: '👨‍🚀 迷失太空',
